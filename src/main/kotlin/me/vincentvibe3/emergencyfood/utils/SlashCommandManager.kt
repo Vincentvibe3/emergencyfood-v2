@@ -67,8 +67,6 @@ object SlashCommandManager {
                 }
             }
         }
-        println("Finished command registration\n")
-        println("Bot ready")
     }
 
 }

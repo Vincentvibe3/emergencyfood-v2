@@ -4,7 +4,6 @@ import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
-import net.dv8tion.jda.api.requests.restaction.CommandCreateAction
 
 class Play:SlashCommand {
 
@@ -16,7 +15,7 @@ class Play:SlashCommand {
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
     override fun handle(event: SlashCommandEvent?) {
-        event?.deferReply()
-        event?.reply("Play was called")
+        event?.deferReply()?.queue()
+        event?.hook?.editOriginal("Play was called")?.queue()
     }
 }
