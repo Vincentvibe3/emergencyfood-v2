@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.vincent.emergencyfood"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -36,7 +36,6 @@ tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-
 tasks.withType<ShadowJar>{
     archiveFileName.set("Emergencyfood-${project.version}.jar")
 }
@@ -44,3 +43,5 @@ tasks.withType<ShadowJar>{
 application {
     mainClass.set("me.vincentvibe3.emergencyfood.core.MainKt")
 }
+
+project.gradle.startParameter.excludedTaskNames.add("jar")
