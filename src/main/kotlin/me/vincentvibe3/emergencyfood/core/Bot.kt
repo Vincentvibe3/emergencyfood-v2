@@ -44,6 +44,7 @@ object Bot {
             .build()
         client.awaitReady()
         SlashCommandManager.registerRemote(channel)
+        SlashCommandManager.registerGuildRemote(channel)
         client.addEventListener(SlashCommandListener())
     }
 }
