@@ -1,5 +1,6 @@
 package me.vincentvibe3.emergencyfood.utils
 
+import me.vincentvibe3.emergencyfood.commands.music.Pause
 import me.vincentvibe3.emergencyfood.commands.music.Play
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.core.Channel
@@ -16,6 +17,7 @@ object SlashCommandManager {
         try{
             //set commands to add here
             registerLocal(Play())
+            registerLocal(Pause())
         } catch (e:IllegalArgumentException) {
             println("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }

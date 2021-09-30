@@ -3,7 +3,11 @@ package me.vincentvibe3.emergencyfood.utils.audio
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer
+import java.util.*
+import java.util.concurrent.BlockingQueue
 
 class Player {
     private val playerManager = DefaultAudioPlayerManager()
@@ -25,8 +29,24 @@ class Player {
         playerManager.loadItemOrdered(player,  track , AudioLoader(queueManager, player))
     }
 
-    fun getPlayingSong(): String{
+    fun getQueue(): BlockingQueue<AudioTrack>{
+        return queueManager.queue
+    }
+
+    fun getCurrentSongUrl(): String{
+        return player.playingTrack.info.uri
+    }
+
+    fun getCurrentSongTitle(): String{
         return player.playingTrack.info.title
+    }
+
+    fun getLastSongUrl():String{
+        return queueManager.queue.last().info.uri
+    }
+
+    fun getLastSongTitle():String{
+        return queueManager.queue.last().info.title
     }
 
     fun skip(){
