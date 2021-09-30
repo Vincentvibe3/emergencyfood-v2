@@ -9,7 +9,7 @@ class Player {
     private val playerManager = DefaultAudioPlayerManager()
     private val player: AudioPlayer = playerManager.createPlayer()
     private val queueManager = QueueManager()
-    val handler = AudioHandler(player)
+    private val handler = AudioHandler(player)
 
     fun setupPlayer(){
         playerManager.configuration.setFrameBufferFactory{ bufferDuration, format, stopping -> NonAllocatingAudioFrameBuffer(bufferDuration, format, stopping)}

@@ -13,6 +13,6 @@ interface SlashCommand {
     val command: CommandData
 
     //handle events
-    fun handle(event: SlashCommandEvent?)
+    fun handle(event: SlashCommandEvent)
 
 }
