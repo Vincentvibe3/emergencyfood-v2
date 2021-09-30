@@ -12,7 +12,16 @@ class Pause:SlashCommand {
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
-        player?.pause()
-        event.reply("paused")
+        if (player != null){
+            if (player.isPlaying() && !player.isPaused()){
+                val track = player.getCurrentSongTitle()
+                player.pause()
+                event.reply("Paused $track").queue()
+            } else {
+                event.reply("No track is playing").queue()
+            }
+        } else {
+            event.reply("An error occurred when fetching the player").queue()
+        }
     }
 }
