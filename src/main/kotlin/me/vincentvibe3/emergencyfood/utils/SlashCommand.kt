@@ -12,6 +12,6 @@ interface SlashCommand {
     val command: CommandCreateAction
 
     //handle events
-    fun handle(event: SlashCommandEvent?)
+    fun handle(event: SlashCommandEvent)
 
 }
