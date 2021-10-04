@@ -8,6 +8,7 @@ import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.audio.Player
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import me.vincentvibe3.emergencyfood.utils.audio.SongSearch
+import me.vincentvibe3.emergencyfood.utils.Response
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Guild
@@ -73,7 +74,7 @@ class Play:SlashCommand {
         }
     }
 
-    private fun play(player: Player, track:String):Message{
+    private fun play(player: Player, track:String):Response{
         player.play(track)
         waitForLoad(player, track)
         val embed = EmbedBuilder()
@@ -86,13 +87,11 @@ class Play:SlashCommand {
 
     }
 
-    private fun respond(event:SlashCommandEvent, message:String, ephemeral:Boolean){
-        event.hook.setEphemeral(ephemeral)
+    private fun respond(event:SlashCommandEvent, message:String){
         event.hook.editOriginal(message).queue()
     }
 
-    private fun respond(event:SlashCommandEvent, message:Message, ephemeral:Boolean){
-        event.hook.setEphemeral(ephemeral)
+    private fun respond(event:SlashCommandEvent, message:Message){
         event.hook.editOriginal(message).queue()
     }
 
@@ -110,7 +109,7 @@ class Play:SlashCommand {
                 val track = getTrack(songOption)
                 play(player, track)
             }
-            respond(event, response, false)
+            respond(event, response, true)
         } else {
             respond(event, "An error occurred when fetching the player", true)
         }
