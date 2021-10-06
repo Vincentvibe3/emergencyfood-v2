@@ -21,6 +21,19 @@ class Player {
         player.addListener(queueManager)
     }
 
+    fun toggleLoop(): Boolean{
+        queueManager.loop = !queueManager.loop
+        return queueManager.loop
+    }
+
+    fun getLoop():Boolean{
+        return  queueManager.loop
+    }
+
+    fun setUpdateChannel(channel:String){
+        queueManager.updatesChannel = channel
+    }
+
     fun getAudioHandler():AudioHandler{
         return handler
     }
@@ -50,10 +63,16 @@ class Player {
     }
 
     fun skip(){
-        val queue = queueManager.queue
-        val currentIndex = queue.indexOf(player.playingTrack)
-        val nextTrack = queue.elementAt(currentIndex+1)
-        player.playTrack(nextTrack)
+        if (isLastSong()&&getLoop()){
+            queueManager.rebuildQueue()
+            val queue = queueManager.queue
+            player.playTrack(queue.elementAt(0))
+        } else {
+            val queue = queueManager.queue
+            val currentIndex = queue.indexOf(player.playingTrack)
+            val nextTrack = queue.elementAt(currentIndex+1)
+            player.playTrack(nextTrack)
+        }
     }
 
     fun isQueueEmpty(): Boolean{
