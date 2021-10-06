@@ -26,7 +26,7 @@ class Play:SlashCommand {
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
     private fun getTrack(query:String):String{
-        return if (query.startsWith("https://www.youtube.com/watch?v=")||query.startsWith("https://youtu.be/")){
+        return if (query.startsWith("https://www.youtube.com/watch?v=")||query.startsWith("https://youtu.be/")||query.startsWith("https://www.youtube.com/playlist?list=")){
             query
         } else {
             SongSearch.getSong(query)
@@ -52,6 +52,16 @@ class Play:SlashCommand {
         }
     }
 
+    private fun waitForPlaylistLoad(player: Player, initSize:Int){
+        runBlocking {
+            val job = launch {
+                while (!player.isPlaying() || player.getQueue().size == initSize){
+                    delay(100L)
+                }
+            }
+            job.join()
+        }
+    }
 
     private fun formatMobileLinks(url: String):String{
         return url.replace("https://youtu.be/", "https://www.youtube.com/watch?v=")
@@ -75,13 +85,23 @@ class Play:SlashCommand {
     }
 
     private fun play(player: Player, track:String):Message{
+        val initSize = player.getQueue().size
         player.play(track)
-        waitForLoad(player, track)
-        val embed = EmbedBuilder()
-            .setTitle("Queued")
-            .setDescription("Added [${player.getLastSongTitle()}](${player.getLastSongUrl()})")
-            .setColor(ConfigData.musicEmbedColor)
-            .build()
+        val embed = if (track.startsWith("https://www.youtube.com/playlist?list=")){
+            waitForPlaylistLoad(player, initSize)
+            EmbedBuilder()
+                .setTitle("Queued")
+                .setDescription("Added ${player.getQueue().size-initSize} songs from [playlist]($track)")
+                .setColor(ConfigData.musicEmbedColor)
+                .build()
+        } else {
+            waitForLoad(player, track)
+            EmbedBuilder()
+                .setTitle("Queued")
+                .setDescription("Added [${player.getLastSongTitle()}](${player.getLastSongUrl()})")
+                .setColor(ConfigData.musicEmbedColor)
+                .build()
+        }
         return MessageBuilder()
             .setEmbeds(embed)
             .build()
