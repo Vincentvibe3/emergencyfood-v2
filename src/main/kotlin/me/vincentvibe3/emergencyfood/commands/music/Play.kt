@@ -4,21 +4,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.core.Bot
+import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.audio.Player
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import me.vincentvibe3.emergencyfood.utils.audio.SongSearch
-import me.vincentvibe3.emergencyfood.utils.Response
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import java.util.concurrent.TimeUnit
 
 class Play:SlashCommand {
 
@@ -63,7 +60,10 @@ class Play:SlashCommand {
     private fun resume(player:Player): Message{
         return if (player.isPaused()){
             player.resume()
-            val embed = EmbedBuilder().setTitle("Resumed Playback").build()
+            val embed = EmbedBuilder()
+                .setTitle("Resumed Playback")
+                .setColor(ConfigData.musicEmbedColor)
+                .build()
             MessageBuilder()
                 .setEmbeds(embed)
                 .build()
@@ -74,25 +74,18 @@ class Play:SlashCommand {
         }
     }
 
-    private fun play(player: Player, track:String):Response{
+    private fun play(player: Player, track:String):Message{
         player.play(track)
         waitForLoad(player, track)
         val embed = EmbedBuilder()
             .setTitle("Queued")
             .setDescription("Added [${player.getLastSongTitle()}](${player.getLastSongUrl()})")
+            .setColor(ConfigData.musicEmbedColor)
             .build()
         return MessageBuilder()
             .setEmbeds(embed)
             .build()
 
-    }
-
-    private fun respond(event:SlashCommandEvent, message:String){
-        event.hook.editOriginal(message).queue()
-    }
-
-    private fun respond(event:SlashCommandEvent, message:Message){
-        event.hook.editOriginal(message).queue()
     }
 
     override fun handle(event: SlashCommandEvent) {
@@ -101,17 +94,20 @@ class Play:SlashCommand {
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         val channel = event.member?.voiceState?.channel
         val songOption = event.getOption("song")?.asString
-        if (player != null) {
-            channel?.let{ connect(channel, player) }
+        if (player != null && channel != null) {
+            player.setUpdateChannel(event.textChannel.id)
+            connect(channel, player)
             val response = if (songOption == null){
                 resume(player)
             } else {
                 val track = getTrack(songOption)
                 play(player, track)
             }
-            respond(event, response, true)
-        } else {
-            respond(event, "An error occurred when fetching the player", true)
+            event.hook.editOriginal(response).queue()
+        } else if (player == null){
+            event.hook.editOriginal("An error occurred when fetching the player").queue()
+        } else if (channel == null){
+            event.hook.editOriginal("You must join a voice channel to play").queue()
         }
     }
 }

@@ -1,11 +1,9 @@
 package me.vincentvibe3.emergencyfood.utils
 
-import me.vincentvibe3.emergencyfood.commands.music.Pause
-import me.vincentvibe3.emergencyfood.commands.music.Play
+import me.vincentvibe3.emergencyfood.commands.music.*
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.core.Channel
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import net.dv8tion.jda.api.requests.restaction.CommandCreateAction
 import kotlin.reflect.full.memberProperties
 
 object SlashCommandManager {
@@ -18,6 +16,10 @@ object SlashCommandManager {
             //set commands to add here
             registerLocal(Play())
             registerLocal(Pause())
+            registerLocal(Loop())
+            registerLocal(Skip())
+            registerLocal(Disconnect())
+            registerLocal(Clear())
         } catch (e:IllegalArgumentException) {
             println("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
@@ -53,7 +55,7 @@ object SlashCommandManager {
             }
         }
         Bot.getClientInstance().guilds.forEach { guild ->
-            guild.retrieveCommands().queue { commandList ->
+            guild.retrieveCommands().queue ({ commandList ->
                 commandList.filter { !commandsList.containsKey(it.name) }.forEach { command ->
                     try {
                         command.delete().queue(
@@ -64,14 +66,15 @@ object SlashCommandManager {
                         println("Failed to delete ${command.name} ${guild.name}")
                     }
                 }
-            }
+            }, {
+                println("Failed to fetch commands for ${guild.name}")
+            })
         }
     }
 
     //register commands on discord
     fun registerRemote(channel: Channel){
         println("Starting command registration")
-
         //upsert new commands
         commandsList.forEach{
             val command = it.value

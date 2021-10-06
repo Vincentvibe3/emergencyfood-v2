@@ -8,29 +8,31 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Pause:SlashCommand {
-    override val name = "pause"
-    override val command = CommandData(name, "pause playback")
+class Loop:SlashCommand {
+    override val name = "loop"
+    override val command = CommandData(name, "toggles looping the queue")
 
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
-        if (player != null){
-            if (player.isPlaying() && !player.isPaused()){
-                player.pause()
-                val embed = EmbedBuilder()
-                    .setTitle("Paused")
+        if (player != null) {
+            val embed = if (player.toggleLoop()){
+                EmbedBuilder()
+                    .setTitle("Looping is enabled")
                     .setColor(ConfigData.musicEmbedColor)
                     .build()
-                val message = MessageBuilder()
-                    .setEmbeds(embed)
-                    .build()
-                event.reply(message).queue()
             } else {
-                event.reply("No track is playing").queue()
+                EmbedBuilder()
+                    .setTitle("Looping is disabled")
+                    .setColor(ConfigData.musicEmbedColor)
+                    .build()
             }
+            val response = MessageBuilder()
+                .setEmbeds(embed)
+                .build()
+            event.reply(response).queue()
         } else {
-            event.reply("An error occurred when fetching the player").queue()
+            event.reply("Failed to fetch player").queue()
         }
     }
 }

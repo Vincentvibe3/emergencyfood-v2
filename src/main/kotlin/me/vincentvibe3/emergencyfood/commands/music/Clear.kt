@@ -8,29 +8,31 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Pause:SlashCommand {
-    override val name = "pause"
-    override val command = CommandData(name, "pause playback")
+class Clear:SlashCommand {
+    override val name = "clear"
+
+    override val command = CommandData(name, "Clears the queue")
 
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
-        if (player != null){
-            if (player.isPlaying() && !player.isPaused()){
-                player.pause()
+        if (player != null) {
+            if (player.isQueueEmpty()){
+                event.reply("Cannot clear, the queue is already empty").queue()
+            } else {
+                player.stop()
                 val embed = EmbedBuilder()
-                    .setTitle("Paused")
+                    .setTitle("Cleared queue")
                     .setColor(ConfigData.musicEmbedColor)
                     .build()
                 val message = MessageBuilder()
                     .setEmbeds(embed)
                     .build()
                 event.reply(message).queue()
-            } else {
-                event.reply("No track is playing").queue()
             }
         } else {
-            event.reply("An error occurred when fetching the player").queue()
+            event.reply("Failed to fetch player").queue()
         }
     }
+
 }

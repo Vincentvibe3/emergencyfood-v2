@@ -5,21 +5,22 @@ import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Pause:SlashCommand {
-    override val name = "pause"
-    override val command = CommandData(name, "pause playback")
+class Disconnect:SlashCommand {
+    override val name = "disconnect"
+    override val command = CommandData(name, "Disconnects from the voice channel")
 
     override fun handle(event: SlashCommandEvent) {
-        val guildId = event.guild?.id
-        val player = guildId?.let { PlayerManager.getPlayer(it) }
-        if (player != null){
-            if (player.isPlaying() && !player.isPaused()){
-                player.pause()
+        val guild = event.guild
+        if (guild != null) {
+            if (guild.audioManager.isConnected){
+                guild.audioManager.closeAudioConnection()
+                PlayerManager.removePlayer(guild.id)
                 val embed = EmbedBuilder()
-                    .setTitle("Paused")
+                    .setTitle("Disconnected")
                     .setColor(ConfigData.musicEmbedColor)
                     .build()
                 val message = MessageBuilder()
@@ -27,10 +28,10 @@ class Pause:SlashCommand {
                     .build()
                 event.reply(message).queue()
             } else {
-                event.reply("No track is playing").queue()
+                event.reply("Cannot disconnect, The bot is not connected to a voice channel").queue()
             }
         } else {
-            event.reply("An error occurred when fetching the player").queue()
+            event.reply("Could not fetch the required server").queue()
         }
     }
 }
