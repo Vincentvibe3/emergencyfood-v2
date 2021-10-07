@@ -5,9 +5,9 @@ import net.dv8tion.jda.api.interactions.components.Button
 
 abstract class InteractionButton {
 
-    open val name:String = ""
+    abstract val name:String
 
-    open lateinit var button:Button
+    abstract val button:Button
 
     fun getDisabled():Button {
         return button.asDisabled()

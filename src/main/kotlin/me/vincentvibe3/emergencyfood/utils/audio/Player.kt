@@ -62,6 +62,10 @@ class Player {
         return queueManager.queue.last().info.title
     }
 
+    fun getCurrentSongIndex():Int{
+        return queueManager.queue.indexOf(player.playingTrack)
+    }
+
     fun skip(){
         if (isLastSong()&&getLoop()){
             queueManager.rebuildQueue()
@@ -85,9 +89,13 @@ class Player {
         return currentIndex == queue.size-1
     }
 
-    fun stop(){
+    fun clear(){
         player.stopTrack()
         queueManager.queue.clear()
+    }
+
+    fun stop(){
+        player.stopTrack()
     }
 
     fun resume(){

@@ -21,6 +21,8 @@ object SlashCommandManager {
             registerLocal(Disconnect)
             registerLocal(Clear)
             registerLocal(Queue)
+            registerLocal(NowPlaying)
+            registerLocal(Remove)
         } catch (e:IllegalArgumentException) {
             println("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }

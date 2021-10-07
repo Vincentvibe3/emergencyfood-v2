@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.components.Button
 object QueueNext: InteractionButton() {
     override val name = "QueueNext"
 
-    override var button = Button.primary(name, "Next")
+    override val button = Button.primary(name, "Next")
 
     override fun handle(event: ButtonClickEvent) {
         val buttons = ActionRow.of(
