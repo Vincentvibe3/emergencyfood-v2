@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 object NowPlaying:SlashCommand {
     override val name = "nowPlaying"
 
-    override val command = CommandData(Pause.name, "Get the current song name")
+    override val command = CommandData(name, "Get the current song name")
 
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
