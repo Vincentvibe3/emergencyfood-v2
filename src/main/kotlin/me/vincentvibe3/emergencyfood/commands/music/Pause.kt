@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Pause:SlashCommand {
+object Pause:SlashCommand {
     override val name = "pause"
     override val command = CommandData(name, "pause playback")
 

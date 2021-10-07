@@ -1,6 +1,7 @@
 package me.vincentvibe3.emergencyfood.core
 
 import me.vincentvibe3.emergencyfood.utils.SlashCommandManager
+import me.vincentvibe3.emergencyfood.utils.events.ButtonsListener
 import me.vincentvibe3.emergencyfood.utils.events.ReadyListener
 import me.vincentvibe3.emergencyfood.utils.events.SlashCommandListener
 import net.dv8tion.jda.api.JDA
@@ -40,11 +41,12 @@ object Bot {
     //start the bot
     fun start(){
         client = JDABuilder.createDefault(token)
-            .addEventListeners(ReadyListener())
+            .addEventListeners(ReadyListener)
             .build()
         client.awaitReady()
         SlashCommandManager.registerRemote(channel)
         SlashCommandManager.registerGuildRemote(channel)
-        client.addEventListener(SlashCommandListener())
+        client.addEventListener(SlashCommandListener)
+        client.addEventListener(ButtonsListener)
     }
 }

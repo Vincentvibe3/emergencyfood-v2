@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Play:SlashCommand {
+object Play:SlashCommand {
 
     override val name = "play"
 
@@ -57,6 +57,7 @@ class Play:SlashCommand {
             val job = launch {
                 while (!player.isPlaying() || player.getQueue().size == initSize){
                     delay(100L)
+                    println("delaying")
                 }
             }
             job.join()
