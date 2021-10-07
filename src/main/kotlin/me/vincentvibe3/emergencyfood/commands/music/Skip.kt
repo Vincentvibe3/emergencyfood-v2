@@ -20,7 +20,7 @@ object Skip:SlashCommand {
                 event.reply("Cannot skip, the queue is empty").queue()
             } else {
                 if (player.isLastSong()&&!player.getLoop()){
-                    player.stop()
+                    player.clear()
                 } else {
                     player.skip()
                 }

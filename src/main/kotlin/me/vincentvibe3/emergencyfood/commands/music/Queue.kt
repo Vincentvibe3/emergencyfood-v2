@@ -59,30 +59,36 @@ object Queue:SlashCommand {
             .setColor(ConfigData.musicEmbedColor)
         if (player != null) {
             val queue = player.getQueue()
-            val end = if (queue.size < 5){
-                queue.size-1
+            if (queue.isEmpty()){
+                event.reply("The queue is empty").queue()
             } else {
-                embedBuilder = embedBuilder.setFooter("and ${queue.size-5} more")
-                4
+                val end = if (queue.size < 5){
+                    queue.size-1
+                } else {
+                    embedBuilder = embedBuilder.setFooter("and ${queue.size-5} more")
+                    4
+                }
+                for (index in 0..end){
+                    val track = queue.elementAt(index)
+                    val songLength = track.info.length
+                    val duration = getDurationFormatted(songLength)
+                    embedBuilder = embedBuilder
+                        .addField("${index+1}", "[${track.info.title}](${track.info.uri})  ($duration)", false)
+                }
+                val buttons = ActionRow.of(
+                    QueueStart.getDisabled(),
+                    QueuePrev.getDisabled(),
+                    QueueNext.getEnabled(),
+                    QueueEnd.getDisabled()
+                )
+                val message = MessageBuilder()
+                    .setEmbeds(embedBuilder.build())
+                    .setActionRows(buttons)
+                    .build()
+                event.reply(message).queue()
             }
-            for (index in 0..end){
-                val track = queue.elementAt(index)
-                val songLength = track.info.length
-                val duration = getDurationFormatted(songLength)
-                embedBuilder = embedBuilder
-                    .addField("${index+1}", "[${track.info.title}](${track.info.uri})  ($duration)", false)
-            }
-            val buttons = ActionRow.of(
-                QueueStart.getDisabled(),
-                QueuePrev.getDisabled(),
-                QueueNext.getEnabled(),
-                QueueEnd.getDisabled()
-            )
-            val message = MessageBuilder()
-                .setEmbeds(embedBuilder.build())
-                .setActionRows(buttons)
-                .build()
-            event.reply(message).queue()
+        } else {
+            event.reply("An error occurred when fetching the player").queue()
         }
     }
 }
