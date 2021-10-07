@@ -5,7 +5,7 @@ import me.vincentvibe3.emergencyfood.utils.SlashCommandManager
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
-class SlashCommandListener: ListenerAdapter() {
+object SlashCommandListener: ListenerAdapter() {
 
     //find the required command and run its handler function
     override fun onSlashCommand(event: SlashCommandEvent) {

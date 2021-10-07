@@ -3,7 +3,7 @@ package me.vincentvibe3.emergencyfood.utils.events
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
-class ReadyListener: ListenerAdapter() {
+object ReadyListener: ListenerAdapter() {
 
     // display info when bot is logged in
     override fun onReady(event: ReadyEvent){

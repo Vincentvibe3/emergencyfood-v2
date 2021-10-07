@@ -35,7 +35,7 @@ class AudioLoader(private val queueManager: QueueManager, private val player:Aud
     }
 
     override fun loadFailed(exception: FriendlyException?) {
-        print("failed")
+        println("failed")
         throw LoadFailedException()
     }
 }

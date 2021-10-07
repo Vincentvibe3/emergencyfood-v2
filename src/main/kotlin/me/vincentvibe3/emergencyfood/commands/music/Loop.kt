@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Loop:SlashCommand {
+object Loop:SlashCommand {
     override val name = "loop"
     override val command = CommandData(name, "toggles looping the queue")
 

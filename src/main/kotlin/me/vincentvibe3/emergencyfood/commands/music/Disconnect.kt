@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Disconnect:SlashCommand {
+object Disconnect:SlashCommand {
     override val name = "disconnect"
     override val command = CommandData(name, "Disconnects from the voice channel")
 

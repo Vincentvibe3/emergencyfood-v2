@@ -17,6 +17,8 @@ class QueueManager : AudioEventAdapter() {
     var queue: BlockingQueue<AudioTrack> = LinkedBlockingQueue()
     lateinit var updatesChannel: String
     var loop = false
+    private var lastUpdatesMessage:String? = null
+    private var lastUpdatesChannel:String? = null
 
     fun addToQueue(track: AudioTrack){
         val response = queue.offer(track)
@@ -64,6 +66,11 @@ class QueueManager : AudioEventAdapter() {
     override fun onTrackStart(player: AudioPlayer?, track: AudioTrack?) {
         val client = Bot.getClientInstance()
         val channel = client.getTextChannelById(updatesChannel)
+        val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
+        if (lastChannel != null) {
+            val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
+            lastMessage?.queue({it.delete().queue()}, { println("failed to get old message")})
+        }
 
         if (channel != null && track != null) {
             val embed = EmbedBuilder()
@@ -74,7 +81,11 @@ class QueueManager : AudioEventAdapter() {
             val message = MessageBuilder()
                 .setEmbeds(embed)
                 .build()
-            channel.sendMessage(message).queue()
+            channel.sendMessage(message).queue(
+                {lastUpdatesMessage = it.id
+                lastUpdatesChannel = it.channel.id},
+                { println("failed to send update message")}
+            )
         }
 //        super.onTrackStart(player, track)
     }
