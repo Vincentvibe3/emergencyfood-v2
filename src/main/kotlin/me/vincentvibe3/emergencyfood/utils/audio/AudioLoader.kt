@@ -19,6 +19,7 @@ class AudioLoader(private val queueManager: QueueManager, private val player:Aud
         }
     }
 
+    // add loaded tracks from playlist to queue and play if queue was empty
     override fun playlistLoaded(playlist: AudioPlaylist?) {
         if (queueManager.queue.size == 0){
             playlist?.tracks?.forEach { queueManager.addToQueue(it) }

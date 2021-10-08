@@ -6,9 +6,7 @@ import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
-import me.vincentvibe3.emergencyfood.utils.audio.Player
-import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
-import me.vincentvibe3.emergencyfood.utils.audio.SongSearch
+import me.vincentvibe3.emergencyfood.utils.audio.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
@@ -25,6 +23,7 @@ object Play:SlashCommand {
     override val command = CommandData(name, "play a song or resume playback")
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
+    //determine whether the song is a YouTube url or a search query
     private fun getTrack(query:String):String{
         return if (query.startsWith("https://www.youtube.com/watch?v=")||query.startsWith("https://youtu.be/")||query.startsWith("https://www.youtube.com/playlist?list=")){
             query
@@ -33,6 +32,7 @@ object Play:SlashCommand {
         }
     }
 
+    //connect to the vc
     private fun connect(channel:VoiceChannel, player: Player){
         val guild = channel.guild
         val audioManager = guild.audioManager
@@ -40,6 +40,9 @@ object Play:SlashCommand {
         audioManager.openAudioConnection(channel)
     }
 
+
+    //wait for the added song to load
+    //allows the queued embed to display the song title without issues
     private fun waitForLoad(player: Player, track:String){
         val url = formatMobileLinks(track)
         runBlocking {
@@ -52,6 +55,8 @@ object Play:SlashCommand {
         }
     }
 
+    //wait for playlist to be loaded,
+    //allows the song added to queue count to be accurate
     private fun waitForPlaylistLoad(player: Player, initSize:Int){
         runBlocking {
             val job = launch {
@@ -64,10 +69,12 @@ object Play:SlashCommand {
         }
     }
 
+    //change mobile links to be readable by lavaplayer
     private fun formatMobileLinks(url: String):String{
         return url.replace("https://youtu.be/", "https://www.youtube.com/watch?v=")
     }
 
+    //resume and return response depending on whether the player was resumed
     private fun resume(player:Player): Message{
         return if (player.isPaused()){
             player.resume()
@@ -85,9 +92,26 @@ object Play:SlashCommand {
         }
     }
 
-    private fun play(player: Player, track:String):Message{
+    //plays and return response depending on whether loading was successful or not
+    private fun play(player: Player, query:String):Message{
+        lateinit var track:String
         val initSize = player.getQueue().size
-        player.play(track)
+        try {
+            track = getTrack(query)
+            player.play(track)
+        } catch (e: SongNotFoundException){
+            return MessageBuilder()
+                .setContent("Could not find a matching song")
+                .build()
+        }catch (e:LoadFailedException){
+            return MessageBuilder()
+                .setContent("Failed to load song")
+                .build()
+        } catch (e:QueueAddException){
+            return MessageBuilder()
+                .setContent("An error occurred while adding the song to the queue")
+                .build()
+        }
         val embed = if (track.startsWith("https://www.youtube.com/playlist?list=")){
             waitForPlaylistLoad(player, initSize)
             EmbedBuilder()
@@ -121,8 +145,7 @@ object Play:SlashCommand {
             val response = if (songOption == null){
                 resume(player)
             } else {
-                val track = getTrack(songOption)
-                play(player, track)
+                play(player, songOption)
             }
             event.hook.editOriginal(response).queue()
         } else if (player == null){

@@ -3,60 +3,101 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
-trigger:
-- main
+name: Build $(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
 
-pool:
-  vmImage: ubuntu-latest
+trigger:
+  tags:
+    include:
+      - v.*
 
 jobs:
-  - job: Build
-    displayName: Build bot
-    steps:
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          javaHomeOption: 'JDKVersion'
-          jdkVersionOption: '1.8'
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: true
-          testResultsFiles: '**/TEST-*.xml'
-          tasks: 'build'
 
-      - task: CopyFiles@2
-          displayName: 'Copy Files to artifact staging directory'
-          inputs:
-            SourceFolder: '$(System.DefaultWorkingDirectory)'
-            Contents: '**/build/libs/*.?(war|jar)'
-            TargetFolder: $(Build.ArtifactStagingDirectory)
-      - upload: $(Build.ArtifactStagingDirectory)
-        artifact: drop
+  - job: Build_Release
+
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    displayName: Build and Release
+
+    steps:
+    - task: Gradle@2
+      displayName: Gradle Build
+      inputs:
+        workingDirectory: ''
+        gradleWrapperFile: 'gradlew'
+        gradleOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        tasks: 'build'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to artifact staging directory'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/build/libs/*'
+        TargetFolder: $(Build.ArtifactStagingDirectory)
+
+    - task: GitHubRelease@1
+      displayName: Publish on Github Releases
+      inputs:
+        gitHubConnection: 'github.com_Vincentvibe3'
+        repositoryName: 'Vincentvibe3/emergencyfood-v2'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'gitTag'
+        assets: '$(Build.ArtifactStagingDirectory)/build/libs/*'
+        changeLogCompareToRelease: 'lastFullRelease'
+        changeLogType: 'commitBased'
 
   - deployment: VMDeploy
-    displayName: Deploy emergencyfood-stable
+    pool:
+      vmImage: 'ubuntu-18.04'
+    dependsOn: Build_Release
+    displayName: Deploy Stable
     environment:
-      name:  emergencyfood-stable
+      name:  emergencyfood
       resourceType: VirtualMachine
       tags: production
     strategy:
       runOnce:
-        preDeploy:
-          steps:
-            - download: current
-              artifact: drop
-
         deploy:
           steps:
             - task: Bash@3
+              displayName: Clean Old Binaries
               inputs:
                 targetType: 'inline'
-                script: java -jar '$(Pipeline.Workspace)/drop/**/target/*.jar'
-        on:
-          failure:
-            steps:
-              - script: echo 'failed deployment'
-          success:
-            steps:
-              - script: echo 'deployment success'
+                script: |
+                  echo Removing old jar
+                  rm -r ~/current
+                  mkdir ~/current
+
+            - task: DownloadGitHubRelease@0
+              displayName: Download Latest Release
+              inputs:
+                connection: 'github.com_Vincentvibe3'
+                userRepository: 'Vincentvibe3/emergencyfood-v2'
+                defaultVersionType: 'latest'
+                itemPattern: '*.jar'
+                downloadPath: $(System.ArtifactsDirectory)
+
+            - task: Bash@3
+              displayName: Move Downloaded Artifact
+              inputs:
+                targetType: 'inline'
+                script: |
+                  mv $(System.ArtifactsDirectory)/* ~/current
+                  ls ~/current
+
+            - task: Bash@3
+              displayName: Start Bot Service
+              inputs:
+                targetType: 'inline'
+                script: |
+                  echo Starting bot service
+                  sudo systemctl stop emergencyfood.service
+                  sudo systemctl start emergencyfood.service
+                  sleep 2
+                  systemctl is-active emergencyfood.service

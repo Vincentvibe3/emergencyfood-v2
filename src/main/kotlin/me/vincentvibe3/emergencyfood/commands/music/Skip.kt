@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 object Skip:SlashCommand {
+
     override val name = "skip"
+
     override val command = CommandData(name, "skip the currently playing song")
 
     override fun handle(event: SlashCommandEvent) {

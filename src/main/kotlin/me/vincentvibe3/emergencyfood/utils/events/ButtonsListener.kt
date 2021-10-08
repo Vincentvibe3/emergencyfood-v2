@@ -7,11 +7,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 object ButtonsListener: ListenerAdapter()  {
 
+    //respond to a button being clicked
     override fun onButtonClick(event: ButtonClickEvent) {
         println(event.componentId)
         retrieveButton(event.componentId)?.handle(event)
     }
 
+    //get a button
     private fun retrieveButton(name:String): InteractionButton?{
         return ButtonManager.getButtons()[name]
     }
