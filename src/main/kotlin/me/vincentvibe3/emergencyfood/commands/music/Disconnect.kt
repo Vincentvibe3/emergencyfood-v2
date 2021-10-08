@@ -17,7 +17,7 @@ object Disconnect:SlashCommand {
             if (guild.audioManager.isConnected){
                 guild.audioManager.closeAudioConnection()
                 PlayerManager.removePlayer(guild.id)
-                val embed = Templates.musicEmbed
+                val embed = Templates.getMusicEmbed()
                     .setTitle("Disconnected")
                     .build()
                 val message = MessageBuilder()

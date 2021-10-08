@@ -17,7 +17,7 @@ object NowPlaying:SlashCommand {
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
             if (player.isPlaying()){
-                val embed = Templates.musicEmbed
+                val embed = Templates.getMusicEmbed()
                     .setTitle("Now Playing")
                     .setDescription("[${player.getCurrentSongTitle()}](${player.getCurrentSongUrl()})")
                     .build()

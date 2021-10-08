@@ -37,7 +37,7 @@ object SongSearch {
                 }
             }
         }
-        throw SongNotFoundException()
+        return ""
     }
 
     //get the url to a song search on YouTube
@@ -46,13 +46,15 @@ object SongSearch {
         val httpAsync = composeQueryLink(query)
             .httpGet()
             .responseString { request, response, result ->
-                val (responseText, error) = result
+                val (responseText, _) = result
                 if (responseText != null && response.statusCode == 200){
                     videoId = parseSearchResults(responseText)
                 }
             }
-
         httpAsync.join()
+        if (videoId==""){
+            throw SongNotFoundException()
+        }
         return "https://www.youtube.com/watch?v=$videoId"
     }
 

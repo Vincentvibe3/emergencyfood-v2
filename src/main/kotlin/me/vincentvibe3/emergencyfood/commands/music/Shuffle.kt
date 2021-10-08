@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 object Shuffle:SlashCommand {
     override val name = "shuffle"
-    override val command = CommandData(Pause.name, "Shuffle the queue")
+    override val command = CommandData(name, "Shuffle the queue")
 
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
@@ -21,7 +21,7 @@ object Shuffle:SlashCommand {
                 event.reply("Cannot shuffle an empty queue").queue()
             } else {
                 player.shuffle()
-                val embed = Templates.musicEmbed
+                val embed = Templates.getMusicEmbed()
                     .setTitle("Shuffled queue")
                     .build()
                 val message = MessageBuilder()

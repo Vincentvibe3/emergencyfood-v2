@@ -16,11 +16,11 @@ object Loop:SlashCommand {
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
             val embed = if (player.toggleLoop()){
-                Templates.musicEmbed
+                Templates.getMusicEmbed()
                     .setTitle("Looping is enabled")
                     .build()
             } else {
-                Templates.musicEmbed
+                Templates.getMusicEmbed()
                     .setTitle("Looping is disabled")
                     .build()
             }

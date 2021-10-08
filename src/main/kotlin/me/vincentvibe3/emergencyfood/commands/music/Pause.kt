@@ -17,7 +17,7 @@ object Pause:SlashCommand {
         if (player != null){
             if (player.isPlaying() && !player.isPaused()){
                 player.pause()
-                val embed = Templates.musicEmbed
+                val embed = Templates.getMusicEmbed()
                     .setTitle("Paused")
                     .build()
                 val message = MessageBuilder()
