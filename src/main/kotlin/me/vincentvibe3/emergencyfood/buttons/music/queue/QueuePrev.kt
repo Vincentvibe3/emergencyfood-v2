@@ -19,33 +19,33 @@ object QueuePrev:InteractionButton() {
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
             val queue = player.getQueue()
-            val currentLastPage = queue.size/5+1
-            val oldFooter = event.message.embeds[0].footer.toString()
-            val pagesInfo = oldFooter.removePrefix("Page ").split("/")
-            val currentPage = pagesInfo[0].toInt()
-            var embedBuilder = Templates.musicQueueEmbed
-            val prev = if (currentLastPage<=currentPage-1){
-                currentLastPage
+            val currentLastPage = Queue.getPageCount(queue)
+            val oldFooter = event.message.embeds[0].footer?.text
+            val pagesInfo = oldFooter?.removePrefix("Page ")?.split("/")
+            if (queue.isEmpty()) {
+                event.message.editMessage("The queue is empty").override(true).queue()
             } else {
-                currentPage-1
+                if (pagesInfo != null) {
+                    val currentPage = pagesInfo[0].toInt()
+                    val embedBuilder = Templates.getMusicQueueEmbed()
+                    val prev = if (currentLastPage<currentPage){
+                        currentLastPage
+                    } else {
+                        currentPage-1
+                    }
+                    Queue.getEmbed(player, prev, embedBuilder)
+                    val buttons = Queue.getButtonsRow(prev, currentLastPage)
+                    val message = MessageBuilder()
+                        .setEmbeds(embedBuilder.build())
+                        .setActionRows(buttons)
+                        .build()
+                    event.message.editMessage(message).override(true).queue()
+                }
             }
-            embedBuilder = embedBuilder.setFooter("Page $prev/$currentLastPage")
-            for (index in (prev*5-1) until (prev+1)*5){
-                val track = queue.elementAt(index)
-                val songLength = track.info.length
-                val duration = Queue.getDurationFormatted(songLength)
-                embedBuilder = embedBuilder
-                    .addField("${index+1}", "[${track.info.title}](${track.info.uri})  ($duration)", false)
-            }
-            val buttons = Queue.getButtonsRow(prev, currentLastPage)
-            val message = MessageBuilder()
-                .setEmbeds(embedBuilder.build())
-                .setActionRows(buttons)
-                .build()
-            event.message.editMessage(message).override(true).queue()
             event.reply("Updated queue").queue()
             event.hook.deleteOriginal().queue()
         }
+
 
     }
 

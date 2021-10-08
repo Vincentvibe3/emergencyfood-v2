@@ -6,6 +6,7 @@ import me.vincentvibe3.emergencyfood.utils.events.ReadyListener
 import me.vincentvibe3.emergencyfood.utils.events.SlashCommandListener
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.entities.Activity
 
 object Bot {
 
@@ -40,7 +41,9 @@ object Bot {
 
     //start the bot
     fun start(){
+        val activity = Activity.playing("Now using Slash Commands")
         client = JDABuilder.createDefault(token)
+            .setActivity(activity)
             .addEventListeners(ReadyListener)
             .build()
         client.awaitReady()

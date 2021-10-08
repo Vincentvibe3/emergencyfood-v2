@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.vincent.emergencyfood"
-version = "0.6"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -19,13 +19,13 @@ dependencies {
     implementation("net.dv8tion:JDA:4.3.0_330")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20210307")
-    implementation ("org.jsoup:jsoup:1.14.2")
+    implementation ("org.jsoup:jsoup:1.14.3")
     implementation("com.github.kittinunf.result:result-jvm:5.2.0")
     implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
     implementation ("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
 tasks.test {

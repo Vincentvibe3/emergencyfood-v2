@@ -9,22 +9,20 @@ import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.ConfigData
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.BlockingDeque
+import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.TimeUnit
 
 class QueueManager : AudioEventAdapter() {
 
-    var queue: BlockingQueue<AudioTrack> = LinkedBlockingQueue()
+    var queue: BlockingDeque<AudioTrack> = LinkedBlockingDeque()
     lateinit var updatesChannel: String
     var loop = false
     private var lastUpdatesMessage:String? = null
     private var lastUpdatesChannel:String? = null
 
-    fun addToQueue(track: AudioTrack){
-        val response = queue.offer(track)
-        if (!response){
-            throw QueueAddException()
-        }
+    fun addToQueue(track: AudioTrack):Boolean{
+        return queue.offer(track)
     }
 
     override fun onPlayerPause(player: AudioPlayer?) {
@@ -37,7 +35,7 @@ class QueueManager : AudioEventAdapter() {
 
     //is used when looping to avoid replaying AudioTracks
     fun rebuildQueue(){
-        val newQueue: BlockingQueue<AudioTrack> = LinkedBlockingQueue()
+        val newQueue: BlockingDeque<AudioTrack> = LinkedBlockingDeque()
         queue.forEach{
             newQueue.offer(it.makeClone())
         }

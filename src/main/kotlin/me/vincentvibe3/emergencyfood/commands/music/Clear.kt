@@ -20,7 +20,7 @@ object Clear:SlashCommand {
                 event.reply("Cannot clear, the queue is already empty").queue()
             } else {
                 player.clear()
-                val embed = Templates.musicEmbed
+                val embed = Templates.getMusicEmbed()
                     .setTitle("Cleared queue")
                     .build()
                 val message = MessageBuilder()

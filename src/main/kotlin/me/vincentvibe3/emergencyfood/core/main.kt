@@ -7,7 +7,7 @@ enum class Channel {
 }
 
 fun main() {
-    val channel = Channel.STABLE
+    val channel = Channel.BETA
     println("Setting up bot on channel $channel...")
     //setup bot
     Bot.setup(channel)

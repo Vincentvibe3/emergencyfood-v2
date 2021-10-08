@@ -8,6 +8,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer
 import java.util.*
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.LinkedBlockingQueue
 
 class Player {
@@ -40,11 +42,31 @@ class Player {
     }
 
     fun play(track:String){
-        playerManager.loadItemOrdered(player,  track , AudioLoader(queueManager, player))
+        if (queueManager.queue.size == Int.MAX_VALUE){
+            throw QueueAddException()
+        }
+        val load = playerManager.loadItemOrdered(player,  track, AudioLoader(queueManager, player))
+        try {
+            load.get()
+        } catch (e:ExecutionException) {
+            when (e.cause?.javaClass) {
+                LoadFailedException::class.java -> {
+                    throw LoadFailedException()
+                }
+                SongNotFoundException::class.java -> {
+                    throw SongNotFoundException()
+                }
+            }
+        }
+
     }
 
     fun getQueue(): BlockingQueue<AudioTrack>{
         return queueManager.queue
+    }
+
+    fun getCurrentSong(): AudioTrack{
+        return player.playingTrack
     }
 
     fun getCurrentSongUrl(): String{
@@ -117,10 +139,12 @@ class Player {
 
     fun shuffle(){
         val newQueue: BlockingQueue<AudioTrack> = LinkedBlockingQueue()
-        queueManager.queue.forEach{
+        val nowPlaying = getCurrentSong()
+        queueManager.queue.filter { it!=nowPlaying }.forEach{
             newQueue.offer(it.makeClone())
         }
-        queueManager.queue = LinkedBlockingQueue(newQueue.shuffled())
+        queueManager.queue = LinkedBlockingDeque(newQueue.shuffled())
+        queueManager.queue.offerFirst(nowPlaying)
     }
 
 }

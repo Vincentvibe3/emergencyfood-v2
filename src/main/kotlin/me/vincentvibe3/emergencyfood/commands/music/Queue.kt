@@ -1,5 +1,6 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueEnd
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueNext
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueuePrev
@@ -8,11 +9,14 @@ import me.vincentvibe3.emergencyfood.utils.ButtonManager
 import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
+import me.vincentvibe3.emergencyfood.utils.audio.Player
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.components.ActionRow
+import java.util.concurrent.BlockingQueue
 
 object Queue:SlashCommand {
 
@@ -52,7 +56,7 @@ object Queue:SlashCommand {
     }
 
     fun getButtonsRow(currentPage:Int, lastPage:Int):ActionRow{
-        return if (currentPage==lastPage){
+        return if (currentPage==lastPage&&lastPage!=1){
             ActionRow.of(
                 QueueStart.getEnabled(),
                 QueuePrev.getEnabled(),
@@ -77,29 +81,53 @@ object Queue:SlashCommand {
 
     }
 
+    fun getPageCount(queue: BlockingQueue<AudioTrack>):Int{
+        return if (queue.size%5 == 0){
+            queue.size/5
+        } else {
+            queue.size/5+1
+        }
+    }
+
+    fun getEmbed(player:Player, page:Int, embedBuilder:EmbedBuilder):EmbedBuilder{
+        val queue = player.getQueue()
+        var embed = embedBuilder
+        val start = (page-1)*5
+        val end = if (page*5-1>queue.size-1){
+            queue.size-1
+        } else {
+            page*5-1
+        }
+        embed = embed.setFooter("Page $page/${getPageCount(queue)}")
+        val currentSong = queue.indexOf(player.getCurrentSong())
+        for (index in start..end) {
+            val track = queue.elementAt(index)
+            val songLength = track.info.length
+            val duration = getDurationFormatted(songLength)
+            val currentMessage = if (index==currentSong){
+                "(Now Playing)"
+            } else {
+                ""
+            }
+            embed = embed
+                .addField("${index+1} $currentMessage", "[${track.info.title}](${track.info.uri})  ($duration)", false)
+        }
+        return embed
+    }
+
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
-        var embedBuilder = Templates.musicQueueEmbed
+        var embedBuilder = Templates.getMusicQueueEmbed()
         if (player != null) {
             val queue = player.getQueue()
             if (queue.isEmpty()){
                 event.reply("The queue is empty").queue()
             } else {
-                val end = if (queue.size < 5){
-                    queue.size-1
-                } else {
-                    4
-                }
-                embedBuilder = embedBuilder.setFooter("Page 1/${queue.size/5+1}")
-                for (index in 0..end){
-                    val track = queue.elementAt(index)
-                    val songLength = track.info.length
-                    val duration = getDurationFormatted(songLength)
-                    embedBuilder = embedBuilder
-                        .addField("${index+1}", "[${track.info.title}](${track.info.uri})  ($duration)", false)
-                }
-                val buttons = getButtonsRow(1, queue.size/5+1)
+                val lastPage = getPageCount(queue)
+                embedBuilder = embedBuilder.setFooter("Page 1/$lastPage")
+                getEmbed(player, 1, embedBuilder)
+                val buttons = getButtonsRow(1, lastPage)
                 val message = MessageBuilder()
                     .setEmbeds(embedBuilder.build())
                     .setActionRows(buttons)

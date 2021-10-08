@@ -76,7 +76,7 @@ object Play:SlashCommand {
     private fun resume(player:Player): Message{
         return if (player.isPaused()){
             player.resume()
-            val embed = Templates.musicEmbed
+            val embed = Templates.getMusicEmbed()
                 .setTitle("Resumed Playback")
                 .build()
             MessageBuilder()
@@ -111,13 +111,13 @@ object Play:SlashCommand {
         }
         val embed = if (track.startsWith("https://www.youtube.com/playlist?list=")){
             waitForPlaylistLoad(player, initSize)
-            Templates.musicEmbed
+            Templates.getMusicEmbed()
                 .setTitle("Queued")
                 .setDescription("Added ${player.getQueue().size-initSize} songs from [playlist]($track)")
                 .build()
         } else {
             waitForLoad(player, track)
-            Templates.musicEmbed
+            Templates.getMusicEmbed()
                 .setTitle("Queued")
                 .setDescription("Added [${player.getLastSongTitle()}](${player.getLastSongUrl()})")
                 .build()

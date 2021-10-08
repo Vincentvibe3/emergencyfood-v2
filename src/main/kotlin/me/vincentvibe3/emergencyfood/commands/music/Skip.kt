@@ -27,7 +27,7 @@ object Skip:SlashCommand {
                 } else {
                     player.skip()
                 }
-                val embed = Templates.musicEmbed
+                val embed = Templates.getMusicEmbed()
                     .setTitle("Skipped song")
                     .build()
                 val message = MessageBuilder()

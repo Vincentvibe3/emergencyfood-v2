@@ -18,14 +18,19 @@ object Remove:SlashCommand {
         if (player != null) {
             val index = event.getOption("index")?.asLong?.toInt()?.minus(1)
             val queue = player.getQueue()
-            if (player.getCurrentSongIndex()==index){
-                player.stop()
-            }
-            if (queue.remove(index?.let { queue.elementAt(it) })){
-                event.reply("Removed Song").queue()
+            if (index != null&&index>=0&&index<queue.size) {
+                if (player.getCurrentSongIndex()==index){
+                    player.stop()
+                }
+                if (queue.remove(index.let { queue.elementAt(it) })){
+                    event.reply("Removed Song").queue()
+                } else {
+                    event.reply("Failed to remove song").queue()
+                }
             } else {
-                event.reply("Failed to remove song").queue()
+                event.reply("Enter a valid index").queue()
             }
+
         } else {
             event.reply("An error occurred when fetching the player").queue()
         }
