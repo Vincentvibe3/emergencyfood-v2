@@ -10,6 +10,8 @@ trigger:
     include:
       - v.*
 
+pr: none
+
 jobs:
 
   - job: Build_Release
