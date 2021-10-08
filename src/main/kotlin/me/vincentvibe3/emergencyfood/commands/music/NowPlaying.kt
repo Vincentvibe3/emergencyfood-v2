@@ -1,15 +1,14 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
-import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 object NowPlaying:SlashCommand {
-    override val name = "nowPlaying"
+    override val name = "nowplaying"
 
     override val command = CommandData(name, "Get the current song name")
 
@@ -18,10 +17,9 @@ object NowPlaying:SlashCommand {
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
             if (player.isPlaying()){
-                val embed = EmbedBuilder()
+                val embed = Templates.musicEmbed
                     .setTitle("Now Playing")
                     .setDescription("[${player.getCurrentSongTitle()}](${player.getCurrentSongUrl()})")
-                    .setColor(ConfigData.musicEmbedColor)
                     .build()
                 val message = MessageBuilder()
                     .setEmbeds(embed)

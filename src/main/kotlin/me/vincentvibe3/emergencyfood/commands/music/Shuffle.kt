@@ -1,34 +1,36 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
+import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Pause:SlashCommand {
-    override val name = "pause"
-    override val command = CommandData(name, "Pause playback")
+object Shuffle:SlashCommand {
+    override val name = "shuffle"
+    override val command = CommandData(Pause.name, "Shuffle the queue")
 
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
-        if (player != null){
-            if (player.isPlaying() && !player.isPaused()){
-                player.pause()
+        if (player != null) {
+            if (player.isQueueEmpty()){
+                event.reply("Cannot shuffle an empty queue").queue()
+            } else {
+                player.shuffle()
                 val embed = Templates.musicEmbed
-                    .setTitle("Paused")
+                    .setTitle("Shuffled queue")
                     .build()
                 val message = MessageBuilder()
                     .setEmbeds(embed)
                     .build()
                 event.reply(message).queue()
-            } else {
-                event.reply("No track is playing").queue()
             }
         } else {
-            event.reply("An error occurred when fetching the player").queue()
+            event.reply("Failed to fetch player").queue()
         }
     }
 }

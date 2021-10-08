@@ -35,6 +35,7 @@ class QueueManager : AudioEventAdapter() {
         super.onPlayerResume(player)
     }
 
+    //is used when looping to avoid replaying AudioTracks
     fun rebuildQueue(){
         val newQueue: BlockingQueue<AudioTrack> = LinkedBlockingQueue()
         queue.forEach{
@@ -47,14 +48,16 @@ class QueueManager : AudioEventAdapter() {
         if (endReason != null) {
             if (endReason.mayStartNext){
                 println("playing next")
+                //clear on end
                 if (queue.indexOf(track)==queue.size-1&&!loop) {
                     println("cleared queue")
                     queue.clear()
+                //prepare queue and loop
                 } else if (queue.indexOf(track)==queue.size-1&&loop){
                     println("looping")
                     rebuildQueue()
                     player?.playTrack(queue.elementAt(0))
-
+                //play next
                 } else {
                     player?.playTrack(queue.elementAt(queue.indexOf(track)+1))
                 }
@@ -66,12 +69,13 @@ class QueueManager : AudioEventAdapter() {
     override fun onTrackStart(player: AudioPlayer?, track: AudioTrack?) {
         val client = Bot.getClientInstance()
         val channel = client.getTextChannelById(updatesChannel)
+        //delete the old now playing message if it exists
         val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
         if (lastChannel != null) {
             val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
             lastMessage?.queue({it.delete().queue()}, { println("failed to get old message")})
         }
-
+        //send now playing message
         if (channel != null && track != null) {
             val embed = EmbedBuilder()
                 .setTitle("Now Playing")
@@ -87,7 +91,6 @@ class QueueManager : AudioEventAdapter() {
                 { println("failed to send update message")}
             )
         }
-//        super.onTrackStart(player, track)
     }
 
     override fun onTrackException(player: AudioPlayer?, track: AudioTrack?, exception: FriendlyException?) {
