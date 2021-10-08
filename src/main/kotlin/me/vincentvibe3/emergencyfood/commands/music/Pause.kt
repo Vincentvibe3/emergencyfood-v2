@@ -1,16 +1,15 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
-import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 object Pause:SlashCommand {
     override val name = "pause"
-    override val command = CommandData(name, "pause playback")
+    override val command = CommandData(name, "Pause playback")
 
     override fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
@@ -18,9 +17,8 @@ object Pause:SlashCommand {
         if (player != null){
             if (player.isPlaying() && !player.isPaused()){
                 player.pause()
-                val embed = EmbedBuilder()
+                val embed = Templates.musicEmbed
                     .setTitle("Paused")
-                    .setColor(ConfigData.musicEmbedColor)
                     .build()
                 val message = MessageBuilder()
                     .setEmbeds(embed)

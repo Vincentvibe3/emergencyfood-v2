@@ -8,6 +8,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer
 import java.util.*
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
 
 class Player {
     private val playerManager = DefaultAudioPlayerManager()
@@ -112,6 +113,14 @@ class Player {
 
     fun isPlaying(): Boolean{
         return player.playingTrack != null
+    }
+
+    fun shuffle(){
+        val newQueue: BlockingQueue<AudioTrack> = LinkedBlockingQueue()
+        queueManager.queue.forEach{
+            newQueue.offer(it.makeClone())
+        }
+        queueManager.queue = LinkedBlockingQueue(newQueue.shuffled())
     }
 
 }

@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 object Remove:SlashCommand {
     override val name = "remove"
 
-    override val command = CommandData(name, "remove a song from the queue")
+    override val command = CommandData(name, "Remove a song from the queue")
         .addOption(OptionType.INTEGER ,"index", "position in the queue", true)
 
     override fun handle(event: SlashCommandEvent) {

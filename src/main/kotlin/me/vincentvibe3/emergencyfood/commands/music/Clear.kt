@@ -1,9 +1,8 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
-import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
@@ -21,9 +20,8 @@ object Clear:SlashCommand {
                 event.reply("Cannot clear, the queue is already empty").queue()
             } else {
                 player.clear()
-                val embed = EmbedBuilder()
+                val embed = Templates.musicEmbed
                     .setTitle("Cleared queue")
-                    .setColor(ConfigData.musicEmbedColor)
                     .build()
                 val message = MessageBuilder()
                     .setEmbeds(embed)

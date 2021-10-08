@@ -4,10 +4,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.*
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.VoiceChannel
@@ -20,7 +19,7 @@ object Play:SlashCommand {
     override val name = "play"
 
     @Bot.Beta
-    override val command = CommandData(name, "play a song or resume playback")
+    override val command = CommandData(name, "Play a song or resume playback")
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
     //determine whether the song is a YouTube url or a search query
@@ -62,7 +61,6 @@ object Play:SlashCommand {
             val job = launch {
                 while (!player.isPlaying() || player.getQueue().size == initSize){
                     delay(100L)
-                    println("delaying")
                 }
             }
             job.join()
@@ -78,9 +76,8 @@ object Play:SlashCommand {
     private fun resume(player:Player): Message{
         return if (player.isPaused()){
             player.resume()
-            val embed = EmbedBuilder()
+            val embed = Templates.musicEmbed
                 .setTitle("Resumed Playback")
-                .setColor(ConfigData.musicEmbedColor)
                 .build()
             MessageBuilder()
                 .setEmbeds(embed)
@@ -114,17 +111,15 @@ object Play:SlashCommand {
         }
         val embed = if (track.startsWith("https://www.youtube.com/playlist?list=")){
             waitForPlaylistLoad(player, initSize)
-            EmbedBuilder()
+            Templates.musicEmbed
                 .setTitle("Queued")
                 .setDescription("Added ${player.getQueue().size-initSize} songs from [playlist]($track)")
-                .setColor(ConfigData.musicEmbedColor)
                 .build()
         } else {
             waitForLoad(player, track)
-            EmbedBuilder()
+            Templates.musicEmbed
                 .setTitle("Queued")
                 .setDescription("Added [${player.getLastSongTitle()}](${player.getLastSongUrl()})")
-                .setColor(ConfigData.musicEmbedColor)
                 .build()
         }
         return MessageBuilder()

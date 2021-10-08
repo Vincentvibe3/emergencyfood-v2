@@ -1,16 +1,36 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
+import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.utils.Templates
+import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-class Shuffle:SlashCommand {
-    override val name: String
-        get() = TODO("Not yet implemented")
-    override val command: CommandData
-        get() = TODO("Not yet implemented")
+object Shuffle:SlashCommand {
+    override val name = "shuffle"
+    override val command = CommandData(Pause.name, "Shuffle the queue")
 
     override fun handle(event: SlashCommandEvent) {
-        TODO("Not yet implemented")
+        val guildId = event.guild?.id
+        val player = guildId?.let { PlayerManager.getPlayer(it) }
+        if (player != null) {
+            if (player.isQueueEmpty()){
+                event.reply("Cannot shuffle an empty queue").queue()
+            } else {
+                player.shuffle()
+                val embed = Templates.musicEmbed
+                    .setTitle("Shuffled queue")
+                    .build()
+                val message = MessageBuilder()
+                    .setEmbeds(embed)
+                    .build()
+                event.reply(message).queue()
+            }
+        } else {
+            event.reply("Failed to fetch player").queue()
+        }
     }
 }

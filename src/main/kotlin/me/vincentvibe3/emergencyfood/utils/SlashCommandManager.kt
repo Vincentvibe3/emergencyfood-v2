@@ -24,6 +24,7 @@ object SlashCommandManager {
             registerLocal(Queue)
             registerLocal(NowPlaying)
             registerLocal(Remove)
+            registerLocal(Shuffle)
         } catch (e:IllegalArgumentException) {
             println("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
