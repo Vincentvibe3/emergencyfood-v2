@@ -10,7 +10,7 @@ object Sauce: SlashCommand() {
 
     override val name = "sauce"
 
-    override val command = CommandData(Play.name, "Play a song or resume playback")
+    override val command = CommandData(name, "Play a song or resume playback")
         .addSubcommands(
             Random.subCommand,
             Read.subCommand
