@@ -136,6 +136,7 @@ object Play: SlashCommand() {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         val channel = event.member?.voiceState?.channel
+        event.member?.deafen(true)
         val songOption = event.getOption("song")?.asString
         if (player != null && channel != null) {
             player.setUpdateChannel(event.textChannel.id)

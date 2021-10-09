@@ -42,6 +42,10 @@ class Player {
         return handler
     }
 
+    fun getAnnouncementChannel():String {
+        return queueManager.updatesChannel
+    }
+
     fun play(track:String){
         if (queueManager.queue.size == Int.MAX_VALUE){
             throw QueueAddException()

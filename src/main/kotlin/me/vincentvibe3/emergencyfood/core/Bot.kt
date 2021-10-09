@@ -4,6 +4,7 @@ import me.vincentvibe3.emergencyfood.utils.SlashCommandManager
 import me.vincentvibe3.emergencyfood.utils.events.ButtonsListener
 import me.vincentvibe3.emergencyfood.utils.events.ReadyListener
 import me.vincentvibe3.emergencyfood.utils.events.SlashCommandListener
+import me.vincentvibe3.emergencyfood.utils.events.VoiceStateListener
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
@@ -51,5 +52,6 @@ object Bot {
         SlashCommandManager.registerGuildRemote(channel)
         client.addEventListener(SlashCommandListener)
         client.addEventListener(ButtonsListener)
+        client.addEventListener(VoiceStateListener)
     }
 }
