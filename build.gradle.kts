@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.vincent.emergencyfood"
-version = "1.2"
+version = "1.2.2"
 
 repositories {
     mavenCentral()
