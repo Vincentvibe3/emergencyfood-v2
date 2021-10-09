@@ -7,7 +7,8 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object NowPlaying:SlashCommand {
+object NowPlaying: SlashCommand() {
+
     override val name = "nowplaying"
 
     override val command = CommandData(name, "Get the current song name")

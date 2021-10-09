@@ -1,12 +1,10 @@
 package me.vincentvibe3.emergencyfood.utils.audio
 
 
-import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.httpGet
-import kotlinx.coroutines.flow.asFlow
+import me.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 import org.jsoup.Jsoup
 import org.json.JSONObject
-import java.io.File
 
 object SongSearch {
 
@@ -43,16 +41,19 @@ object SongSearch {
     //get the url to a song search on YouTube
     fun getSong(query:String):String{
         lateinit var videoId:String
+        var requestSuccess = true
         val httpAsync = composeQueryLink(query)
             .httpGet()
             .responseString { request, response, result ->
                 val (responseText, _) = result
                 if (responseText != null && response.statusCode == 200){
                     videoId = parseSearchResults(responseText)
+                } else {
+                    requestSuccess = false
                 }
             }
         httpAsync.join()
-        if (videoId==""){
+        if (videoId==""||!requestSuccess){
             throw SongNotFoundException()
         }
         return "https://www.youtube.com/watch?v=$videoId"

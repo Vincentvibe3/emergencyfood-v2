@@ -9,8 +9,10 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Shuffle:SlashCommand {
+object Shuffle: SlashCommand() {
+
     override val name = "shuffle"
+
     override val command = CommandData(name, "Shuffle the queue")
 
     override fun handle(event: SlashCommandEvent) {

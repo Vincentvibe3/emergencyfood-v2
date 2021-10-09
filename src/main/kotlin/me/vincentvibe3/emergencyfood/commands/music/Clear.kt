@@ -7,7 +7,8 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Clear:SlashCommand {
+object Clear: SlashCommand() {
+
     override val name = "clear"
 
     override val command = CommandData(name, "Clears the queue")

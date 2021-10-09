@@ -4,9 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer
-import java.util.*
+import me.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
+import me.vincentvibe3.emergencyfood.utils.exceptions.QueueAddException
+import me.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.LinkedBlockingDeque
@@ -17,6 +18,7 @@ class Player {
     private val player: AudioPlayer = playerManager.createPlayer()
     private val queueManager = QueueManager()
     private val handler = AudioHandler(player)
+    var cleanup = false
 
     fun setupPlayer(){
         playerManager.configuration.setFrameBufferFactory{ bufferDuration, format, stopping -> NonAllocatingAudioFrameBuffer(bufferDuration, format, stopping)}
@@ -39,6 +41,10 @@ class Player {
 
     fun getAudioHandler():AudioHandler{
         return handler
+    }
+
+    fun getAnnouncementChannel():String {
+        return queueManager.updatesChannel
     }
 
     fun play(track:String){

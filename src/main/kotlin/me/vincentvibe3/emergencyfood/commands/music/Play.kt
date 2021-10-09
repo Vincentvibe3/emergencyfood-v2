@@ -7,6 +7,9 @@ import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.*
+import me.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
+import me.vincentvibe3.emergencyfood.utils.exceptions.QueueAddException
+import me.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.VoiceChannel
@@ -14,7 +17,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Play:SlashCommand {
+object Play: SlashCommand() {
 
     override val name = "play"
 
@@ -107,11 +110,11 @@ object Play:SlashCommand {
             return MessageBuilder()
                 .setContent("Could not find a matching song")
                 .build()
-        }catch (e:LoadFailedException){
+        }catch (e: LoadFailedException){
             return MessageBuilder()
                 .setContent("Failed to load song")
                 .build()
-        } catch (e:QueueAddException){
+        } catch (e: QueueAddException){
             return MessageBuilder()
                 .setContent("An error occurred while adding the song to the queue")
                 .build()
@@ -140,6 +143,7 @@ object Play:SlashCommand {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         val channel = event.member?.voiceState?.channel
+        event.member?.deafen(true)
         val songOption = event.getOption("song")?.asString
         if (player != null && channel != null) {
             player.setUpdateChannel(event.textChannel.id)

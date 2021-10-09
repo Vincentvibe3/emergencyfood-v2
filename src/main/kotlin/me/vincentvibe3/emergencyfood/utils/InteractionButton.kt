@@ -22,5 +22,5 @@ abstract class InteractionButton {
     }
 
     //generic function used as the entry point to handle a ButtonClickEvent
-    open fun handle(event: ButtonClickEvent) {}
+    abstract fun handle(event: ButtonClickEvent)
 }

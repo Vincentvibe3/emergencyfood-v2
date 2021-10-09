@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import java.util.concurrent.BlockingQueue
 
-object Queue:SlashCommand {
+object Queue: SlashCommand() {
 
     init {
         ButtonManager.registerLocal(QueueNext)
@@ -31,7 +31,7 @@ object Queue:SlashCommand {
 
     override val command = CommandData(name, "Displays the active queue")
 
-    fun getDurationFormatted(length:Long): String{
+    private fun getDurationFormatted(length:Long): String{
         val hours = length / 1000 / 3600
         val minutes = length / 1000 / 60 % 60
         val seconds = length / 1000 % 60

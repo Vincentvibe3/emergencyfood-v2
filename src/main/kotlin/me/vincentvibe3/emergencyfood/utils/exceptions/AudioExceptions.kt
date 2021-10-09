@@ -1,4 +1,4 @@
-package me.vincentvibe3.emergencyfood.utils.audio
+package me.vincentvibe3.emergencyfood.utils.exceptions
 
 //exceptions used in QueueManager and AudioLoader
 class LoadFailedException:Exception() {
