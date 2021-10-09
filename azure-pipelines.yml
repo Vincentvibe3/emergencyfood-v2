@@ -66,18 +66,20 @@ jobs:
       tags: production
     strategy:
       runOnce:
+        preDeploy:
+          steps:
+            - script: |
+                echo Stopping old instance
+                sudo systemctl stop emergencyfood.service
+              displayName: Stop Old Instance
+
         deploy:
           steps:
-            - task: Bash@3
+            - script: |
+                echo Removing old jar
+                sudo rm -r ~/current
+                mkdir ~/current
               displayName: Clean Old Binaries
-              inputs:
-                targetType: 'inline'
-                script: |
-                  echo Stopping old instance
-                  sudo systemctl stop emergencyfood.service
-                  echo Removing old jar
-                  rm -r ~/current
-                  mkdir ~/current
 
             - task: DownloadGitHubRelease@0
               displayName: Download Latest Release
@@ -88,20 +90,14 @@ jobs:
                 itemPattern: '*.jar'
                 downloadPath: $(System.ArtifactsDirectory)
 
-            - task: Bash@3
+            - script: |
+                mv $(System.ArtifactsDirectory)/* ~/current
+                ls ~/current
               displayName: Move Downloaded Artifact
-              inputs:
-                targetType: 'inline'
-                script: |
-                  mv $(System.ArtifactsDirectory)/* ~/current
-                  ls ~/current
 
-            - task: Bash@3
+            - script: |
+                echo Starting bot service
+                sudo systemctl start emergencyfood.service
+                sleep 2
+                systemctl is-active emergencyfood.service
               displayName: Start Bot Service
-              inputs:
-                targetType: 'inline'
-                script: |
-                  echo Starting bot service
-                  sudo systemctl start emergencyfood.service
-                  sleep 2
-                  systemctl is-active emergencyfood.service
