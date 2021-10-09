@@ -48,7 +48,7 @@ jobs:
         gitHubConnection: 'github.com_Vincentvibe3'
         repositoryName: 'Vincentvibe3/emergencyfood-v2'
         action: 'create'
-        title: $(SourceBranchName)
+        title: '$(Build.SourceBranchName)'
         target: '$(Build.SourceVersion)'
         tagSource: 'gitTag'
         assets: '$(Build.ArtifactStagingDirectory)/build/libs/*'
