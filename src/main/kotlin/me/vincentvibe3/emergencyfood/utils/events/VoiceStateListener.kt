@@ -28,7 +28,7 @@ object VoiceStateListener:ListenerAdapter() {
             } else {
                 if (channel.members.size == 1 && channel.members.contains(selfMember)) {
                     player?.cleanup = true
-                    playerCleanDelay(1)
+                    playerCleanDelay(5)
                     val updatedPlayer = PlayerManager.getPlayer(guildId)
                     if (updatedPlayer?.cleanup == true) {
                         val messageChannel = updatedPlayer.getAnnouncementChannel()
