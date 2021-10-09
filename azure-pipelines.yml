@@ -73,6 +73,8 @@ jobs:
               inputs:
                 targetType: 'inline'
                 script: |
+                  echo Stopping old instance
+                  sudo systemctl stop emergencyfood.service
                   echo Removing old jar
                   rm -r ~/current
                   mkdir ~/current
@@ -100,7 +102,6 @@ jobs:
                 targetType: 'inline'
                 script: |
                   echo Starting bot service
-                  sudo systemctl stop emergencyfood.service
                   sudo systemctl start emergencyfood.service
                   sleep 2
                   systemctl is-active emergencyfood.service
