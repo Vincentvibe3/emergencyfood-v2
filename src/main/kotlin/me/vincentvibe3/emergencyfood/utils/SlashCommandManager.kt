@@ -16,7 +16,7 @@ object SlashCommandManager {
     init {
         try{
             //set commands to add here
-            registerLocal(Sauce)
+//            registerLocal(Sauce)
             registerLocal(Play)
             registerLocal(Pause)
             registerLocal(Loop)
