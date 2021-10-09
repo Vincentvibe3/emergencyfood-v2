@@ -33,7 +33,7 @@ object VoiceStateListener:ListenerAdapter() {
                     if (updatedPlayer?.cleanup == true) {
                         val messageChannel = updatedPlayer.getAnnouncementChannel()
                         val embed = Templates.getMusicEmbed()
-                            .setTitle("Disconnected to due to inactivity")
+                            .setTitle("Disconnected due to inactivity")
                             .build()
                         val message = MessageBuilder()
                             .setEmbeds(embed)
