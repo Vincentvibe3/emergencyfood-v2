@@ -9,7 +9,6 @@ object ButtonsListener: ListenerAdapter()  {
 
     //respond to a button being clicked
     override fun onButtonClick(event: ButtonClickEvent) {
-        println(event.componentId)
         retrieveButton(event.componentId)?.handle(event)
     }
 

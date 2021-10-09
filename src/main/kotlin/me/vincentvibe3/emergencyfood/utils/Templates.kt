@@ -5,6 +5,7 @@ import java.awt.Color
 
 object Templates {
     private val musicEmbedColor = Color(176, 0, 50)
+    private val sauceEmbedColor = Color(0,141,163)
 
     fun getMusicEmbed():EmbedBuilder{
         return EmbedBuilder()
@@ -14,5 +15,10 @@ object Templates {
     fun getMusicQueueEmbed():EmbedBuilder{
         return getMusicEmbed()
             .setTitle("Queue")
+    }
+
+    fun getSauceEmbed():EmbedBuilder{
+        return EmbedBuilder()
+            .setColor(sauceEmbedColor)
     }
 }

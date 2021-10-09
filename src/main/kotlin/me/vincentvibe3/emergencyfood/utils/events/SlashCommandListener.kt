@@ -9,7 +9,6 @@ object SlashCommandListener: ListenerAdapter() {
 
     //find the required command and run its handler function
     override fun onSlashCommand(event: SlashCommandEvent) {
-        println(event.name)
         retrieveCommand(event.name)?.handle(event)
     }
 
