@@ -27,4 +27,3 @@ Download a release from [the releases page](https://github.com/Vincentvibe3/emer
 
 3. The produced binary will be under ```build/libs/Emergencyfood-<version>.jar```
 
-4. Start the bot with ```java -jar <Path to Binary>```
