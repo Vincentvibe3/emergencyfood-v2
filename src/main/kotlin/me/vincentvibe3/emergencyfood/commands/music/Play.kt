@@ -27,8 +27,15 @@ object Play: SlashCommand() {
 
     //determine whether the song is a YouTube url or a search query
     private fun getTrack(query:String):String{
-        return if (query.startsWith("https://www.youtube.com/watch?v=")||query.startsWith("https://youtu.be/")||query.startsWith("https://www.youtube.com/playlist?list=")){
-            query
+        val isVideo = query.startsWith("https://www.youtube.com/watch?v=")
+        val isPlaylist = query.startsWith("https://www.youtube.com/playlist?list=")
+        val isMobile = query.startsWith("https://youtu.be/")
+        return if (isVideo||isMobile||isPlaylist){
+            if (isVideo&&query.contains("&list=")){
+                query.replaceAfter("&list=", "").replace("&list=", "")
+            } else {
+                query
+            }
         } else {
             SongSearch.getSong(query)
         }
