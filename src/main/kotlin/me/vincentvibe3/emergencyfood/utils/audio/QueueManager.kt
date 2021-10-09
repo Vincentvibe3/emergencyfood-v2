@@ -43,6 +43,14 @@ class QueueManager : AudioEventAdapter() {
     }
 
     override fun onTrackEnd(player: AudioPlayer?, track: AudioTrack?, endReason: AudioTrackEndReason?) {
+        val client = Bot.getClientInstance()
+        //delete the old now playing message if it exists
+        val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
+        if (lastChannel != null) {
+            val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
+            lastMessage?.queue({it.delete().queue()}, { println("failed to get old message")})
+        }
+
         if (endReason != null) {
             if (endReason.mayStartNext){
                 println("playing next")
@@ -67,12 +75,6 @@ class QueueManager : AudioEventAdapter() {
     override fun onTrackStart(player: AudioPlayer?, track: AudioTrack?) {
         val client = Bot.getClientInstance()
         val channel = client.getTextChannelById(updatesChannel)
-        //delete the old now playing message if it exists
-        val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
-        if (lastChannel != null) {
-            val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
-            lastMessage?.queue({it.delete().queue()}, { println("failed to get old message")})
-        }
         //send now playing message
         if (channel != null && track != null) {
             val embed = EmbedBuilder()
