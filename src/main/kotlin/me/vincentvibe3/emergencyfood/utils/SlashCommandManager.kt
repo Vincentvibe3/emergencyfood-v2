@@ -1,6 +1,7 @@
 package me.vincentvibe3.emergencyfood.utils
 
 import me.vincentvibe3.emergencyfood.commands.music.*
+import me.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.core.Channel
 import net.dv8tion.jda.api.interactions.commands.Command
@@ -15,6 +16,7 @@ object SlashCommandManager {
     init {
         try{
             //set commands to add here
+            registerLocal(Sauce)
             registerLocal(Play)
             registerLocal(Pause)
             registerLocal(Loop)
