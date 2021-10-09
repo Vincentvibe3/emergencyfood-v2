@@ -1,5 +1,14 @@
 ﻿# emergencyfood-v2
 A rewrite of the emergencyfood bot in Kotlin
+
+## Status
+Main branch: 
+
+![Build Status Github Actions](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Build.yaml/badge.svg?branch=main) 
+ 
+Version 1.0:
+
+[![Release Status](https://dev.azure.com/vincentvibe4/emergencyfood/_apis/build/status/Vincentvibe3.emergencyfood-v2?branchName=refs%2Ftags%2Fv.1.0)](https://dev.azure.com/vincentvibe4/emergencyfood/_build/latest?definitionId=5&branchName=refs%2Ftags%2Fv.1.0)
 ## Dependencies
 - [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA)
 - [Lavaplayer](https://github.com/sedmelluq/lavaplayer)
@@ -9,7 +18,7 @@ A rewrite of the emergencyfood bot in Kotlin
 ## Self-host
 ### Grab a release
 
-Download a relases from [the releases page](https://github.com/Vincentvibe3/emergencyfood-v2/releases/latest)
+Download a release from [the releases page](https://github.com/Vincentvibe3/emergencyfood-v2/releases/latest)
 
 ### Build from source
 1. Clone the repository with ```git clone https://github.com/Vincentvibe3/emergencyfood-v2.git```
