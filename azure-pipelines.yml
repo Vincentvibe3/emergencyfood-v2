@@ -66,6 +66,7 @@ jobs:
    dependsOn: Build_Release
 
    steps:
+    - checkout: none
     - task: SSH@0
       displayName: Kill Old Instance
       inputs:
@@ -75,11 +76,20 @@ jobs:
           sudo systemctl stop emergencyfood.service
         readyTimeout: '20000'
 
+    - task: DownloadGitHubRelease@0
+      displayName: Download Latest Release
+      inputs:
+        connection: 'github.com_Vincentvibe3'
+        userRepository: 'Vincentvibe3/emergencyfood-v2'
+        defaultVersionType: 'latest'
+        itemPattern: '*.jar'
+        downloadPath: $(System.ArtifactsDirectory)
+
     - task: CopyFilesOverSSH@0
       displayName: Copy Binary
       inputs:
         sshEndpoint: 'emergencyfood-ssh'
-        sourceFolder: '$(Build.ArtifactStagingDirectory)/build/libs'
+        sourceFolder: '$(System.ArtifactsDirectory)'
         contents: '*.jar'
         cleanTargetFolder: true
         targetFolder: '~/current'
