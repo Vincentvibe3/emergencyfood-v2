@@ -2,12 +2,14 @@ package me.vincentvibe3.emergencyfood.core
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.vincentvibe3.emergencyfood.utils.MessageCommandManager
 import me.vincentvibe3.emergencyfood.utils.SlashCommandManager
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import me.vincentvibe3.emergencyfood.utils.events.ButtonsListener
 import me.vincentvibe3.emergencyfood.utils.events.ReadyListener
 import me.vincentvibe3.emergencyfood.utils.events.SlashCommandListener
 import me.vincentvibe3.emergencyfood.utils.events.VoiceStateListener
+import me.vincentvibe3.emergencyfood.utils.events.MessageListener
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
@@ -53,6 +55,7 @@ object Bot {
         client.awaitReady()
         SlashCommandManager.registerRemote(channel)
         SlashCommandManager.registerGuildRemote(channel)
+        MessageCommandManager
         runBlocking {
             launch {
                 //run background check loops here
@@ -61,6 +64,7 @@ object Bot {
             client.addEventListener(SlashCommandListener)
             client.addEventListener(ButtonsListener)
             client.addEventListener(VoiceStateListener)
+            client.addEventListener(MessageListener)
         }
 
     }
