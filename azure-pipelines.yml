@@ -61,11 +61,11 @@ jobs:
    pool:
     vmImage: 'ubuntu-18.04'
 
-    displayName: Deploy to VM 
+   displayName: Deploy to VM 
     
-    dependsOn: Build_Release
+   dependsOn: Build_Release
 
-    steps:
+   steps:
     - task: SSH@0
       displayName: Kill Old Instance
       inputs:
@@ -90,7 +90,6 @@ jobs:
         sshEndpoint: 'emergencyfood-ssh'
         runOptions: 'inline'
         inline: |
-          sudo systemctl stop emergencyfood.service
           sudo systemctl start emergencyfood.service
           sleep 2
           systemctl is-active emergencyfood.service --quiet
