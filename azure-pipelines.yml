@@ -1,3 +1,4 @@
+
 # Gradle
 # Build your Java project and run tests with Gradle using a Gradle wrapper script.
 # Add steps that analyze code, save build artifacts, deploy, and more:
@@ -14,90 +15,130 @@ pr: none
 
 jobs:
 
-#  - job: Build_Release
-#
-#    pool:
-#      vmImage: 'ubuntu-18.04'
-#
-#    displayName: Build and Release
-#
-#    steps:
-#    - task: Gradle@2
-#      displayName: Gradle Build
-#      inputs:
-#        workingDirectory: ''
-#        gradleWrapperFile: 'gradlew'
-#        gradleOptions: '-Xmx3072m'
-#        javaHomeOption: 'JDKVersion'
-#        jdkVersionOption: '1.8'
-#        jdkArchitectureOption: 'x64'
-#        publishJUnitResults: true
-#        testResultsFiles: '**/TEST-*.xml'
-#        tasks: 'build'
-#
-#    - task: CopyFiles@2
-#      displayName: 'Copy Files to artifact staging directory'
-#      inputs:
-#        SourceFolder: '$(System.DefaultWorkingDirectory)'
-#        Contents: '**/build/libs/*'
-#        TargetFolder: $(Build.ArtifactStagingDirectory)
-#
-#    - task: GitHubRelease@1
-#      displayName: Publish on Github Releases
-#      inputs:
-#        gitHubConnection: 'github.com_Vincentvibe3'
-#        repositoryName: 'Vincentvibe3/emergencyfood-v2'
-#        action: 'create'
-#        title: '$(Build.SourceBranchName)'
-#        target: '$(Build.SourceVersion)'
-#        tagSource: 'gitTag'
-#        assets: '$(Build.ArtifactStagingDirectory)/build/libs/*'
-#        changeLogCompareToRelease: 'lastFullRelease'
-#        changeLogType: 'commitBased'
+ - job: Build_Release
 
-  - deployment: VMDeploy
-    pool:
-      vmImage: 'ubuntu-18.04'
-#    dependsOn: Build_Release
-    displayName: Deploy Stable
-    environment:
-      name:  emergencyfood
-      resourceType: VirtualMachine
-      tags: production
-    strategy:
-      runOnce:
-        preDeploy:
-          steps:
-            - script: |
-                echo Stopping old instance
-                sudo systemctl stop emergencyfood.service
-              displayName: Stop Old Instance
+   pool:
+     vmImage: 'ubuntu-18.04'
 
-        deploy:
-          steps:
-            - script: |
-                echo Removing old jar
-                sudo rm -r ~/current
-                mkdir ~/current
-              displayName: Clean Old Binaries
+   displayName: Build and Release
 
-            - task: DownloadGitHubRelease@0
-              displayName: Download Latest Release
-              inputs:
-                connection: 'github.com_Vincentvibe3'
-                userRepository: 'Vincentvibe3/emergencyfood-v2'
-                defaultVersionType: 'latest'
-                itemPattern: '*.jar'
-                downloadPath: $(System.ArtifactsDirectory)
+   steps:
+   - task: Gradle@2
+     displayName: Gradle Build
+     inputs:
+       workingDirectory: ''
+       gradleWrapperFile: 'gradlew'
+       gradleOptions: '-Xmx3072m'
+       javaHomeOption: 'JDKVersion'
+       jdkVersionOption: '1.8'
+       jdkArchitectureOption: 'x64'
+       publishJUnitResults: true
+       testResultsFiles: '**/TEST-*.xml'
+       tasks: 'build'
 
-            - script: |
-                mv $(System.ArtifactsDirectory)/* ~/current
-                ls ~/current
-              displayName: Move Downloaded Artifact
+   - task: CopyFiles@2
+     displayName: 'Copy Files to artifact staging directory'
+     inputs:
+       SourceFolder: '$(System.DefaultWorkingDirectory)'
+       Contents: '**/build/libs/*'
+       TargetFolder: $(Build.ArtifactStagingDirectory)
 
-            - script: |
-                echo Starting bot service
-                sudo systemctl start emergencyfood.service
-                sleep 2
-                systemctl is-active emergencyfood.service
-              displayName: Start Bot Service
+   - task: GitHubRelease@1
+     displayName: Publish on Github Releases
+     inputs:
+       gitHubConnection: 'github.com_Vincentvibe3'
+       repositoryName: 'Vincentvibe3/emergencyfood-v2'
+       action: 'create'
+       title: '$(Build.SourceBranchName)'
+       target: '$(Build.SourceVersion)'
+       tagSource: 'gitTag'
+       assets: '$(Build.ArtifactStagingDirectory)/build/libs/*'
+       changeLogCompareToRelease: 'lastFullRelease'
+       changeLogType: 'commitBased'
+
+ - job: Deployment
+ 
+   pool:
+    vmImage: 'ubuntu-18.04'
+
+    displayName: Deploy to VM 
+    
+    dependsOn: Build_Release
+
+    steps:
+    - task: SSH@0
+      displayName: Kill Old Instance
+      inputs:
+        sshEndpoint: 'emergencyfood-ssh'
+        runOptions: 'inline'
+        inline: |
+          sudo systemctl stop emergencyfood.service
+        readyTimeout: '20000'
+
+    - task: CopyFilesOverSSH@0
+      displayName: Copy Binary
+      inputs:
+        sshEndpoint: 'emergencyfood-ssh'
+        sourceFolder: '$(Build.ArtifactStagingDirectory)/build/libs'
+        contents: '*.jar'
+        cleanTargetFolder: true
+        targetFolder: '~/current'
+        readyTimeout: '20000'
+    - task: SSH@0
+      displayName: Start New Instance
+      inputs:
+        sshEndpoint: 'emergencyfood-ssh'
+        runOptions: 'inline'
+        inline: |
+          sudo systemctl stop emergencyfood.service
+          sudo systemctl start emergencyfood.service
+          sleep 2
+          systemctl is-active emergencyfood.service --quiet
+        readyTimeout: '20000'
+
+#   - deployment: VMDeploy
+#     pool:
+#       vmImage: 'ubuntu-18.04'
+# #    dependsOn: Build_Release
+#     displayName: Deploy Stable
+#     environment:
+#       name:  emergencyfood
+#       resourceType: VirtualMachine
+#       tags: production
+#     strategy:
+#       runOnce:
+#         preDeploy:
+#           steps:
+#             - script: |
+#                 echo Stopping old instance
+#                 sudo systemctl stop emergencyfood.service
+#               displayName: Stop Old Instance
+
+#         deploy:
+#           steps:
+#             - script: |
+#                 echo Removing old jar
+#                 sudo rm -r ~/current
+#                 mkdir ~/current
+#               displayName: Clean Old Binaries
+
+#             - task: DownloadGitHubRelease@0
+#               displayName: Download Latest Release
+#               inputs:
+#                 connection: 'github.com_Vincentvibe3'
+#                 userRepository: 'Vincentvibe3/emergencyfood-v2'
+#                 defaultVersionType: 'latest'
+#                 itemPattern: '*.jar'
+#                 downloadPath: $(System.ArtifactsDirectory)
+
+#             - script: |
+#                 mv $(System.ArtifactsDirectory)/* ~/current
+#                 ls ~/current
+#               displayName: Move Downloaded Artifact
+
+#             - script: |
+#                 echo Starting bot service
+#                 sudo systemctl start emergencyfood.service
+#                 sleep 2
+#                 systemctl is-active emergencyfood.service
+#               displayName: Start Bot Service
