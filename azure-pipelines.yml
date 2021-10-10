@@ -14,51 +14,51 @@ pr: none
 
 jobs:
 
-  - job: Build_Release
-
-    pool:
-      vmImage: 'ubuntu-18.04'
-
-    displayName: Build and Release
-
-    steps:
-    - task: Gradle@2
-      displayName: Gradle Build
-      inputs:
-        workingDirectory: ''
-        gradleWrapperFile: 'gradlew'
-        gradleOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.8'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: true
-        testResultsFiles: '**/TEST-*.xml'
-        tasks: 'build'
-
-    - task: CopyFiles@2
-      displayName: 'Copy Files to artifact staging directory'
-      inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: '**/build/libs/*'
-        TargetFolder: $(Build.ArtifactStagingDirectory)
-
-    - task: GitHubRelease@1
-      displayName: Publish on Github Releases
-      inputs:
-        gitHubConnection: 'github.com_Vincentvibe3'
-        repositoryName: 'Vincentvibe3/emergencyfood-v2'
-        action: 'create'
-        title: '$(Build.SourceBranchName)'
-        target: '$(Build.SourceVersion)'
-        tagSource: 'gitTag'
-        assets: '$(Build.ArtifactStagingDirectory)/build/libs/*'
-        changeLogCompareToRelease: 'lastFullRelease'
-        changeLogType: 'commitBased'
+#  - job: Build_Release
+#
+#    pool:
+#      vmImage: 'ubuntu-18.04'
+#
+#    displayName: Build and Release
+#
+#    steps:
+#    - task: Gradle@2
+#      displayName: Gradle Build
+#      inputs:
+#        workingDirectory: ''
+#        gradleWrapperFile: 'gradlew'
+#        gradleOptions: '-Xmx3072m'
+#        javaHomeOption: 'JDKVersion'
+#        jdkVersionOption: '1.8'
+#        jdkArchitectureOption: 'x64'
+#        publishJUnitResults: true
+#        testResultsFiles: '**/TEST-*.xml'
+#        tasks: 'build'
+#
+#    - task: CopyFiles@2
+#      displayName: 'Copy Files to artifact staging directory'
+#      inputs:
+#        SourceFolder: '$(System.DefaultWorkingDirectory)'
+#        Contents: '**/build/libs/*'
+#        TargetFolder: $(Build.ArtifactStagingDirectory)
+#
+#    - task: GitHubRelease@1
+#      displayName: Publish on Github Releases
+#      inputs:
+#        gitHubConnection: 'github.com_Vincentvibe3'
+#        repositoryName: 'Vincentvibe3/emergencyfood-v2'
+#        action: 'create'
+#        title: '$(Build.SourceBranchName)'
+#        target: '$(Build.SourceVersion)'
+#        tagSource: 'gitTag'
+#        assets: '$(Build.ArtifactStagingDirectory)/build/libs/*'
+#        changeLogCompareToRelease: 'lastFullRelease'
+#        changeLogType: 'commitBased'
 
   - deployment: VMDeploy
     pool:
       vmImage: 'ubuntu-18.04'
-    dependsOn: Build_Release
+#    dependsOn: Build_Release
     displayName: Deploy Stable
     environment:
       name:  emergencyfood
