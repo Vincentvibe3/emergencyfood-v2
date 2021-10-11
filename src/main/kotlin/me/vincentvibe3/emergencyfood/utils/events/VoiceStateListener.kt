@@ -1,16 +1,8 @@
 package me.vincentvibe3.emergencyfood.utils.events
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.utils.Templates
+import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
-import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Invite
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -22,19 +14,26 @@ object VoiceStateListener:ListenerAdapter() {
         val client = Bot.getClientInstance()
         val selfId = client.selfUser.id
         val selfMember = event.guild.getMemberById(selfId)
-        val channel = event.channelLeft
+        val channelLeft = event.channelLeft
+        val channelJoin = event.channelJoined
         val guild = event.guild
         val guildId = guild.id
         if (!event.member.user.isBot) {
-            if (channel == null) {
+            if (channelJoin != null && channelJoin.members.contains(selfMember)) {
+                Logging.logger.debug("User Connected to vc")
                 PlayerManager.unsetForCleanup(guildId)
-            } else {
-                if (channel.members.none { !it.user.isBot } && channel.members.contains(selfMember)){
+            } else if (channelLeft!=null && channelLeft.members.contains(selfMember)){
+                Logging.logger.debug("User Disconnected from vc")
+                if (channelLeft.members.none { !it.user.isBot } ){
                     PlayerManager.setForCleanup(guildId)
                 }
             }
         } else {
-            if (channel!=null){
+            if (event.member.user.id == selfId && channelJoin != null){
+                if (channelJoin.members.none { !it.user.isBot }){
+                    PlayerManager.setForCleanup(guildId)
+                }
+            } else if (event.member.user.id == selfId && channelLeft != null && !PlayerManager.isSetForCleanup(guildId)){
                 PlayerManager.removePlayer(guildId)
             }
         }
@@ -46,11 +45,9 @@ object VoiceStateListener:ListenerAdapter() {
                 event.member.deafen(true).queue()
                 val guild = event.guild.id
                 val player = PlayerManager.getPlayer(guild)
-                if (player != null) {
-                    val messageChannel = player.getAnnouncementChannel()
-                    val client = Bot.getClientInstance()
-                    client.getTextChannelById(messageChannel)?.sendMessage("Please do not server undeafen the bot")?.queue()
-                }
+                val messageChannel = player.getAnnouncementChannel()
+                val client = Bot.getClientInstance()
+                client.getTextChannelById(messageChannel)?.sendMessage("Please do not server undeafen the bot")?.queue()
             }
         }
     }

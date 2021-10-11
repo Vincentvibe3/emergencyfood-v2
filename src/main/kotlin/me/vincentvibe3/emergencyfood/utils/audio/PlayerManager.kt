@@ -10,10 +10,11 @@ object PlayerManager {
     private val activeGuilds = HashMap<String, Player>()
     private val checkForCleanup = HashMap<String, Long>()
 
-    //fetches the player for a guild and creates a new onw if none is found
-    fun getPlayer(guild:String): Player? {
-        return if (activeGuilds[guild] != null){
-            activeGuilds[guild]
+    //fetches the player for a guild and creates a new one if none is found
+    fun getPlayer(guild:String): Player {
+        val currentPlayer = activeGuilds[guild]
+        return if (currentPlayer != null){
+            currentPlayer
         } else {
             val newPlayer = Player()
             newPlayer.setupPlayer()
@@ -47,22 +48,24 @@ object PlayerManager {
         }
     }
 
+    fun isSetForCleanup(guildId: String):Boolean{
+        return checkForCleanup.contains(guildId)
+    }
+
     private fun cleanUp(guildId: String){
         val client = Bot.getClientInstance()
         val guild = client.getGuildById(guildId)
         val updatedPlayer = getPlayer(guildId)
-        if (updatedPlayer != null) {
-            val messageChannel = updatedPlayer.getAnnouncementChannel()
-            val embed = Templates.getMusicEmbed()
-                .setTitle("Disconnected to due to inactivity")
-                .build()
-            val message = MessageBuilder()
-                .setEmbeds(embed)
-                .build()
-            client.getTextChannelById(messageChannel)?.sendMessage(message)?.queue()
-            removePlayer(guildId)
-            guild?.audioManager?.closeAudioConnection()
-        }
+        val messageChannel = updatedPlayer.getAnnouncementChannel()
+        val embed = Templates.getMusicEmbed()
+            .setTitle("Disconnected to due to inactivity")
+            .build()
+        val message = MessageBuilder()
+            .setEmbeds(embed)
+            .build()
+        client.getTextChannelById(messageChannel)?.sendMessage(message)?.queue()
+        removePlayer(guildId)
+        guild?.audioManager?.closeAudioConnection()
         unsetForCleanup(guildId)
     }
 
