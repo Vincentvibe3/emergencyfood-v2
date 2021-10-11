@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.ConfigData
+import me.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.concurrent.BlockingDeque
@@ -52,14 +53,11 @@ class QueueManager : AudioEventAdapter() {
 
         if (endReason != null) {
             if (endReason.mayStartNext){
-                println("playing next")
                 //clear on end
                 if (queue.indexOf(track)==queue.size-1&&!loop) {
-                    println("cleared queue")
                     queue.clear()
                 //prepare queue and loop
                 } else if (queue.indexOf(track)==queue.size-1&&loop){
-                    println("looping")
                     rebuildQueue()
                     player?.playTrack(queue.elementAt(0))
                 //play next
@@ -87,7 +85,7 @@ class QueueManager : AudioEventAdapter() {
             channel.sendMessage(message).queue(
                 {lastUpdatesMessage = it.id
                 lastUpdatesChannel = it.channel.id},
-                { println("failed to send update message")}
+                { Logging.logger.error("Failed to send update message in ${channel.guild}")}
             )
         }
     }

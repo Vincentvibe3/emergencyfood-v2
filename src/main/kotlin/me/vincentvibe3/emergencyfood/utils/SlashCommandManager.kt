@@ -6,6 +6,7 @@ import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.core.Channel
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import org.apache.commons.logging.Log
 import kotlin.reflect.full.memberProperties
 
 object SlashCommandManager {
@@ -28,7 +29,7 @@ object SlashCommandManager {
             registerLocal(Remove)
             registerLocal(Shuffle)
         } catch (e:IllegalArgumentException) {
-            println("Failed to add ${e.stackTrace[5].className.split(".").last()}")
+            Logging.logger.error("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
 
     }
@@ -46,7 +47,7 @@ object SlashCommandManager {
     /*this method is only currently used to accelerate testing and
     * therefore does not support use of actual guild commands*/
     fun registerGuildRemote(channel: Channel){
-        println("Starting guild command registration")
+        Logging.logger.info("Starting guild command registration")
 
         //register guild commands if not on stable
         if (channel!=Channel.STABLE){
@@ -58,8 +59,8 @@ object SlashCommandManager {
 
                 Bot.getClientInstance().guilds.forEach { guild ->
                     guild.upsertCommand(commandData).queue(
-                        { println("Added ${command.name} to ${guild.name}") },
-                        { println("Failed to add ${command.name} to ${guild.name}") }
+                        { Logging.logger.info("Added ${command.name} to ${guild.name}") },
+                        { Logging.logger.error("Failed to add ${command.name} to ${guild.name}") }
                     )
                 }
             }
@@ -70,22 +71,22 @@ object SlashCommandManager {
                 commandList.filter { !commandsList.containsKey(it.name) }.forEach { command ->
                     try {
                         command.delete().queue(
-                            { println("Deleted ${command.name} from ${guild.name}") },
-                            { println("Failed to delete ${command.name} from ${guild.name}") }
+                            { Logging.logger.info("Deleted ${command.name} from ${guild.name}") },
+                            { Logging.logger.error("Failed to delete ${command.name} from ${guild.name}") }
                         )
                     } catch (e: IllegalAccessException) {
-                        println("Failed to delete ${command.name} ${guild.name}")
+                        Logging.logger.error("Failed to delete ${command.name} ${guild.name}")
                     }
                 }
             }, {
-                println("Failed to fetch commands for ${guild.name}")
+                Logging.logger.error("Failed to fetch commands for ${guild.name}")
             })
         }
     }
 
     //register commands on discord
     fun registerRemote(channel: Channel){
-        println("Starting command registration")
+        Logging.logger.info("Starting command registration")
         //upsert new commands
         commandsList.forEach{
             val command = it.value
@@ -105,8 +106,8 @@ object SlashCommandManager {
             Bot.getClientInstance()
                 .upsertCommand(commandData)
                 .queue(
-                    { println("Added ${command.name}") },
-                    { println("Failed to add ${command.name}") }
+                    { Logging.logger.info("Added ${command.name}") },
+                    { Logging.logger.error("Failed to add ${command.name}") }
             )
         }
 
@@ -134,11 +135,11 @@ object SlashCommandManager {
         toDelete.forEach{ command ->
             try {
                 command.delete().queue(
-                    { println("Deleted ${command.name}") },
-                    { println("Failed to delete ${command.name}") }
+                    { Logging.logger.info("Deleted ${command.name}") },
+                    { Logging.logger.error("Failed to delete ${command.name}") }
                 )
             } catch (e:IllegalAccessException){
-                println("Failed to delete ${command.name}")
+                Logging.logger.error("Failed to delete ${command.name}")
             }
         }
     }
