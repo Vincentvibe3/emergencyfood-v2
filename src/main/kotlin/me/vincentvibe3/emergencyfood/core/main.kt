@@ -1,5 +1,7 @@
 package me.vincentvibe3.emergencyfood.core
 
+import me.vincentvibe3.emergencyfood.utils.Logging
+
 /* enum representing environments
 *  in which the bot may run */
 enum class Channel {
@@ -8,10 +10,10 @@ enum class Channel {
 
 fun main() {
     val channel = Channel.STABLE
-    println("Setting up bot on channel $channel...")
+    Logging.logger.info("Setting up bot on channel $channel...")
     //setup bot
     Bot.setup(channel)
-    println("Starting bot...")
+    Logging.logger.info("Starting bot...")
     //start bot
     Bot.start()
 

@@ -1,5 +1,6 @@
 package me.vincentvibe3.emergencyfood.utils.events
 
+import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.SlashCommandManager
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
@@ -9,6 +10,7 @@ object SlashCommandListener: ListenerAdapter() {
 
     //find the required command and run its handler function
     override fun onSlashCommand(event: SlashCommandEvent) {
+        Logging.logger.debug("SlashCommand ${event.name} called")
         retrieveCommand(event.name)?.handle(event)
     }
 
