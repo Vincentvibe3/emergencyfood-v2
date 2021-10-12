@@ -3,7 +3,7 @@ package me.vincentvibe3.emergencyfood.commands.music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.vincentvibe3.emergencyfood.core.Bot
+import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.utils.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.*
@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
@@ -21,7 +22,7 @@ object Play: SlashCommand() {
 
     override val name = "play"
 
-    @Bot.Beta
+
     override val command = CommandData(name, "Play a song or resume playback")
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
@@ -143,7 +144,11 @@ object Play: SlashCommand() {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         val channel = event.member?.voiceState?.channel
-        event.member?.deafen(true)
+        try {
+            event.member?.deafen(true)
+        } catch (e: InsufficientPermissionException){
+            Logging.logger.debug("Failed to self deafen")
+        }
         val songOption = event.getOption("song")?.asString
         if (player != null && channel != null) {
             player.setUpdateChannel(event.textChannel.id)

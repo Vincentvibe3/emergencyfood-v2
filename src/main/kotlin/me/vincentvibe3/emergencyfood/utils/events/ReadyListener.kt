@@ -9,7 +9,7 @@ object ReadyListener: ListenerAdapter() {
     // display info when bot is logged in
     override fun onReady(event: ReadyEvent){
         Logging.logger.info("Logged in as ${event.jda.selfUser.name}#${event.jda.selfUser.discriminator}")
-        Logging.logger.info("Active in ${event.jda.guilds.size} guilds\n")
+        Logging.logger.info("Active in ${event.jda.guilds.size} guilds")
 
     }
 

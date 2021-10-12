@@ -6,7 +6,7 @@ import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.core.Channel
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import org.apache.commons.logging.Log
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 
 object SlashCommandManager {
@@ -17,7 +17,7 @@ object SlashCommandManager {
     init {
         try{
             //set commands to add here
-//            registerLocal(Sauce)
+            registerLocal(Sauce)
             registerLocal(Play)
             registerLocal(Pause)
             registerLocal(Loop)
@@ -79,7 +79,7 @@ object SlashCommandManager {
                     }
                 }
             }, {
-                Logging.logger.error("Failed to fetch commands for ${guild.name}")
+                Logging.logger.error("Failed to fetch commands for ${guild.name} ")
             })
         }
     }
@@ -88,27 +88,26 @@ object SlashCommandManager {
     fun registerRemote(channel: Channel){
         Logging.logger.info("Starting command registration")
         //upsert new commands
-        commandsList.forEach{
+        commandsList.forEach {
             val command = it.value
-            val commandData = if (channel == Channel.STABLE){
-                //upsert all commands except those marked as beta
-                command::class.memberProperties
-                    .filter { item -> item.annotations.find { property -> property.annotationClass == Bot.Beta::annotationClass } == null }
-                    .first { item -> item.name == "command" }
-                    .getter.call(command) as CommandData
-            } else {
-                //upsert all commands
-                command::class.memberProperties
-                    .first { item -> item.name == "command" }
-                    .getter.call(command) as CommandData
-            }
+            val isStable =
+                command::class.annotations.none { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass }
+            val commandData = command::class.memberProperties
+                .first { item -> item.name == "command" }
+                .getter.call(command) as CommandData
+
+            val upsert = if (channel == Channel.STABLE && isStable) {
+                true
+            } else channel != Channel.STABLE && isStable
             //upsert
-            Bot.getClientInstance()
-                .upsertCommand(commandData)
-                .queue(
-                    { Logging.logger.info("Added ${command.name}") },
-                    { Logging.logger.error("Failed to add ${command.name}") }
-            )
+            if (upsert){
+                Bot.getClientInstance()
+                    .upsertCommand(commandData)
+                    .queue(
+                        { Logging.logger.info("Added ${command.name}") },
+                        { Logging.logger.error("Failed to add ${command.name}") })
+            }
+
         }
 
         //old command deletion
@@ -116,30 +115,30 @@ object SlashCommandManager {
         Bot.getClientInstance().retrieveCommands().queue{ remoteCommandList ->
             //delete remote commands that are locally marked as beta
             if (channel==Channel.STABLE){
-                remoteCommandList.filter { commandsList.containsKey(it.name) }.filter {
-                    commandsList[it.name]!!::class.memberProperties
-                        .none { item -> item.annotations.find { property -> property.annotationClass == Bot.Beta::annotationClass } != null }
-                }.forEach {
-                    println("${it.name} deletion")
-                    toDelete.add(it)
-                }
+                remoteCommandList.filter { commandsList.containsKey(it.name) }
+                    .filter {
+                        commandsList.getValue(it.name)::class.annotations
+                            .firstOrNull { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass } != null }
+                    .forEach {
+                        toDelete.add(it)
+                    }
             }
 
             //delete commands that exist remotely but not locally
             remoteCommandList.filter { !commandsList.containsKey(it.name) }.forEach {
                 toDelete.add(it)
             }
-        }
 
-        //delete commands
-        toDelete.forEach{ command ->
-            try {
-                command.delete().queue(
-                    { Logging.logger.info("Deleted ${command.name}") },
-                    { Logging.logger.error("Failed to delete ${command.name}") }
-                )
-            } catch (e:IllegalAccessException){
-                Logging.logger.error("Failed to delete ${command.name}")
+            //delete commands
+            toDelete.forEach{ command ->
+                try {
+                    command.delete().queue(
+                        { Logging.logger.info("Deleted ${command.name}") },
+                        { Logging.logger.error("Failed to delete ${command.name}") }
+                    )
+                } catch (e:IllegalAccessException){
+                    Logging.logger.error("Failed to delete ${command.name}")
+                }
             }
         }
     }
