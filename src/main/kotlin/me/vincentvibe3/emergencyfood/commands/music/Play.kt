@@ -148,12 +148,14 @@ object Play: SlashCommand() {
             event.member?.deafen(true)
         } catch (e: InsufficientPermissionException){
             Logging.logger.debug("Failed to self deafen")
+        } catch (e:IllegalStateException){
+            Logging.logger.debug("Failed to self deafen")
         }
         val songOption = event.getOption("song")?.asString
         if (player != null && channel != null) {
             player.setUpdateChannel(event.textChannel.id)
             connect(channel, player)
-            val response = if (songOption == null){
+            val response = if (songOption == null) {
                 resume(player)
             } else {
                 play(player, songOption)
