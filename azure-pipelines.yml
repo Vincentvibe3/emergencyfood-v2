@@ -101,6 +101,6 @@ jobs:
         runOptions: 'inline'
         inline: |
           sudo systemctl start emergencyfood.service
-          sleep 2
+          sleep 3
           systemctl is-active emergencyfood.service
         readyTimeout: '20000'
