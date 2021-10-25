@@ -13,7 +13,7 @@ object MessageListener:ListenerAdapter() {
         val selfId = client.selfUser.id
         val name = client.selfUser.name
         val selfMember = event.guild.getMemberById(selfId)
-        if (event.message.mentionedMembers.contains(selfMember)){
+        if (event.message.mentionedMembers.contains(selfMember)||event.message.contentDisplay.startsWith(Templates.prefix){
             Logging.logger.debug("MessageCommand received")
             val message = event.message.contentDisplay.replace("@$name", "").trim()
             val commandName = message.split(" ")[0]
