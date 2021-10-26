@@ -16,7 +16,7 @@ abstract class SlashCommand {
     val subCommands = HashMap<String, SubCommand>()
 
     fun registerSubCommands(subCommand: SubCommand){
-        Sauce.subCommands[subCommand.name] = subCommand
+        this.subCommands[subCommand.name] = subCommand
     }
 
     //handle events

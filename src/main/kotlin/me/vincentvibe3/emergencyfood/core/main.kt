@@ -1,5 +1,7 @@
 package me.vincentvibe3.emergencyfood.core
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.utils.RequestHandler
 
@@ -11,7 +13,16 @@ enum class Channel {
 
 fun main() {
     val channel = Channel.STABLE
-    RequestHandler.get("https://fuel.gitbook.io/documentation/support/fuel-coroutines")
+    runBlocking {
+        for (i in 1..100) {
+            launch {
+                println("${RequestHandler.get("http://127.0.0.1:8000", i)} $i")
+                println("launched")
+            }
+            println("collected")
+        }
+    }
+
     Logging.logger.info("Setting up bot on channel $channel...")
     //setup bot
     Bot.setup(channel)

@@ -7,7 +7,7 @@ object Templates {
     private val musicEmbedColor = Color(176, 0, 50)
     private val sauceEmbedColor = Color(0,141,163)
     //requests per second
-    private val defaultRateLimit  = 5
+    const val defaultRateLimit  = 5L
 
     fun getMusicEmbed():EmbedBuilder{
         return EmbedBuilder()
