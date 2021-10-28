@@ -13,7 +13,7 @@ object Clear: SlashCommand() {
 
     override val command = CommandData(name, "Clears the queue")
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {

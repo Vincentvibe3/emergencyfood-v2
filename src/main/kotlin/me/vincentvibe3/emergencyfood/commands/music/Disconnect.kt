@@ -13,7 +13,7 @@ object Disconnect: SlashCommand() {
 
     override val command = CommandData(name, "Disconnects from the voice channel")
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         val guild = event.guild
         if (guild != null) {
             if (guild.audioManager.isConnected){

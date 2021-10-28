@@ -139,7 +139,7 @@ object Play: SlashCommand() {
 
     }
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         event.deferReply().queue()
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }

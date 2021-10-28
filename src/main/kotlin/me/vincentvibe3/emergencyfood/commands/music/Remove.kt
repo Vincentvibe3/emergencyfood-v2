@@ -13,7 +13,7 @@ object Remove: SlashCommand() {
     override val command = CommandData(name, "Remove a song from the queue")
         .addOption(OptionType.INTEGER ,"index", "position in the queue", true)
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {

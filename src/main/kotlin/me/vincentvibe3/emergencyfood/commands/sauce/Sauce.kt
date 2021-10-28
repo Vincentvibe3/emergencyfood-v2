@@ -23,7 +23,7 @@ object Sauce: SlashCommand() {
         registerSubCommands(Random)
     }
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         subCommands[event.subcommandName]?.handle(event)
     }
 

@@ -20,6 +20,6 @@ abstract class SlashCommand {
     }
 
     //handle events
-    abstract fun handle(event: SlashCommandEvent)
+    abstract suspend fun handle(event: SlashCommandEvent)
 
 }
