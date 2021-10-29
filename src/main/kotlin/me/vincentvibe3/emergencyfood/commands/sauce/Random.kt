@@ -1,13 +1,13 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
 import com.github.kittinunf.fuel.httpGet
-import me.vincentvibe3.emergencyfood.utils.SubCommand
+import me.vincentvibe3.emergencyfood.internals.SubCommand
 import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import org.json.JSONObject
 
-object Random:SubCommand {
+object Random: SubCommand {
     override val name = "random"
 
     override val subCommand = SubcommandData(name, "Get a random sauce")
@@ -32,7 +32,7 @@ object Random:SubCommand {
         return jsonResponse
     }
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         if (event.textChannel.isNSFW){
 
         } else {

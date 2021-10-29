@@ -1,9 +1,7 @@
-package me.vincentvibe3.emergencyfood.utils
+package me.vincentvibe3.emergencyfood.internals
 
-import me.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import net.dv8tion.jda.api.requests.restaction.CommandCreateAction
 
 abstract class SlashCommand {
 
@@ -15,11 +13,12 @@ abstract class SlashCommand {
 
     val subCommands = HashMap<String, SubCommand>()
 
-    fun registerSubCommands(subCommand: SubCommand){
+    fun registerSubCommands(subCommand: SubCommand) {
         this.subCommands[subCommand.name] = subCommand
     }
 
     //handle events
     abstract suspend fun handle(event: SlashCommandEvent)
+
 
 }

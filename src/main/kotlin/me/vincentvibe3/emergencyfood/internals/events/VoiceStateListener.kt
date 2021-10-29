@@ -1,4 +1,4 @@
-package me.vincentvibe3.emergencyfood.utils.events
+package me.vincentvibe3.emergencyfood.internals.events
 
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.Logging
@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
-object VoiceStateListener:ListenerAdapter() {
+object VoiceStateListener: ListenerAdapter() {
 
     //check if the bot is alone
     override fun onGuildVoiceUpdate(event: GuildVoiceUpdateEvent) {

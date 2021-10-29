@@ -1,9 +1,7 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
-import me.vincentvibe3.emergencyfood.commands.music.Play
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.utils.SlashCommand
-import me.vincentvibe3.emergencyfood.utils.SubCommand
+import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 

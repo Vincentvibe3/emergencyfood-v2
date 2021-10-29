@@ -1,20 +1,20 @@
 package me.vincentvibe3.emergencyfood.buttons.music.queue
 
 import me.vincentvibe3.emergencyfood.commands.music.Queue
-import me.vincentvibe3.emergencyfood.utils.InteractionButton
+import me.vincentvibe3.emergencyfood.internals.InteractionButton
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.interactions.components.Button
 
-object QueuePrev:InteractionButton() {
+object QueuePrev: InteractionButton() {
 
     override val name = "QueuePrev"
 
     override var button = Button.primary(name, "Prev")
 
-    override fun handle(event: ButtonClickEvent) {
+    override suspend fun handle(event: ButtonClickEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {

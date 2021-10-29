@@ -1,6 +1,6 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
-import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType

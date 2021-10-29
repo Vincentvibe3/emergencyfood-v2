@@ -5,9 +5,8 @@ import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueEnd
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueNext
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueuePrev
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueStart
-import me.vincentvibe3.emergencyfood.utils.ButtonManager
-import me.vincentvibe3.emergencyfood.utils.ConfigData
-import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.internals.ButtonManager
+import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.Player
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager

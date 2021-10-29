@@ -1,7 +1,7 @@
-package me.vincentvibe3.emergencyfood.utils.events
+package me.vincentvibe3.emergencyfood.internals.events
 
-import me.vincentvibe3.emergencyfood.utils.ButtonManager
-import me.vincentvibe3.emergencyfood.utils.InteractionButton
+import me.vincentvibe3.emergencyfood.internals.ButtonManager
+import me.vincentvibe3.emergencyfood.internals.InteractionButton
 import me.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
