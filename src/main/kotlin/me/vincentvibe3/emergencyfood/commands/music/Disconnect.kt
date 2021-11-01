@@ -1,6 +1,6 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
-import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
@@ -13,7 +13,7 @@ object Disconnect: SlashCommand() {
 
     override val command = CommandData(name, "Disconnects from the voice channel")
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         val guild = event.guild
         if (guild != null) {
             if (guild.audioManager.isConnected){

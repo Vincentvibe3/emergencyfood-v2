@@ -1,4 +1,4 @@
-package me.vincentvibe3.emergencyfood.utils
+package me.vincentvibe3.emergencyfood.internals
 
 object ButtonManager {
 

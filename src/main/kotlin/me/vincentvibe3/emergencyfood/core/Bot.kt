@@ -2,14 +2,10 @@ package me.vincentvibe3.emergencyfood.core
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.vincentvibe3.emergencyfood.utils.MessageCommandManager
-import me.vincentvibe3.emergencyfood.utils.SlashCommandManager
+import me.vincentvibe3.emergencyfood.internals.MessageCommandManager
+import me.vincentvibe3.emergencyfood.internals.SlashCommandManager
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
-import me.vincentvibe3.emergencyfood.utils.events.ButtonsListener
-import me.vincentvibe3.emergencyfood.utils.events.ReadyListener
-import me.vincentvibe3.emergencyfood.utils.events.SlashCommandListener
-import me.vincentvibe3.emergencyfood.utils.events.VoiceStateListener
-import me.vincentvibe3.emergencyfood.utils.events.MessageListener
+import me.vincentvibe3.emergencyfood.internals.events.*
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
@@ -63,10 +59,8 @@ object Bot {
             }
             client.addEventListener(SlashCommandListener)
             client.addEventListener(ButtonsListener)
-            client.addEventListener(VoiceStateListener)
             client.addEventListener(MessageListener)
+            client.addEventListener(VoiceStateListener)
         }
-
-
     }
 }

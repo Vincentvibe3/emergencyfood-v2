@@ -4,7 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.utils.Logging
-import me.vincentvibe3.emergencyfood.utils.SlashCommand
+import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.*
 import me.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
@@ -139,7 +139,7 @@ object Play: SlashCommand() {
 
     }
 
-    override fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandEvent) {
         event.deferReply().queue()
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }

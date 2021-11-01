@@ -1,9 +1,10 @@
-package me.vincentvibe3.emergencyfood.utils
+package me.vincentvibe3.emergencyfood.internals
 
 import me.vincentvibe3.emergencyfood.commands.music.*
 import me.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.core.Channel
+import me.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import kotlin.reflect.full.createInstance
@@ -40,7 +41,7 @@ object SlashCommandManager {
     }
 
     //add commands to the hashmap
-    private fun registerLocal(command:SlashCommand){
+    private fun registerLocal(command: SlashCommand){
         commandsList[command.name] = command
     }
 

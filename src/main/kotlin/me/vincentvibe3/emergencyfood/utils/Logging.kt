@@ -1,7 +1,6 @@
 package me.vincentvibe3.emergencyfood.utils
 
 import me.vincentvibe3.emergencyfood.core.Bot
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 object Logging {

@@ -1,5 +1,7 @@
-package me.vincentvibe3.emergencyfood.utils
+package me.vincentvibe3.emergencyfood.internals
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.interactions.components.Button
 
@@ -22,5 +24,6 @@ abstract class InteractionButton {
     }
 
     //generic function used as the entry point to handle a ButtonClickEvent
-    abstract fun handle(event: ButtonClickEvent)
+    abstract suspend fun handle(event: ButtonClickEvent)
+
 }
