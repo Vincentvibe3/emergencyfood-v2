@@ -58,7 +58,7 @@ object PlayerManager {
         val updatedPlayer = getPlayer(guildId)
         val messageChannel = updatedPlayer.getAnnouncementChannel()
         val embed = Templates.getMusicEmbed()
-            .setTitle("Disconnected to due to inactivity")
+            .setTitle("Disconnected due to inactivity")
             .build()
         val message = MessageBuilder()
             .setEmbeds(embed)

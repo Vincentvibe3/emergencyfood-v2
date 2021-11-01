@@ -6,6 +6,7 @@ import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import me.vincentvibe3.emergencyfood.internals.MessageCommandManager
+import me.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
@@ -15,7 +16,7 @@ object MessageListener: ListenerAdapter() {
         val selfId = client.selfUser.id
         val name = client.selfUser.name
         val selfMember = event.guild.getMemberById(selfId)
-        if (event.message.mentionedMembers.contains(selfMember)){
+        if (event.message.mentionedMembers.contains(selfMember)||event.message.contentDisplay.startsWith(Templates.prefix)){
             Logging.logger.debug("MessageCommand received")
             val message = event.message.contentDisplay.replace("@$name", "").trim()
             val commandName = message.split(" ")[0]
