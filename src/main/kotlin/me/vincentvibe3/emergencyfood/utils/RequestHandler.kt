@@ -1,6 +1,5 @@
 package me.vincentvibe3.emergencyfood.utils
 
-import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
 import com.github.kittinunf.fuel.httpGet
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -17,7 +16,7 @@ object RequestHandler {
     private val rateLimits = HashMap<String, Long>()
     private val mutex = Mutex()
 
-    suspend fun get(originalUrl: String, id:Int):String{
+    suspend fun get(originalUrl: String):String{
         val host = if (rateLimits.containsKey(originalUrl)){
             originalUrl
         } else {
@@ -26,7 +25,7 @@ object RequestHandler {
         var queueTime by Delegates.notNull<Long>()
         //sync queue position fetching
         mutex.withLock {
-            queueTime = getQueuePos(host, id)
+            queueTime = getQueuePos(host)
         }
         while (System.currentTimeMillis()/1000 < queueTime) {
             delay(100L)
@@ -35,14 +34,18 @@ object RequestHandler {
 
         var body = ""
         var success = false
-        val (request, response, result) = originalUrl.httpGet().awaitStringResponseResult()
-        result.fold(
-            {data ->
-                success = true
-                body = data},
-            {error ->
-                success = false}
-        )
+        val httpAsync = "http://127.0.0.1:8000"
+            .httpGet()
+            .responseString { request, response, result ->
+                result.fold(
+                    {data ->
+                        success = true
+                        body = data},
+                    {error ->
+                        success = false}
+                )
+            }
+        httpAsync.join()
         if (!success){
             throw RequestFailedException()
         } else {
@@ -50,7 +53,7 @@ object RequestHandler {
         }
     }
 
-    private fun getQueuePos(entry: String, id: Int):Long{
+    private fun getQueuePos(entry: String):Long{
         val queueToCheck = queue[entry]
         val currentTime = (System.currentTimeMillis().toDouble() / 1000).roundToLong()
         if (queueToCheck != null) {
