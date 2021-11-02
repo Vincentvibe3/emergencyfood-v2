@@ -27,7 +27,7 @@ object Play: SlashCommand() {
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
     //determine whether the song is a YouTube url or a search query
-    private fun getTrack(query:String):String{
+    private suspend fun getTrack(query:String):String{
         val isVideo = query.startsWith("https://www.youtube.com/watch?v=")
         val isPlaylist = query.startsWith("https://www.youtube.com/playlist?list=")
         val isMobile = query.startsWith("https://youtu.be/")
@@ -101,7 +101,7 @@ object Play: SlashCommand() {
     }
 
     //plays and return response depending on whether loading was successful or not
-    private fun play(player: Player, query:String):Message{
+    private suspend fun play(player: Player, query:String):Message{
         lateinit var track:String
         val initSize = player.getQueue().size
         try {

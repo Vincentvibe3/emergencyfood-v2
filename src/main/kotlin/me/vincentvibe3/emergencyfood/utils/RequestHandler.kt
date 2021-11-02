@@ -1,6 +1,8 @@
 package me.vincentvibe3.emergencyfood.utils
 
 import com.github.kittinunf.fuel.httpGet
+import io.ktor.client.*
+import io.ktor.client.features.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -9,6 +11,9 @@ import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import java.net.ConnectException
 
 object RequestHandler {
 
@@ -33,19 +38,22 @@ object RequestHandler {
         cleanQueue(queueTime)
 
         var body = ""
-        var success = false
-        val httpAsync = "http://127.0.0.1:8000"
-            .httpGet()
-            .responseString { request, response, result ->
-                result.fold(
-                    {data ->
-                        success = true
-                        body = data},
-                    {error ->
-                        success = false}
-                )
-            }
-        httpAsync.join()
+        var success:Boolean
+        val client = HttpClient()
+        try {
+            val response: HttpResponse = client.get(originalUrl)
+            body = response.readText()
+            success = true
+        } catch (e:ConnectException){
+            success = false
+        } catch (e:RedirectResponseException){
+            success = false
+        } catch (e:ClientRequestException){
+            success = false
+        } catch (e:ServerResponseException){
+            success = false
+        }
+
         if (!success){
             throw RequestFailedException()
         } else {

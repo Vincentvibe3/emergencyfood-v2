@@ -23,6 +23,8 @@ dependencies {
     implementation("com.github.kittinunf.result:result-jvm:5.2.0")
     implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
     implementation ("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
+    implementation("io.ktor:ktor-client-core:1.6.4")
+    implementation("io.ktor:ktor-client-cio:1.6.4")
     implementation("ch.qos.logback:logback-classic:1.2.6")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
