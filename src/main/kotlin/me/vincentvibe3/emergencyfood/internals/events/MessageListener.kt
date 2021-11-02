@@ -1,7 +1,6 @@
 package me.vincentvibe3.emergencyfood.internals.events
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.MessageCommand
@@ -14,7 +13,7 @@ object MessageListener: ListenerAdapter() {
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val client = Bot.getClientInstance()
         val selfId = client.selfUser.id
-        val name = client.selfUser.name
+        val name = client.guilds.first { it.id == event.guild.id }.selfMember.effectiveName
         val selfMember = event.guild.getMemberById(selfId)
         if (event.message.mentionedMembers.contains(selfMember)||event.message.contentDisplay.startsWith(Templates.prefix)){
             Logging.logger.debug("MessageCommand received")
