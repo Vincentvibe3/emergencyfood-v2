@@ -1,9 +1,5 @@
 package me.vincentvibe3.emergencyfood.utils.audio
 
-
-import com.github.kittinunf.fuel.httpGet
-import com.github.kittinunf.result.success
-import kotlinx.coroutines.GlobalScope
 import me.vincentvibe3.emergencyfood.utils.RequestHandler
 import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import me.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
