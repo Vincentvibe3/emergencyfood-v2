@@ -1,10 +1,11 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
-import com.github.kittinunf.fuel.httpGet
 import me.vincentvibe3.emergencyfood.internals.SubCommand
+import me.vincentvibe3.emergencyfood.utils.RequestHandler
 import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import org.json.JSONException
 import org.json.JSONObject
 
 object Random: SubCommand {
@@ -12,22 +13,16 @@ object Random: SubCommand {
 
     override val subCommand = SubcommandData(name, "Get a random sauce")
 
-    fun search(query:String):JSONObject{
+    suspend fun search(query:String):JSONObject{
         lateinit var jsonResponse:JSONObject
-        var requestSuccess = true
-        val httpAsync = "https://nhentai.net/api/galleries/search?query=$query"
-            .httpGet()
-            .responseString { request, response, result ->
-                val (responseText, _) = result
-                if (responseText != null && response.statusCode == 200){
-                    jsonResponse = JSONObject(responseText)
-                } else {
-                    requestSuccess = false
-                }
-            }
-        httpAsync.join()
-        if (!requestSuccess){
-            throw RequestFailedException()
+
+        try{
+            val response = RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query")
+            jsonResponse = JSONObject(response)
+        } catch (e:RequestFailedException){
+            throw e
+        } catch (e:JSONException){
+            throw e
         }
         return jsonResponse
     }
