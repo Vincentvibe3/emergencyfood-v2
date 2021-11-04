@@ -3,11 +3,11 @@ package me.vincentvibe3.emergencyfood.internals
 import me.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-abstract class MessageCommand:GenericCommand() {
+abstract class UniversalCommand():SlashCommand() {
 
     abstract suspend fun handle(event: MessageReceivedEvent)
 
-    suspend fun handleSubCommands(event:MessageReceivedEvent){
+    suspend fun handleSubCommands(event: MessageReceivedEvent){
         val options = event.getOptions()
         if (options.isEmpty()){
             event.textChannel.sendMessage("Please pass a valid subcommand")
@@ -43,4 +43,5 @@ abstract class MessageCommand:GenericCommand() {
             ArrayList()
         }
     }
+
 }

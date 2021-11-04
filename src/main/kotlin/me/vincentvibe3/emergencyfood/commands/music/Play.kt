@@ -3,6 +3,7 @@ package me.vincentvibe3.emergencyfood.commands.music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
@@ -18,7 +19,7 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Play: SlashCommand() {
+object Play:SlashCommand() {
 
     override val name = "play"
 

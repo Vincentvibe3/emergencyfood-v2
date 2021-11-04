@@ -2,6 +2,7 @@ package me.vincentvibe3.emergencyfood.commands.sauce
 
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
+import me.vincentvibe3.emergencyfood.internals.SubCommandImpl
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
@@ -22,7 +23,7 @@ object Sauce: SlashCommand() {
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
-        subCommands[event.subcommandName]?.handle(event)
+        (subCommands[event.subcommandName] as SubCommandImpl).handle(event)
     }
 
 

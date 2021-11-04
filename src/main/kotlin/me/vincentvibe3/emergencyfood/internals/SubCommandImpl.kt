@@ -3,12 +3,10 @@ package me.vincentvibe3.emergencyfood.internals
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
-interface SubCommand {
+abstract class SubCommandImpl:GenericSubCommand() {
 
-    val name: String
+    abstract val subCommand:SubcommandData
 
-    val subCommand:SubcommandData
-
-    suspend fun handle(event: SlashCommandEvent)
+    abstract suspend fun handle(event: SlashCommandEvent)
 
 }
