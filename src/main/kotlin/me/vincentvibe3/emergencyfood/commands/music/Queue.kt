@@ -7,6 +7,7 @@ import me.vincentvibe3.emergencyfood.buttons.music.queue.QueuePrev
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueStart
 import me.vincentvibe3.emergencyfood.internals.ButtonManager
 import me.vincentvibe3.emergencyfood.internals.GenericCommand
+import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.Player
@@ -14,11 +15,12 @@ import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import java.util.concurrent.BlockingQueue
 
-object Queue: GenericCommand(), SlashCommand {
+object Queue: GenericCommand(), SlashCommand, MessageCommand {
 
     init {
         ButtonManager.registerLocal(QueueNext)
@@ -136,6 +138,27 @@ object Queue: GenericCommand(), SlashCommand {
             }
         } else {
             event.reply("An error occurred when fetching the player").queue()
+        }
+    }
+
+    override suspend fun handle(event: MessageReceivedEvent) {
+        val guildId = event.guild.id
+        val channel = event.textChannel
+        val player = guildId.let { PlayerManager.getPlayer(it) }
+        var embedBuilder = Templates.getMusicQueueEmbed()
+        val queue = player.getQueue()
+        if (queue.isEmpty()){
+            channel.sendMessage("The queue is empty").queue()
+        } else {
+            val lastPage = getPageCount(queue)
+            embedBuilder = embedBuilder.setFooter("Page 1/$lastPage")
+            getEmbed(player, 1, embedBuilder)
+            val buttons = getButtonsRow(1, lastPage)
+            val message = MessageBuilder()
+                .setEmbeds(embedBuilder.build())
+                .setActionRows(buttons)
+                .build()
+            channel.sendMessage(message).queue()
         }
     }
 }

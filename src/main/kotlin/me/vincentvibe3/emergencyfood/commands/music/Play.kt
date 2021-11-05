@@ -1,5 +1,6 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -70,8 +71,8 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
 
     //wait for playlist to be loaded,
     //allows the song added to queue count to be accurate
-    private fun waitForPlaylistLoad(player: Player, initSize:Int){
-        runBlocking {
+    private suspend fun waitForPlaylistLoad(player: Player, initSize:Int){
+        coroutineScope {
             val job = launch {
                 while (!player.isPlaying() || player.getQueue().size == initSize){
                     delay(100L)
@@ -187,9 +188,10 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
         val songOption = if (options.isEmpty()){
             null
         } else{
-            options[0]
+            var song = ""
+            options.forEach { song+=" $it" }
+            song
         }
-        println(songOption)
         if (channel != null) {
             player.setUpdateChannel(event.textChannel.id)
             connect(channel, player)
