@@ -1,13 +1,14 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
 import me.vincentvibe3.emergencyfood.core.Bot
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
-import me.vincentvibe3.emergencyfood.internals.SubCommandImpl
+import me.vincentvibe3.emergencyfood.internals.SubCommand
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 @Bot.Beta
-object Sauce: SlashCommand() {
+object Sauce: GenericCommand(), SlashCommand {
 
     override val name = "sauce"
 
@@ -23,7 +24,7 @@ object Sauce: SlashCommand() {
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
-        (subCommands[event.subcommandName] as SubCommandImpl).handle(event)
+        (subCommands[event.subcommandName] as SubCommand).handle(event)
     }
 
 

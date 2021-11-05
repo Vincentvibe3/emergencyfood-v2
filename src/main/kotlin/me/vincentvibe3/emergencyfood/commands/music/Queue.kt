@@ -6,6 +6,7 @@ import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueNext
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueuePrev
 import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueStart
 import me.vincentvibe3.emergencyfood.internals.ButtonManager
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.Player
@@ -17,7 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import java.util.concurrent.BlockingQueue
 
-object Queue: SlashCommand() {
+object Queue: GenericCommand(), SlashCommand {
 
     init {
         ButtonManager.registerLocal(QueueNext)

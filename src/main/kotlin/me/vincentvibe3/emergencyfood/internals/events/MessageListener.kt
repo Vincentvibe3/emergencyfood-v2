@@ -2,9 +2,9 @@ package me.vincentvibe3.emergencyfood.internals.events
 
 import kotlinx.coroutines.*
 import me.vincentvibe3.emergencyfood.core.Bot
+import me.vincentvibe3.emergencyfood.internals.CommandManager
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.MessageCommand
-import me.vincentvibe3.emergencyfood.internals.MessageCommandManager
 import me.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -39,6 +39,6 @@ object MessageListener: ListenerAdapter() {
     }
 
     private fun retrieveCommand(name:String): MessageCommand?{
-        return MessageCommandManager.getCommands()[name]
+        return CommandManager.getMessageCommands()[name]
     }
 }

@@ -1,9 +1,10 @@
 package me.vincentvibe3.emergencyfood.commands.admin
 
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
 import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-object Admin: MessageCommand() {
+object Admin: GenericCommand(), MessageCommand {
     override val name = "admin"
 
     init {

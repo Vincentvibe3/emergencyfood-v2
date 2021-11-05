@@ -10,10 +10,11 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 
-object SlashCommandManager {
+object CommandManager {
 
     //registered commands
-    private val commandsList = HashMap<String, SlashCommand>()
+    private val slashCommandsList = HashMap<String, SlashCommand>()
+    private val messageCommandsList = HashMap<String, MessageCommand>()
 
     init {
         try{
@@ -36,13 +37,23 @@ object SlashCommandManager {
     }
 
     //get hashmap with commands
-    fun getCommands():HashMap<String, SlashCommand> {
-        return commandsList
+    fun getSlashCommands():HashMap<String, SlashCommand> {
+        return slashCommandsList
+    }
+
+    fun getMessageCommands():HashMap<String, MessageCommand> {
+        return messageCommandsList
     }
 
     //add commands to the hashmap
-    private fun registerLocal(command: SlashCommand){
-        commandsList[command.name] = command
+    private fun registerLocal(command: GenericCommand){
+        if (command is MessageCommand){
+            messageCommandsList[command.name] = command
+        }
+        if (command is SlashCommand){
+            slashCommandsList[command.name] = command
+        }
+
     }
 
     /*this method is only currently used to accelerate testing and
@@ -52,8 +63,8 @@ object SlashCommandManager {
 
         //register guild commands if not on stable
         if (channel!=Channel.STABLE){
-            commandsList.forEach{
-                val command = it.value
+            slashCommandsList.forEach{
+                val command = it.value as GenericCommand
                 val commandData = command::class.memberProperties
                     .first{item -> item.name == "command"}
                     .getter.call(command) as CommandData
@@ -69,7 +80,7 @@ object SlashCommandManager {
         //remove old guild commands
         Bot.getClientInstance().guilds.forEach { guild ->
             guild.retrieveCommands().queue ({ commandList ->
-                commandList.filter { !commandsList.containsKey(it.name) }.forEach { command ->
+                commandList.filter { !slashCommandsList.containsKey(it.name) }.forEach { command ->
                     try {
                         command.delete().queue(
                             { Logging.logger.info("Deleted ${command.name} from ${guild.name}") },
@@ -89,8 +100,8 @@ object SlashCommandManager {
     fun registerRemote(channel: Channel){
         Logging.logger.info("Starting command registration")
         //upsert new commands
-        commandsList.forEach {
-            val command = it.value
+        slashCommandsList.forEach {
+            val command = it.value as GenericCommand
             val isStable =
                 command::class.annotations.none { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass }
             val commandData = command::class.memberProperties
@@ -116,9 +127,9 @@ object SlashCommandManager {
         Bot.getClientInstance().retrieveCommands().queue{ remoteCommandList ->
             //delete remote commands that are locally marked as beta
             if (channel==Channel.STABLE){
-                remoteCommandList.filter { commandsList.containsKey(it.name) }
+                remoteCommandList.filter { slashCommandsList.containsKey(it.name) }
                     .filter {
-                        commandsList.getValue(it.name)::class.annotations
+                        slashCommandsList.getValue(it.name)::class.annotations
                             .firstOrNull { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass } != null }
                     .forEach {
                         toDelete.add(it)
@@ -126,7 +137,7 @@ object SlashCommandManager {
             }
 
             //delete commands that exist remotely but not locally
-            remoteCommandList.filter { !commandsList.containsKey(it.name) }.forEach {
+            remoteCommandList.filter { !slashCommandsList.containsKey(it.name) }.forEach {
                 toDelete.add(it)
             }
 

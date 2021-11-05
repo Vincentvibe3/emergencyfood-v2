@@ -3,6 +3,7 @@ package me.vincentvibe3.emergencyfood.commands.music
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
 import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
@@ -15,11 +16,12 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Play:SlashCommand() {
+object Play: GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "play"
 
@@ -166,6 +168,39 @@ object Play:SlashCommand() {
             event.hook.editOriginal("An error occurred when fetching the player").queue()
         } else if (channel == null){
             event.hook.editOriginal("You must join a voice channel to play").queue()
+        }
+    }
+
+    override suspend fun handle(event: MessageReceivedEvent) {
+        val guildId = event.guild.id
+        val player = guildId.let { PlayerManager.getPlayer(it) }
+        val channel = event.member?.voiceState?.channel
+        val textChannel = event.textChannel
+        try {
+            event.member?.deafen(true)
+        } catch (e: InsufficientPermissionException){
+            Logging.logger.debug("Failed to self deafen")
+        } catch (e:IllegalStateException){
+            Logging.logger.debug("Failed to self deafen")
+        }
+        val options = event.getOptions()
+        val songOption = if (options.isEmpty()){
+            null
+        } else{
+            options[0]
+        }
+        println(songOption)
+        if (channel != null) {
+            player.setUpdateChannel(event.textChannel.id)
+            connect(channel, player)
+            val response = if (songOption == null) {
+                resume(player)
+            } else {
+                play(player, songOption)
+            }
+            textChannel.sendMessage(response).queue()
+        } else {
+            textChannel.sendMessage("You must join a voice channel to play").queue()
         }
     }
 }

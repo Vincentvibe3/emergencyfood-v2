@@ -1,12 +1,13 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Remove: SlashCommand() {
+object Remove: GenericCommand(), SlashCommand {
 
     override val name = "remove"
 

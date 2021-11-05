@@ -4,7 +4,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
-import me.vincentvibe3.emergencyfood.internals.SlashCommandManager
+import me.vincentvibe3.emergencyfood.internals.CommandManager
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
@@ -20,7 +20,7 @@ object SlashCommandListener: ListenerAdapter() {
 
     //find a register command from its name
     private fun retrieveCommand(name:String): SlashCommand?{
-        return SlashCommandManager.getCommands()[name]
+        return CommandManager.getSlashCommands()[name]
     }
 
 }

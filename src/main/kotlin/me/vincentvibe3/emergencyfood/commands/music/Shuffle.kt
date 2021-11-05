@@ -1,5 +1,6 @@
 package me.vincentvibe3.emergencyfood.commands.music
 
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
 import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
@@ -7,7 +8,7 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-object Shuffle: SlashCommand() {
+object Shuffle: GenericCommand(), SlashCommand {
 
     override val name = "shuffle"
 
