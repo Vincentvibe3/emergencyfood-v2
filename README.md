@@ -8,7 +8,7 @@ Main branch:
  
 Version 1.2.9:
 
-[![Release Status](https://dev.azure.com/vincentvibe4/emergencyfood/_apis/build/status/Vincentvibe3.emergencyfood-v2?branchName=refs%2Ftags%2Fv.1.2.3)](https://dev.azure.com/vincentvibe4/emergencyfood/_build/latest?definitionId=5&branchName=refs%2Ftags%2Fv.1.2.3)
+[![Release Status](https://dev.azure.com/vincentvibe4/emergencyfood/_apis/build/status/Vincentvibe3.emergencyfood-v2?branchName=refs%2Ftags%2Fv.1.2.9)](https://dev.azure.com/vincentvibe4/emergencyfood/_build/latest?definitionId=5&branchName=refs%2Ftags%2Fv.1.2.9)
 ## Dependencies
 - [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA)
 - [Lavaplayer](https://github.com/sedmelluq/lavaplayer)
