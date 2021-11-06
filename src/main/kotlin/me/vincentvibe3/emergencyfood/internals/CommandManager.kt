@@ -123,7 +123,17 @@ object CommandManager {
         }
 
         //old command deletion
-        val toDelete = ArrayList<Command>()
+        val toDelete = HashMap<String, ArrayList<Command>>()
+        toDelete["guild"] = ArrayList()
+        toDelete["global"] = ArrayList()
+        if (channel==Channel.STABLE){
+            Bot.getClientInstance().guilds.forEach{ guild ->
+                guild.retrieveCommands().queue{ guildCommands ->
+                    guildCommands.forEach{ toDelete["guild"]?.add(it) }
+                }
+            }
+        }
+
         Bot.getClientInstance().retrieveCommands().queue{ remoteCommandList ->
             //delete remote commands that are locally marked as beta
             if (channel==Channel.STABLE){
@@ -132,24 +142,26 @@ object CommandManager {
                         slashCommandsList.getValue(it.name)::class.annotations
                             .firstOrNull { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass } != null }
                     .forEach {
-                        toDelete.add(it)
+                        toDelete["global"]?.add(it)
                     }
             }
 
             //delete commands that exist remotely but not locally
             remoteCommandList.filter { !slashCommandsList.containsKey(it.name) }.forEach {
-                toDelete.add(it)
+                toDelete["global"]?.add(it)
             }
 
             //delete commands
-            toDelete.forEach{ command ->
-                try {
-                    command.delete().queue(
-                        { Logging.logger.info("Deleted ${command.name}") },
-                        { Logging.logger.error("Failed to delete ${command.name}") }
-                    )
-                } catch (e:IllegalAccessException){
-                    Logging.logger.error("Failed to delete ${command.name}")
+            toDelete.forEach { type ->
+                type.value.forEach { command ->
+                    try {
+                        command.delete().queue(
+                            { Logging.logger.info("Deleted ${command.name} ${type.key}") },
+                            { Logging.logger.error("Failed to delete ${command.name} ${type.key}") }
+                        )
+                    } catch (e: IllegalAccessException) {
+                        Logging.logger.error("Failed to delete ${command.name} ${type.key}")
+                    }
                 }
             }
         }
