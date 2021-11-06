@@ -6,8 +6,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-
-@Bot.Beta
 object Anime:GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "anime"
