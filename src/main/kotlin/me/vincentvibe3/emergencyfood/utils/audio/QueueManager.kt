@@ -91,10 +91,50 @@ class QueueManager : AudioEventAdapter() {
     }
 
     override fun onTrackException(player: AudioPlayer?, track: AudioTrack?, exception: FriendlyException?) {
-        super.onTrackException(player, track, exception)
+        val trackIndex = queue.indexOf(track)
+        //clear on end
+        if (trackIndex==queue.size-1&&!loop) {
+            queue.clear()
+            //prepare queue and loop
+        } else if (trackIndex==queue.size-1&&loop){
+            rebuildQueue()
+            player?.playTrack(queue.elementAt(0))
+            queue.remove(queue.elementAt(trackIndex))
+            //play next
+        } else {
+            player?.playTrack(queue.elementAt(trackIndex+1))
+            queue.remove(queue.elementAt(trackIndex))
+        }
+        val client = Bot.getClientInstance()
+        val channel = client.getTextChannelById(updatesChannel)
+        channel?.sendMessage("An error occurred during playback")?.queue(
+            {},
+            { Logging.logger.error("Failed to send playback failure message in ${channel.guild}")}
+        )
+
     }
 
     override fun onTrackStuck(player: AudioPlayer?, track: AudioTrack?, thresholdMs: Long) {
-        super.onTrackStuck(player, track, thresholdMs)
+        val trackIndex = queue.indexOf(track)
+        //clear on end
+        if (trackIndex==queue.size-1&&!loop) {
+            queue.clear()
+            //prepare queue and loop
+        } else if (trackIndex==queue.size-1&&loop){
+            rebuildQueue()
+            player?.playTrack(queue.elementAt(0))
+            queue.remove(queue.elementAt(trackIndex))
+            //play next
+        } else {
+            player?.playTrack(queue.elementAt(trackIndex+1))
+            queue.remove(queue.elementAt(trackIndex))
+        }
+        val client = Bot.getClientInstance()
+        val channel = client.getTextChannelById(updatesChannel)
+        channel?.sendMessage("An error occurred during playback")?.queue(
+            {},
+            { Logging.logger.error("Failed to send playback failure message in ${channel.guild}")}
+        )
+
     }
 }
