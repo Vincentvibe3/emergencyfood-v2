@@ -5,6 +5,7 @@ import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import me.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 import org.jsoup.Jsoup
 import org.json.JSONObject
+import java.io.FileWriter
 
 object SongSearch {
 
@@ -16,22 +17,30 @@ object SongSearch {
 
     private fun parseSearchResults(rawPage:String):String{
         val doc = Jsoup.parse(rawPage)
+        val fw = FileWriter("yt.json")
         doc.select("script").forEach { script ->
             if (script.data().startsWith("var ytInitialData = ")) {
                 val json = JSONObject(script.data().removePrefix("var ytInitialData = "))
-                val videoList = json.getJSONObject("contents")
+                fw.write(json.toString(4))
+                val content = json.getJSONObject("contents")
                     .getJSONObject("twoColumnSearchResultsRenderer")
                     .getJSONObject("primaryContents")
                     .getJSONObject("sectionListRenderer")
                     .getJSONArray("contents")
-                    .getJSONObject(0)
-                    .getJSONObject("itemSectionRenderer")
-                    .getJSONArray("contents")
 
-                for ((index, _) in videoList.withIndex()){
-                    if (videoList.getJSONObject(index).has("videoRenderer")){
-                        return videoList.getJSONObject(index).getJSONObject("videoRenderer").getString("videoId")
+                for ((contentIndex, _) in content.withIndex()){
+                    val element = content.getJSONObject(contentIndex).getJSONObject("itemSectionRenderer")
+                    print("getting renderer")
+                    if (element.has("contents")){
+                        print("checking contents")
+                        val videoList = element.getJSONArray("contents")
+                        for ((index, _) in videoList.withIndex()){
+                            if (videoList.getJSONObject(index).has("videoRenderer")){
+                                return videoList.getJSONObject(index).getJSONObject("videoRenderer").getString("videoId")
+                            }
+                        }
                     }
+
                 }
             }
         }
