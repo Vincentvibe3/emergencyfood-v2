@@ -25,4 +25,8 @@ object Templates {
         return EmbedBuilder()
             .setColor(sauceEmbedColor)
     }
+
+    fun setRateLimits(){
+        RequestHandler.rateLimits["api.github.com"] = 2L
+    }
 }

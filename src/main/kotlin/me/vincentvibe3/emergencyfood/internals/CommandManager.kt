@@ -1,5 +1,6 @@
 package me.vincentvibe3.emergencyfood.internals
 
+import me.vincentvibe3.emergencyfood.commands.anime.Anime
 import me.vincentvibe3.emergencyfood.commands.music.*
 import me.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import me.vincentvibe3.emergencyfood.core.Bot
@@ -30,6 +31,7 @@ object CommandManager {
             registerLocal(NowPlaying)
             registerLocal(Remove)
             registerLocal(Shuffle)
+            registerLocal(Anime)
         } catch (e:IllegalArgumentException) {
             Logging.logger.error("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
