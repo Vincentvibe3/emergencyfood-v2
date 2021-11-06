@@ -1,5 +1,8 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
+import me.vincentvibe3.emergencyfood.internals.GenericCommand
+import me.vincentvibe3.emergencyfood.internals.GenericSubCommand
+import me.vincentvibe3.emergencyfood.internals.SlashCommand
 import me.vincentvibe3.emergencyfood.internals.SubCommand
 import me.vincentvibe3.emergencyfood.utils.RequestHandler
 import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
@@ -8,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import org.json.JSONException
 import org.json.JSONObject
 
-object Random: SubCommand {
+object Random: GenericSubCommand(), SubCommand{
     override val name = "random"
 
     override val subCommand = SubcommandData(name, "Get a random sauce")

@@ -1,6 +1,5 @@
 package me.vincentvibe3.emergencyfood.utils
 
-import com.github.kittinunf.fuel.httpGet
 import io.ktor.client.*
 import io.ktor.client.features.*
 import kotlinx.coroutines.*

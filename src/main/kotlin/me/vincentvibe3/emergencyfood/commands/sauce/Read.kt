@@ -1,11 +1,12 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
+import me.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import me.vincentvibe3.emergencyfood.internals.SubCommand
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
-object Read: SubCommand {
+object Read: GenericSubCommand(), SubCommand {
     override val name = "read"
 
     override val subCommand = SubcommandData("read", "Read a sauce")

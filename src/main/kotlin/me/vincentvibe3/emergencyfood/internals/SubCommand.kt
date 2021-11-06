@@ -5,8 +5,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 interface SubCommand {
 
-    val name: String
-
     val subCommand:SubcommandData
 
     suspend fun handle(event: SlashCommandEvent)

@@ -1,24 +1,16 @@
 package me.vincentvibe3.emergencyfood.internals
 
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-abstract class SlashCommand {
-
-    //name of the command
-    abstract val name: String
+interface SlashCommand{
 
     //command to create
-    abstract val command: CommandData
-
-    val subCommands = HashMap<String, SubCommand>()
-
-    fun registerSubCommands(subCommand: SubCommand) {
-        this.subCommands[subCommand.name] = subCommand
-    }
+    val command: CommandData
 
     //handle events
-    abstract suspend fun handle(event: SlashCommandEvent)
+    suspend fun handle(event: SlashCommandEvent)
 
 
 }
