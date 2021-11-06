@@ -6,7 +6,7 @@ Main branch:
 
 ![Build Status Github Actions](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Build.yaml/badge.svg?branch=main) 
  
-Version 1.2.3:
+Version 1.2.9:
 
 [![Release Status](https://dev.azure.com/vincentvibe4/emergencyfood/_apis/build/status/Vincentvibe3.emergencyfood-v2?branchName=refs%2Ftags%2Fv.1.2.3)](https://dev.azure.com/vincentvibe4/emergencyfood/_build/latest?definitionId=5&branchName=refs%2Ftags%2Fv.1.2.3)
 ## Dependencies
