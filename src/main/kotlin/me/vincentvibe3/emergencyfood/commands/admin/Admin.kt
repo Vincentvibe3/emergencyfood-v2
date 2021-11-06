@@ -13,7 +13,7 @@ object Admin: GenericCommand(), MessageCommand {
 
     override suspend fun handle(event: MessageReceivedEvent) {
         if (event.author.id==System.getenv("BOT_OWNER")){
-            handleSubCommands(event)
+            handleMessageSubCommands(event)
         }
     }
 }

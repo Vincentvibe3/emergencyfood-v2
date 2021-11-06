@@ -2,6 +2,7 @@ package me.vincentvibe3.emergencyfood.internals
 
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.utils.Templates
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 abstract class GenericCommand {
@@ -14,16 +15,24 @@ abstract class GenericCommand {
         this.subCommands[subCommand.name] = subCommand
     }
 
-    suspend fun handleSubCommands(event: MessageReceivedEvent) {
+    suspend fun handleSubCommands(event:SlashCommandEvent){
+        val subCommand = subCommands[event.subcommandName]
+        if (subCommand!=null){
+            (subCommand as SubCommand).handle(event)
+        }
+
+    }
+
+    suspend fun handleMessageSubCommands(event: MessageReceivedEvent) {
         val options = event.getOptions()
         if (options.isEmpty()) {
-            event.textChannel.sendMessage("Please pass a valid subcommand")
+            event.textChannel.sendMessage("Please pass a valid subcommand").queue()
         } else {
             val subcommand = options[0]
             if (subCommands.containsKey(subcommand)) {
                 (subCommands[subcommand] as MessageSubCommand).handle(event)
             } else {
-                event.textChannel.sendMessage("Invalid subcommand supplied")
+                event.textChannel.sendMessage("Invalid subcommand supplied").queue()
             }
         }
 

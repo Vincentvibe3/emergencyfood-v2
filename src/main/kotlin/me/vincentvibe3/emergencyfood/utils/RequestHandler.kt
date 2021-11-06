@@ -17,7 +17,7 @@ import java.net.ConnectException
 object RequestHandler {
 
     private val queue = ConcurrentHashMap<String, ConcurrentHashMap<Long, Long>>()
-    private val rateLimits = HashMap<String, Long>()
+    val rateLimits = HashMap<String, Long>()
     private val mutex = Mutex()
 
     suspend fun get(originalUrl: String):String{
