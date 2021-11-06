@@ -17,11 +17,9 @@ object SongSearch {
 
     private fun parseSearchResults(rawPage:String):String{
         val doc = Jsoup.parse(rawPage)
-        val fw = FileWriter("yt.json")
         doc.select("script").forEach { script ->
             if (script.data().startsWith("var ytInitialData = ")) {
                 val json = JSONObject(script.data().removePrefix("var ytInitialData = "))
-                fw.write(json.toString(4))
                 val content = json.getJSONObject("contents")
                     .getJSONObject("twoColumnSearchResultsRenderer")
                     .getJSONObject("primaryContents")
@@ -30,9 +28,7 @@ object SongSearch {
 
                 for ((contentIndex, _) in content.withIndex()){
                     val element = content.getJSONObject(contentIndex).getJSONObject("itemSectionRenderer")
-                    print("getting renderer")
                     if (element.has("contents")){
-                        print("checking contents")
                         val videoList = element.getJSONArray("contents")
                         for ((index, _) in videoList.withIndex()){
                             if (videoList.getJSONObject(index).has("videoRenderer")){
