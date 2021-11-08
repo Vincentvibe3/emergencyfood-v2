@@ -13,6 +13,7 @@ import kotlin.properties.Delegates
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import java.net.ConnectException
+import java.net.URISyntaxException
 
 object RequestHandler {
 
@@ -24,7 +25,11 @@ object RequestHandler {
         val host = if (rateLimits.containsKey(originalUrl)){
             originalUrl
         } else {
-            URI(originalUrl).host
+            try {
+                URI(originalUrl).host
+            } catch (e:URISyntaxException){
+               throw RequestFailedException()
+            }
         }
         var queueTime by Delegates.notNull<Long>()
         //sync queue position fetching

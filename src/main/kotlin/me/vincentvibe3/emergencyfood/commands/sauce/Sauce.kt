@@ -24,7 +24,11 @@ object Sauce: GenericCommand(), SlashCommand {
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
-        (subCommands[event.subcommandName] as SubCommand).handle(event)
+        if (event.textChannel.isNSFW){
+            (subCommands[event.subcommandName] as SubCommand).handle(event)
+        } else {
+            event.reply("You must use a NSFW channel for this").queue()
+        }
     }
 
 
