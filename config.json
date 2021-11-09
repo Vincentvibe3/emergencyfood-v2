@@ -1,0 +1,15 @@
+{
+  "Stable": {
+    "token": ""
+  },
+  "Beta": {
+    "token": ""
+  },
+  "global": {
+    "owner": "",
+    "status": "",
+    "prefix": "",
+    "remote": ""
+  },
+  "Channel": ""
+}

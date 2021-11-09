@@ -19,6 +19,10 @@ object Bot {
     private lateinit var client:JDA
     private lateinit var channel: Channel
 
+    fun loadConfig(){
+
+    }
+
     //set up the bot with token
     fun setup(channelValue: Channel){
         channel = channelValue
