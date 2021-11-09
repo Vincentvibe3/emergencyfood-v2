@@ -7,7 +7,6 @@ import me.vincentvibe3.emergencyfood.internals.SubCommand
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-@Bot.Beta
 object Sauce: GenericCommand(), SlashCommand {
 
     override val name = "sauce"
@@ -24,7 +23,11 @@ object Sauce: GenericCommand(), SlashCommand {
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
-        (subCommands[event.subcommandName] as SubCommand).handle(event)
+        if (event.textChannel.isNSFW){
+            (subCommands[event.subcommandName] as SubCommand).handle(event)
+        } else {
+            event.reply("You must use a NSFW channel for this").queue()
+        }
     }
 
 
