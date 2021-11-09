@@ -6,6 +6,7 @@ import me.vincentvibe3.emergencyfood.buttons.sauce.read.SaucePrev
 import me.vincentvibe3.emergencyfood.buttons.sauce.read.SauceStart
 import me.vincentvibe3.emergencyfood.internals.ButtonManager
 import me.vincentvibe3.emergencyfood.internals.GenericSubCommand
+import me.vincentvibe3.emergencyfood.internals.MessageSubCommand
 import me.vincentvibe3.emergencyfood.internals.SubCommand
 import me.vincentvibe3.emergencyfood.utils.RequestHandler
 import me.vincentvibe3.emergencyfood.utils.Templates
@@ -13,13 +14,14 @@ import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import org.json.JSONException
 import org.json.JSONObject
 
-object Read: GenericSubCommand(), SubCommand {
+object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
     override val name = "read"
 
     override val subCommand = SubcommandData("read", "Read a sauce")
@@ -113,6 +115,28 @@ object Read: GenericSubCommand(), SubCommand {
             .setEmbeds(embed)
             .setActionRows(getButtonsRow(currentPage, pageCount))
             .build()
+    }
+
+    override suspend fun handle(event: MessageReceivedEvent) {
+        val textChannel = event.textChannel
+        val options = event.getOptions()
+
+        val id = options.getOrNull(0)
+        val page = if (options.size>=2){
+            options[1].toLongOrNull()
+        } else {
+            1L
+        }
+        if (id != null&&page!=null){
+            val message = getMessage(id, page)
+            textChannel.sendMessage(message).queue()
+        } else if (id == null){
+            textChannel.sendMessage("A sauce is required").queue()
+        } else if (page == null) {
+            textChannel.sendMessage("The page number must be a number").queue()
+        } else {
+            textChannel.sendMessage("An unknown error has occurred").queue()
+        }
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
