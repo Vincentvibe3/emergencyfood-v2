@@ -121,9 +121,9 @@ object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
         val textChannel = event.textChannel
         val options = event.getOptions()
 
-        val id = options.getOrNull(0)
-        val page = if (options.size>=2){
-            options[1].toLongOrNull()
+        val id = options.getOrNull(1)
+        val page = if (options.size>=3){
+            options[2].toLongOrNull()
         } else {
             1L
         }

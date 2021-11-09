@@ -1,10 +1,12 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
 import me.vincentvibe3.emergencyfood.internals.GenericSubCommand
+import me.vincentvibe3.emergencyfood.internals.MessageSubCommand
 import me.vincentvibe3.emergencyfood.internals.SubCommand
 import me.vincentvibe3.emergencyfood.utils.RequestHandler
 import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import org.json.JSONException
@@ -12,7 +14,7 @@ import org.json.JSONObject
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-object Random: GenericSubCommand(), SubCommand{
+object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
     override val name = "random"
 
     override val subCommand = SubcommandData(name, "Get a random sauce")
@@ -84,6 +86,39 @@ object Random: GenericSubCommand(), SubCommand{
             "Could not find a matching sauce. Try Again"
         }
 
+    }
+
+    override suspend fun handle(event: MessageReceivedEvent) {
+        val textChannel = event.textChannel
+        val options = event.getOptions()
+        var tags:String? = ""
+        var strict = false
+        if (options.size==1){
+            tags = null
+        }else if (options.last().lowercase().toBooleanStrictOrNull() == null){
+            options.subList(1, options.size-1).forEach { tags+="$it " }
+        } else {
+            options.subList(1, options.size-2).forEach { tags+="$it " }
+            strict = options.last().lowercase().toBooleanStrict()
+        }
+        var query = tags?.trim()?.replace(" ", "+")
+        if (query==null){
+            query = "english"
+        }
+        try{
+            val pages = search(query)
+            val page = getPage(pages, query)
+            if (page!=null){
+                val url = getEntry(page, strict, query)
+                textChannel.sendMessage(url).queue()
+            } else {
+                textChannel.sendMessage("No result was found").queue()
+            }
+        } catch (e:JSONException){
+            textChannel.sendMessage("An unknown error occurred").queue()
+        } catch (e:RequestFailedException){
+            textChannel.sendMessage("An unknown error occurred").queue()
+        }
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
