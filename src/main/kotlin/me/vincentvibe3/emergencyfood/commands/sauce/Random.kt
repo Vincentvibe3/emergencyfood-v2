@@ -93,12 +93,12 @@ object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
         val options = event.getOptions()
         var tags:String? = ""
         var strict = false
-        if (options.size==1){
+        if (options.isEmpty()){
             tags = null
-        }else if (options.last().lowercase().toBooleanStrictOrNull() == null){
-            options.subList(1, options.size-1).forEach { tags+="$it " }
+        }else if (options.last().lowercase().toBooleanStrictOrNull() == null||options.size==1){
+            options.subList(0, options.size).forEach { tags+="$it " }
         } else {
-            options.subList(1, options.size-2).forEach { tags+="$it " }
+            options.subList(0, options.size-1).forEach { tags+="$it " }
             strict = options.last().lowercase().toBooleanStrict()
         }
         var query = tags?.trim()?.replace(" ", "+")

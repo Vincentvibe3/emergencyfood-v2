@@ -58,13 +58,4 @@ abstract class GenericCommand {
         }
     }
 
-    fun MessageReceivedEvent.getSubCommandOptions(): List<String> {
-        val options = this.getOptions()
-        return if (options.size > 1) {
-            options.subList(2, options.size - 1)
-        } else {
-            ArrayList()
-        }
-    }
-
 }

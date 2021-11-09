@@ -10,15 +10,19 @@ abstract class GenericSubCommand {
 
     fun MessageReceivedEvent.getOptions(): List<String> {
         val client = Bot.getClientInstance()
-        val selfId = client.selfUser.id
-        val displayName = client.guilds.first { it.id == this.guild.id }.selfMember.effectiveName
-        val message = this.message.contentDisplay
-            .replace("@$displayName", "")
-            .replace(Templates.prefix, "")
-            .trim()
+        val memberName = client.guilds.first { it.id == this.guild.id }.selfMember.effectiveName
+        val message = if (this.message.contentDisplay.startsWith(Templates.prefix)) {
+            this.message.contentDisplay
+                .replaceFirst(Templates.prefix, "")
+                .trim()
+        } else {
+            this.message.contentDisplay
+                .replaceFirst("@$memberName", "")
+                .trim()
+        }
         val splitMessage = message.split(" ")
-        return if (splitMessage.size > 1){
-            splitMessage.subList(1, splitMessage.size-1)
+        return if (splitMessage.size > 2) {
+            splitMessage.subList(2, splitMessage.size)
         } else {
             ArrayList()
         }
