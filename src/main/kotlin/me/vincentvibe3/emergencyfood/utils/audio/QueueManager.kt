@@ -6,9 +6,8 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.utils.ConfigData
 import me.vincentvibe3.emergencyfood.utils.Logging
-import net.dv8tion.jda.api.EmbedBuilder
+import me.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
@@ -74,10 +73,9 @@ class QueueManager : AudioEventAdapter() {
         val channel = client.getTextChannelById(updatesChannel)
         //send now playing message
         if (channel != null && track != null) {
-            val embed = EmbedBuilder()
+            val embed = Templates.getMusicEmbed()
                 .setTitle("Now Playing")
                 .setDescription("[${track.info.title}](${track.info.uri})")
-                .setColor(ConfigData.musicEmbedColor)
                 .build()
             val message = MessageBuilder()
                 .setEmbeds(embed)
