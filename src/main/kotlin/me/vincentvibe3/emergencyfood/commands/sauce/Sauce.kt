@@ -7,7 +7,6 @@ import me.vincentvibe3.emergencyfood.internals.SubCommand
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-@Bot.Beta
 object Sauce: GenericCommand(), SlashCommand {
 
     override val name = "sauce"
