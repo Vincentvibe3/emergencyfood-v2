@@ -1,9 +1,5 @@
 package me.vincentvibe3.emergencyfood.commands.sauce
 
-import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueEnd
-import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueNext
-import me.vincentvibe3.emergencyfood.buttons.music.queue.QueuePrev
-import me.vincentvibe3.emergencyfood.buttons.music.queue.QueueStart
 import me.vincentvibe3.emergencyfood.buttons.sauce.read.SauceEnd
 import me.vincentvibe3.emergencyfood.buttons.sauce.read.SauceNext
 import me.vincentvibe3.emergencyfood.buttons.sauce.read.SaucePrev
@@ -14,8 +10,8 @@ import me.vincentvibe3.emergencyfood.internals.SubCommand
 import me.vincentvibe3.emergencyfood.utils.RequestHandler
 import me.vincentvibe3.emergencyfood.utils.Templates
 import me.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -28,6 +24,7 @@ object Read: GenericSubCommand(), SubCommand {
 
     override val subCommand = SubcommandData("read", "Read a sauce")
         .addOption(OptionType.INTEGER,"numbers", "the number to the sauce", true)
+        .addOption(OptionType.INTEGER, "start", "the page to start on", false)
 
     init {
         ButtonManager.registerLocal(SauceStart)
@@ -36,7 +33,7 @@ object Read: GenericSubCommand(), SubCommand {
         ButtonManager.registerLocal(SauceEnd)
     }
 
-    suspend fun getInfo(id:String?): JSONObject {
+    private suspend fun getInfo(id:String?): JSONObject {
         lateinit var jsonResponse: JSONObject
         try{
             val response = RequestHandler.get("https://nhentai.net/api/gallery/$id")
@@ -59,23 +56,24 @@ object Read: GenericSubCommand(), SubCommand {
         return ext
     }
 
-    fun getImage(info:JSONObject, index:Int):String{
+    private fun getImage(info:JSONObject, index: Long):String{
+        //index starts at 1
         val pageInfo = info.getJSONObject("images").getJSONArray("pages")
-        val page = pageInfo.getJSONObject(index)
+        val page = pageInfo.getJSONObject((index-1).toInt())
         val format = getImageFormat(page)
         val id = info.getString("media_id")
-        return "https://i.nhentai.net/galleries/$id/${index+1}.$format"
+        return "https://i.nhentai.net/galleries/$id/${index}.$format"
     }
 
-    fun getButtonsRow(currentPage:Int, lastPage:Int): ActionRow {
-        return if (currentPage==lastPage&&lastPage!=1){
+    private fun getButtonsRow(currentPage:Long, lastPage:Long): ActionRow {
+        return if (currentPage==lastPage&&lastPage!=1L){
             ActionRow.of(
                 SauceStart.getEnabled(),
                 SaucePrev.getEnabled(),
                 SauceNext.getDisabled(),
                 SauceEnd.getDisabled()
             )
-        } else if (currentPage==1){
+        } else if (currentPage==1L){
             ActionRow.of(
                 SauceStart.getDisabled(),
                 SaucePrev.getDisabled(),
@@ -93,35 +91,40 @@ object Read: GenericSubCommand(), SubCommand {
 
     }
 
+    suspend fun getMessage(id:String, currentPage: Long):Message {
+        //currentPage is the index of the page
+        //Note: starts at 1
+        lateinit var sauceInfo: JSONObject
+        try {
+            sauceInfo = getInfo(id)
+        } catch (e: JSONException) {
+            return MessageBuilder().setContent("An unknown error occurred").build()
+        } catch (e: RequestFailedException) {
+            return MessageBuilder().setContent("An unknown error occurred").build()
+        }
+        val pageCount = sauceInfo.getLong("num_pages")
+        val image = getImage(sauceInfo, currentPage)
+        val embed = Templates.getSauceEmbed()
+            .setImage(image)
+            .setFooter("Page $currentPage of $pageCount")
+            .setDescription("Now Reading: [$id](https://nhentai.net/g/$id)")
+            .build()
+        return MessageBuilder()
+            .setEmbeds(embed)
+            .setActionRows(getButtonsRow(currentPage, pageCount))
+            .build()
+    }
+
     override suspend fun handle(event: SlashCommandEvent) {
         event.deferReply().queue()
         val id = event.getOption("numbers")?.asString
+        var page = event.getOption("start")?.asLong
         if (id != null){
-            lateinit var sauceInfo:JSONObject
-            var infoOk = false
-            try {
-                sauceInfo = getInfo(id)
-                infoOk = true
-            } catch (e:JSONException){
-                event.hook.editOriginal("An unknown error occurred").queue()
-            } catch (e:RequestFailedException){
-                event.hook.editOriginal("An unknown error occurred").queue()
+            if (page==null){
+                page = 1L
             }
-            if (infoOk){
-                val pageCount = sauceInfo.getInt("num_pages")
-                val image = getImage(sauceInfo, 0)
-                val embed = Templates.getSauceEmbed()
-                    .setImage(image)
-                    .setFooter("Page 1 of $pageCount")
-                    .setDescription("[$id](https://nhentai.net/g/$id)")
-                    .build()
-                val message = MessageBuilder()
-                    .setEmbeds(embed)
-                    .setActionRows(getButtonsRow(1, pageCount))
-                    .build()
-                event.hook.editOriginal(message).queue()
-            }
-
+            val message = getMessage(id, page)
+            event.hook.editOriginal(message).queue()
         }
     }
 }

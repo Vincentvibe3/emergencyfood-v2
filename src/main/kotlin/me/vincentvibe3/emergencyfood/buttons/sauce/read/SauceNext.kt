@@ -17,34 +17,14 @@ object SauceNext:InteractionButton() {
     override val button = Button.primary(name, "Next")
 
     override suspend fun handle(event: ButtonClickEvent) {
-        val originalEmbed = event.message.embeds.first()
-        val description = originalEmbed.description
+        val originalEmbed = event.message.embeds.firstOrNull()
+        val description = originalEmbed?.description
         val id = description?.substringAfter("[")?.substringBefore("]")
-        val footer = originalEmbed.footer?.text
+        val footer = originalEmbed?.footer?.text
         if (footer != null) {
-            val nextPage = footer.split(" ")[1].toInt() + 1
-            lateinit var sauceInfo: JSONObject
-            var infoOk = false
-            try {
-                sauceInfo = Read.getInfo(id)
-                infoOk = true
-            } catch (e: JSONException) {
-                event.message.editMessage("An unknown error occurred").override(true).queue()
-            } catch (e: RequestFailedException) {
-                event.message.editMessage("An unknown error occurred").override(true).queue()
-            }
-            if (infoOk) {
-                val pageCount = sauceInfo.getInt("num_pages")
-                val image = Read.getImage(sauceInfo, nextPage)
-                val embed = Templates.getSauceEmbed()
-                    .setImage(image)
-                    .setFooter("Page $nextPage of $pageCount")
-                    .setDescription("[$id](https://nhentai.net/g/$id)")
-                    .build()
-                val message = MessageBuilder()
-                    .setEmbeds(embed)
-                    .setActionRows(Read.getButtonsRow(nextPage, pageCount))
-                    .build()
+            val nextPage = footer.split(" ")[1].toLong() + 1
+            if (id != null) {
+                val message = Read.getMessage(id, nextPage)
                 event.message.editMessage(message).override(true).queue()
             }
         } else {
