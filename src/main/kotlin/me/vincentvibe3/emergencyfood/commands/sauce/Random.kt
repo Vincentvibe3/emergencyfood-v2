@@ -17,6 +17,7 @@ object Random: GenericSubCommand(), SubCommand{
 
     override val subCommand = SubcommandData(name, "Get a random sauce")
         .addOption(OptionType.STRING, "query", "Search query for a random sauce", false)
+        .addOption(OptionType.BOOLEAN, "strict", "uses query as words to match in tags returning only if all are found", false)
 
     private suspend fun search(query:String):JSONObject{
         lateinit var jsonResponse:JSONObject
@@ -39,8 +40,8 @@ object Random: GenericSubCommand(), SubCommand{
         val pageToGet = Random.nextInt(1..totalPages)
         lateinit var jsonResponse:JSONObject
         try{
-            val response = RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query&page=$pageToGet")
-            jsonResponse = JSONObject(response)
+            val pageResponse = RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query&page=$pageToGet")
+            jsonResponse = JSONObject(pageResponse)
         } catch (e:RequestFailedException){
             throw e
         } catch (e:JSONException){
@@ -49,26 +50,57 @@ object Random: GenericSubCommand(), SubCommand{
         return jsonResponse
     }
 
-    private suspend fun getEntry(response: JSONObject):String{
+    private fun getEntry(response: JSONObject, strict:Boolean, query: String):String{
+        var found = false
+        val searchTags = query.split("+")
+        lateinit var entry:JSONObject
         val entries = response.getJSONArray("result")
         val max = entries.length()-1
-        val entryIndex = Random.nextInt(0..max)
-        val entry = entries.getJSONObject(entryIndex)
-        val id = entry.getInt("id")
-        return "https://nhentai.net/g/$id"
+        var attempts = 0
+        while (!found&&attempts<=max){
+            val entryIndex = Random.nextInt(0..max)
+            entry = entries.getJSONObject(entryIndex)
+            val tags = entry.getJSONArray("tags")
+            val tagNames = ArrayList<String>()
+            tags.forEach {
+                if (it is JSONObject) {
+                    tagNames.add(it.getString("name"))
+                }
+            }
+            found = if (strict){
+                searchTags.size == searchTags
+                    .filter { tagName -> tagNames.any { it == tagName } }
+                    .size
+            } else {
+                true
+            }
+            attempts++
+            println(attempts)
+        }
+        return if (found){
+            val id = entry.getInt("id")
+            "https://nhentai.net/g/$id"
+        } else {
+            "Could not find a matching sauce. Try Again"
+        }
+
     }
 
     override suspend fun handle(event: SlashCommandEvent) {
         event.deferReply().queue()
         var query = event.getOption("query")?.asString?.replace(" ", "+")
+        var strict = event.getOption("strict")?.asBoolean
         if (query==null){
             query = "english"
+        }
+        if (strict == null){
+            strict = false
         }
         try{
             val pages = search(query)
             val page = getPage(pages, query)
             if (page!=null){
-                val url = getEntry(page)
+                val url = getEntry(page, strict, query)
                 event.hook.editOriginal(url).queue()
             } else {
                 event.hook.editOriginal("No result was found").queue()
