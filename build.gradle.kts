@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:4.3.0_330")
+    implementation("net.dv8tion:JDA:4.3.0_346")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20210307")
     implementation ("org.jsoup:jsoup:1.14.3")
