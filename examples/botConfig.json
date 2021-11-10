@@ -5,11 +5,14 @@
   "Beta": {
     "token": ""
   },
+  "Local": {
+    "token": ""
+  },
   "global": {
     "owner": "",
     "status": "",
     "prefix": "",
     "remote": ""
   },
-  "Channel": ""
+  "Channel": "beta"
 }
