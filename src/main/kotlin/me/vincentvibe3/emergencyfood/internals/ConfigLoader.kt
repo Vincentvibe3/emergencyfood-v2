@@ -25,6 +25,7 @@ object ConfigLoader {
     private const val JSON = "botConfig.json"
     lateinit var channel: Channel
     lateinit var token:String
+    val required = arrayOf("channel", "token")
 
     /** preferred methods of config
         1. json
@@ -65,7 +66,6 @@ object ConfigLoader {
     private fun applySetting(tempConfig: HashMap<String, Any> ){
         this::class.declaredMemberProperties.forEach {
             if (it.isLateinit && it.javaField?.get(this) == null){
-                println(it.name)
                 it.takeIf { property -> property is KMutableProperty<*> }
                 .let { property -> property as KMutableProperty<*> }
                     .setter.call(this, tempConfig[it.name])
@@ -96,11 +96,13 @@ object ConfigLoader {
                 val value = scope.second.getString(key)
                 if (value!=""){
                     updateSetting(key, value, tempConfig)
-                }else{
+                }else if (required.contains(key)&&scope.first!="Global"){
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
             } catch (e:JSONException){
-                Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
+                if (required.contains(key)&&scope.first!="Global"){
+                    Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
+                }
             }
         }
     }
