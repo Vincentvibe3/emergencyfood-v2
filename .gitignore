@@ -1,4 +1,6 @@
 .idea/
 build/
 .gradle/
+/botConfig.json
+/config.bot.kts
 emergencyfood.service

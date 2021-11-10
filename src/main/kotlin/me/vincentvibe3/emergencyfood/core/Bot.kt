@@ -3,6 +3,7 @@ package me.vincentvibe3.emergencyfood.core
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.internals.CommandManager
+import me.vincentvibe3.emergencyfood.internals.Config.Channel
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import me.vincentvibe3.emergencyfood.internals.events.*
 import net.dv8tion.jda.api.JDA
@@ -19,10 +20,6 @@ object Bot {
     private lateinit var client:JDA
     private lateinit var channel: Channel
 
-    fun loadConfig(){
-
-    }
-
     //set up the bot with token
     fun setup(channelValue: Channel){
         channel = channelValue
@@ -31,7 +28,7 @@ object Bot {
                 token = System.getenv("TOKEN")
             }
             Channel.BETA -> {
-                token = System.getenv("TOKENBETA")
+                token = System.getenv("TOKEN_BETA")
             }
             Channel.LOCAL -> {
                 token = System.getenv("TOKEN")
