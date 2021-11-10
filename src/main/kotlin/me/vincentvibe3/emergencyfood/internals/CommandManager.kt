@@ -4,7 +4,7 @@ import me.vincentvibe3.emergencyfood.commands.anime.Anime
 import me.vincentvibe3.emergencyfood.commands.music.*
 import me.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.internals.Config.Channel
+import me.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
 import me.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData

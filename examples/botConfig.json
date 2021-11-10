@@ -8,11 +8,10 @@
   "Local": {
     "token": ""
   },
-  "global": {
+  "Global": {
     "owner": "",
     "status": "",
-    "prefix": "",
-    "remote": ""
+    "prefix": ""
   },
   "Channel": "beta"
 }

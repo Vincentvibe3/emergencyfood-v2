@@ -3,12 +3,16 @@ package me.vincentvibe3.emergencyfood.core
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.internals.CommandManager
-import me.vincentvibe3.emergencyfood.internals.Config.Channel
+import me.vincentvibe3.emergencyfood.internals.ConfigLoader
+import me.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
 import me.vincentvibe3.emergencyfood.internals.events.*
+import me.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import javax.security.auth.login.LoginException
+import kotlin.system.exitProcess
 
 object Bot {
 
@@ -16,25 +20,7 @@ object Bot {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Beta
 
-    private lateinit var token:String
     private lateinit var client:JDA
-    private lateinit var channel: Channel
-
-    //set up the bot with token
-    fun setup(channelValue: Channel){
-        channel = channelValue
-        when (channel) {
-            Channel.STABLE -> {
-                token = System.getenv("TOKEN")
-            }
-            Channel.BETA -> {
-                token = System.getenv("TOKEN_BETA")
-            }
-            Channel.LOCAL -> {
-                token = System.getenv("TOKEN")
-            }
-        }
-    }
 
     //get the running bot client
     fun getClientInstance():JDA{
@@ -44,13 +30,18 @@ object Bot {
     //start the bot
     fun start(){
         val activity = Activity.playing("Now using Slash Commands")
-        client = JDABuilder.createDefault(token)
-            .setActivity(activity)
-            .addEventListeners(ReadyListener)
-            .build()
+        try {
+            client = JDABuilder.createDefault(ConfigLoader.token)
+                .setActivity(activity)
+                .addEventListeners(ReadyListener)
+                .build()
+        } catch (e:LoginException){
+            Logging.logger.error("Invalid Token was passed")
+            exitProcess(1)
+        }
         client.awaitReady()
-        CommandManager.registerRemote(channel)
-        CommandManager.registerGuildRemote(channel)
+        CommandManager.registerRemote(ConfigLoader.channel)
+        CommandManager.registerGuildRemote(ConfigLoader.channel)
         runBlocking {
             launch {
                 //run background check loops here

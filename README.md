@@ -4,8 +4,6 @@ A rewrite of the [emergencyfood]() bot in Kotlin
 
 ## Table of Contents
 
-***
-
 * [Status]()
 * [Dependencies]()
 * [Configuration]()
@@ -15,8 +13,6 @@ A rewrite of the [emergencyfood]() bot in Kotlin
 * [Self Hosting]()
 
 ## Status
-
-***
 
 *Main branch:* 
 
@@ -28,8 +24,6 @@ A rewrite of the [emergencyfood]() bot in Kotlin
 
 ## Dependencies
 
-***
-
 This project is made possible by:
 
 - [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA)
@@ -39,8 +33,6 @@ This project is made possible by:
 - [JSON](https://github.com/stleary/JSON-java)
 
 ## Configuration
-
-***
 
 Configuration is possible through 3 methods
 
@@ -52,8 +44,6 @@ The bot will attempt to load a config from each of these methods in this order.
 Failure to load any config will prevent the bot from launching. 
 
 ### *botConfig.json*
-
-***
 
 An example can be found [here]()
 
@@ -95,7 +85,6 @@ It's value may only be `STABLE`, `BETA` or `LOCAL`.
 If this is missing or does not match a valid value the bot will default to `STABLE`
 
 ## Self-host
-***
 ### Grab a release
 
 Download a release from the [releases](https://github.com/Vincentvibe3/emergencyfood-v2/releases/latest) page

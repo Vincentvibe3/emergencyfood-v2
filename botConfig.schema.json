@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Vincentvibe3/emergencyfood-v2/blob/main/botConfig.schema.json",
+  "title": "botConfig Schema",
+  "description": "schema for the botConfig.json file",
+  "type": "object",
+  "required": [ "Channel" ],
+  "properties": {
+    "Stable": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": ["owner", "status", "prefix", "token"]
+    },
+    "Beta": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": ["owner", "status", "prefix", "token"]
+    },
+    "Local": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": ["owner", "status", "prefix", "token"]
+    },
+    "Global": {
+      "type": "object",
+      "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": ["owner", "status", "prefix", "token"]
+    },
+    "Channel": {
+      "type": "string"
+    }
+  }
+}
