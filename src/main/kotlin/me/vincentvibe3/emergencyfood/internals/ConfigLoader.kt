@@ -10,6 +10,7 @@ import kotlin.IllegalArgumentException
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
+import kotlin.system.exitProcess
 
 object ConfigLoader {
 
@@ -25,7 +26,8 @@ object ConfigLoader {
     private const val JSON = "botConfig.json"
     lateinit var channel: Channel
     lateinit var token:String
-    val required = arrayOf("channel", "token")
+    lateinit var owner:String
+    val required = arrayOf("channel", "token", "owner")
 
     /** preferred methods of config
         1. json
@@ -39,38 +41,46 @@ object ConfigLoader {
 //        tasks.add { loadKTS(tempConfig) }
         tasks.add { loadENV(tempConfig) }
         tasks.forEach {
-            if (!checkSetting()){
+            if (!checkSetting().second){
                 it.invoke(tempConfig)
+                applySetting(tempConfig)
             }
         }
-        applySetting(tempConfig)
+        val checkResult = checkSetting()
+        if (!checkResult.second){
+            Logging.logger.error("Unable to load required setting (${checkResult.first}) from config")
+            exitProcess(1)
+        }
     }
 
-    private fun checkSetting():Boolean{
+    private fun checkSetting(): Pair<String, Boolean> {
         this::class.declaredMemberProperties.forEach {
             if (it.isLateinit && it.javaField?.get(this) == null){
-                println(it.name)
                 try {
                     it.takeIf { property -> property is KMutableProperty<*> }
                         .let { property -> property as KMutableProperty<*> }
                         .getter.call(this)
                 } catch (e:InvocationTargetException){
-                    return false
+                    return Pair(it.name, false)
                 }
 
             }
         }
-        return true
+        return Pair("ok", true)
     }
 
     private fun applySetting(tempConfig: HashMap<String, Any> ){
-        this::class.declaredMemberProperties.forEach {
-            if (it.isLateinit && it.javaField?.get(this) == null){
-                it.takeIf { property -> property is KMutableProperty<*> }
-                .let { property -> property as KMutableProperty<*> }
-                    .setter.call(this, tempConfig[it.name])
+        tempConfig.filter { required.contains(it.key) }.forEach{
+            val setting = this::class.declaredMemberProperties.first { property ->
+                property.name == it.key
             }
+            if (setting.isLateinit && setting.javaField?.get(this) == null){
+            setting.takeIf { property -> property is KMutableProperty<*> }
+                .let { property -> property as KMutableProperty<*> }
+                .setter.call(this, tempConfig[setting.name])
         }
+        }
+
     }
 
     private fun loadFile(path:String):String{
@@ -96,11 +106,11 @@ object ConfigLoader {
                 val value = scope.second.getString(key)
                 if (value!=""){
                     updateSetting(key, value, tempConfig)
-                }else if (required.contains(key)&&scope.first!="Global"){
+                }else if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
             } catch (e:JSONException){
-                if (required.contains(key)&&scope.first!="Global"){
+                if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
             }
