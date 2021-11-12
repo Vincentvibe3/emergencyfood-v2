@@ -9,9 +9,9 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 * [Status](#Status)
 * [Dependencies](#Dependencies)
 * [Configuration](#Configuration)
-  * [botConfig.json](#*botConfig.json*)
-  * [config.bot.kts](#*config.bot.kts*)
-  * [Environment Variables](#*Environment Variables*)
+  * [botConfig.json](#botConfig.json)
+  * [config.bot.kts](#config.bot.kts)
+  * [Environment Variables](#Environment-Variables)
 * [Self Hosting](#Self-Host)
 
 ## Status
