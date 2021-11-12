@@ -1,16 +1,18 @@
 ﻿# emergencyfood-v2
 
-A rewrite of the [emergencyfood]() bot in Kotlin
+A rewrite of the emergencyfood bot in Kotlin
+
+Looking for the original project? Find it [here](https://github.com/Vincentvibe3/EmergencyFoodBot).
 
 ## Table of Contents
 
-* [Status]()
-* [Dependencies]()
-* [Configuration]()
-  * [botConfig.json]()
-  * [config.bot.kts]()
-  * [Environment Variables]()
-* [Self Hosting]()
+* [Status](#Status)
+* [Dependencies](#Dependencies)
+* [Configuration](#Configuration)
+  * [botConfig.json](#*botConfig.json*)
+  * [config.bot.kts](#*config.bot.kts*)
+  * [Environment Variables](#*Environment Variables*)
+* [Self Hosting](#Self-Host)
 
 ## Status
 
@@ -28,7 +30,7 @@ This project is made possible by:
 
 - [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA)
 - [Lavaplayer](https://github.com/sedmelluq/lavaplayer)
-- [Ktor]()
+- [Ktor](https://ktor.io/)
 - [Jsoup](https://jsoup.org/)
 - [JSON](https://github.com/stleary/JSON-java)
 
@@ -49,26 +51,20 @@ An example can be found [here]()
 
 ### *config.bot.kts*
 
-***
-
-**⚠ Warning! ⚠**
-
-This method will evaluate the script when loading the config.
-Make sure that you verify that `config.bot.kts` is safe before starting the bot.
-
-***
+>**⚠ Warning! ⚠**
+> 
+> This method will evaluate the script when loading the config.
+> Make sure that you verify that `config.bot.kts` is safe before starting the bot.
 
 An example can be found [here]()
 
 ### *Environment Variables*
 
-***
-**Note:**
+> **Note:**
+>
+> The following method only allows for more basic configurations than the other methods.
+> Consider using `botConfig.json` or `config,bot.kts` if you need more control over the configuration.
 
-The following method only allows for more basic configurations than the other methods.
-Consider using `botConfig.json` or `config,bot.kts` if you need more control over the configuration.
-
-***
 
 The following environment variables are **required**:
 
@@ -76,7 +72,7 @@ The following environment variables are **required**:
 
 `TOKEN_BETA`: This is the token used when the bot launches on a stable channel
 
-`BOT_OWNER`: This is the [id]() of the discord user owning the bot and is used for the admin commands
+`BOT_OWNER`: This is the [id](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) of the discord user owning the bot and is used for the admin commands
 
 The following environment variables are **optional**:
 
@@ -84,7 +80,7 @@ The following environment variables are **optional**:
 It's value may only be `STABLE`, `BETA` or `LOCAL`. 
 If this is missing or does not match a valid value the bot will default to `STABLE`
 
-## Self-host
+## Self-Host
 ### Grab a release
 
 Download a release from the [releases](https://github.com/Vincentvibe3/emergencyfood-v2/releases/latest) page
