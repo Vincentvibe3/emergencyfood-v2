@@ -47,7 +47,7 @@ class QueueManager : AudioEventAdapter() {
         val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
         if (lastChannel != null) {
             val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
-            lastMessage?.queue({it.delete().queue()}, { println("failed to get old message")})
+            lastMessage?.queue({it.delete().queue()}, { println("Failed to get old message")})
         }
 
         if (endReason != null) {

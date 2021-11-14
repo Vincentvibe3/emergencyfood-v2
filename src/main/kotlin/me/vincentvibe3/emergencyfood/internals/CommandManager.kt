@@ -49,13 +49,14 @@ object CommandManager {
 
     //add commands to the hashmap
     private fun registerLocal(command: GenericCommand){
-        if (command is MessageCommand){
-            messageCommandsList[command.name] = command
+        if (!Config.exclusions.contains(command.name)){
+            if (command is MessageCommand){
+                messageCommandsList[command.name] = command
+            }
+            if (command is SlashCommand){
+                slashCommandsList[command.name] = command
+            }
         }
-        if (command is SlashCommand){
-            slashCommandsList[command.name] = command
-        }
-
     }
 
     /*this method is only currently used to accelerate testing and

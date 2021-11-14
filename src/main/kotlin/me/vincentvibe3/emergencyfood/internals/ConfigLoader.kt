@@ -24,9 +24,6 @@ object ConfigLoader {
 
     private const val KTS = "config.bot.kts"
     private const val JSON = "botConfig.json"
-    lateinit var channel: Channel
-    lateinit var token:String
-    lateinit var owner:String
     val required = arrayOf("channel", "token", "owner")
 
     /** preferred methods of config
@@ -54,31 +51,22 @@ object ConfigLoader {
     }
 
     private fun checkSetting(): Pair<String, Boolean> {
-        this::class.declaredMemberProperties.forEach {
-            if (it.isLateinit && it.javaField?.get(this) == null){
-                try {
-                    it.takeIf { property -> property is KMutableProperty<*> }
-                        .let { property -> property as KMutableProperty<*> }
-                        .getter.call(this)
-                } catch (e:InvocationTargetException){
-                    return Pair(it.name, false)
-                }
-
+        Config::class.declaredMemberProperties.forEach {
+            if (it.isLateinit && it.javaField?.get(Config) == null){
+                return Pair(it.name, false)
             }
         }
         return Pair("ok", true)
     }
 
     private fun applySetting(tempConfig: HashMap<String, Any> ){
-        tempConfig.filter { required.contains(it.key) }.forEach{
-            val setting = this::class.declaredMemberProperties.first { property ->
+        tempConfig.forEach{
+            val setting = Config::class.declaredMemberProperties.first { property ->
                 property.name == it.key
             }
-            if (setting.isLateinit && setting.javaField?.get(this) == null){
             setting.takeIf { property -> property is KMutableProperty<*> }
                 .let { property -> property as KMutableProperty<*> }
-                .setter.call(this, tempConfig[setting.name])
-        }
+                .setter.call(Config, tempConfig[setting.name])
         }
 
     }
@@ -101,6 +89,9 @@ object ConfigLoader {
         val stringParams = arrayOf(
             "owner", "status", "prefix", "token"
         )
+        val arrayParams = arrayOf(
+            "exclusions"
+        )
         for (key in stringParams){
             try {
                 val value = scope.second.getString(key)
@@ -109,6 +100,21 @@ object ConfigLoader {
                 }else if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
+            } catch (e:JSONException){
+                if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
+                    Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
+                }
+            }
+        }
+        for (key in arrayParams){
+            try {
+                val paramArray = ArrayList<String>()
+                val value = scope.second.getJSONArray(key)
+                for (index in 0 until value.length()){
+                    val stringVal = value.optString(index)
+                    paramArray.add(stringVal)
+                }
+                updateSetting(key, paramArray, tempConfig)
             } catch (e:JSONException){
                 if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")

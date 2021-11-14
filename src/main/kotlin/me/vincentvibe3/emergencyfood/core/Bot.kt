@@ -3,6 +3,7 @@ package me.vincentvibe3.emergencyfood.core
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.vincentvibe3.emergencyfood.internals.CommandManager
+import me.vincentvibe3.emergencyfood.internals.Config
 import me.vincentvibe3.emergencyfood.internals.ConfigLoader
 import me.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
 import me.vincentvibe3.emergencyfood.utils.audio.PlayerManager
@@ -31,7 +32,7 @@ object Bot {
     fun start(){
         val activity = Activity.playing("Now using Slash Commands")
         try {
-            client = JDABuilder.createDefault(ConfigLoader.token)
+            client = JDABuilder.createDefault(Config.token)
                 .setActivity(activity)
                 .addEventListeners(ReadyListener)
                 .build()
@@ -40,8 +41,8 @@ object Bot {
             exitProcess(1)
         }
         client.awaitReady()
-        CommandManager.registerRemote(ConfigLoader.channel)
-        CommandManager.registerGuildRemote(ConfigLoader.channel)
+        CommandManager.registerRemote(Config.channel)
+        CommandManager.registerGuildRemote(Config.channel)
         runBlocking {
             launch {
                 //run background check loops here
