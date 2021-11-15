@@ -24,7 +24,7 @@ object ConfigLoader {
 
     private const val KTS = "config.bot.kts"
     private const val JSON = "botConfig.json"
-    val required = arrayOf("channel", "token", "owner")
+    private val required = arrayOf("channel", "token", "owner")
 
     /** preferred methods of config
         1. json
@@ -206,7 +206,7 @@ object ConfigLoader {
         val tempOwner = System.getenv("BOT_OWNER")
         updateSetting("token", tempToken, tempConfig)
         val exclusionsValues = System.getenv("EXCLUSIONS")
-        val exclusions = exclusionsValues.replace("\"", "").split(" ")
+        val exclusions = exclusionsValues?.replace("\"", "")?.split(" ") ?: ArrayList()
         if (exclusions.isNotEmpty()){
             updateSetting("exclusions", exclusions, tempConfig)
         }

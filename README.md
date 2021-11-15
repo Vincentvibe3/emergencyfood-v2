@@ -47,9 +47,11 @@ Failure to load any config will prevent the bot from launching.
 
 ### *botConfig.json*
 
-An example can be found [here]()
+An example can be found [here](https://github.com/Vincentvibe3/emergencyfood-v2/blob/main/examples/botConfig.json)
 
 ### *config.bot.kts*
+
+> **⚠ Not implemented yet ⚠**
 
 >**⚠ Warning! ⚠**
 > 
@@ -79,6 +81,9 @@ The following environment variables are **optional**:
 `CHANNEL`: This represents the channel on which the bot should be running. 
 It's value may only be `STABLE`, `BETA` or `LOCAL`. 
 If this is missing or does not match a valid value the bot will default to `STABLE`
+
+`EXCLUSIONS`: This represents the commands to be excluded. The values to pass are the 
+command names separated by a space.
 
 ## Self-Host
 ### Grab a release
