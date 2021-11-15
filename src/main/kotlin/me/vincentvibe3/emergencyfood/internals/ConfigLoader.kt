@@ -205,6 +205,11 @@ object ConfigLoader {
         }
         val tempOwner = System.getenv("BOT_OWNER")
         updateSetting("token", tempToken, tempConfig)
+        val exclusionsValues = System.getenv("EXCLUSIONS")
+        val exclusions = exclusionsValues.replace("\"", "").split(" ")
+        if (exclusions.isNotEmpty()){
+            updateSetting("exclusions", exclusions, tempConfig)
+        }
         if (tempOwner!=null){
             updateSetting("owner", tempOwner, tempConfig)
         }

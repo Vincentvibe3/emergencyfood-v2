@@ -6,5 +6,7 @@ object Config {
     lateinit var token:String
     lateinit var owner:String
     var exclusions = ArrayList<String>()
+    var prefix = "$"
+    var status = "Now using Slash Commands"
 
 }
