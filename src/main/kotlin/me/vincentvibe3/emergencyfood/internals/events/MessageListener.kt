@@ -3,6 +3,7 @@ package me.vincentvibe3.emergencyfood.internals.events
 import kotlinx.coroutines.*
 import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.internals.CommandManager
+import me.vincentvibe3.emergencyfood.internals.Config
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
@@ -15,7 +16,7 @@ object MessageListener: ListenerAdapter() {
         val name = client.guilds.first { it.id == event.guild.id }.selfMember.effectiveName
         if (checkMessageForCommand(event)){
             Logging.logger.debug("MessageCommand received")
-            val message = event.message.contentDisplay.replace("@$name", "").replace(Templates.prefix, "").trim()
+            val message = event.message.contentDisplay.replace("@$name", "").replace(Config.prefix, "").trim()
             val commandName = message.split(" ")[0]
             GlobalScope.launch {
                 retrieveCommand(commandName)?.handle(event)
@@ -29,7 +30,7 @@ object MessageListener: ListenerAdapter() {
         val selfMember = event.guild.getMemberById(selfId)
         val name = client.guilds.first { it.id == event.guild.id }.selfMember.effectiveName
         val message = event.message
-        return if (message.contentDisplay.startsWith(Templates.prefix)){
+        return if (message.contentDisplay.startsWith(Config.prefix)){
            true
         } else if (message.mentionedMembers.contains(selfMember)) {
             message.contentDisplay.startsWith("@$name")

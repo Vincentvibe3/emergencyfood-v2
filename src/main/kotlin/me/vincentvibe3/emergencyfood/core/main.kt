@@ -1,21 +1,17 @@
 package me.vincentvibe3.emergencyfood.core
 
-import io.ktor.http.*
+import me.vincentvibe3.emergencyfood.internals.CommandManager
+import me.vincentvibe3.emergencyfood.internals.Config
+import me.vincentvibe3.emergencyfood.internals.ConfigLoader
+import me.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
 import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.utils.Templates
-import java.net.URLEncoder
-
-/* enum representing environments
-*  in which the bot may run */
-enum class Channel {
-    BETA, STABLE, LOCAL
-}
 
 fun main() {
-    val channel = Channel.STABLE
+    Logging.logger.info("Loading Config...")
+    ConfigLoader.load()
+    val channel = Config.channel
     Logging.logger.info("Setting up bot on channel $channel...")
-    //setup bot
-    Bot.setup(channel)
     Logging.logger.info("Setting up custom rate limits...")
     Templates.setRateLimits()
     Logging.logger.info("Starting bot...")

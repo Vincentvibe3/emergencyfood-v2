@@ -41,9 +41,9 @@ abstract class GenericCommand {
     fun MessageReceivedEvent.getOptions(): List<String> {
         val client = Bot.getClientInstance()
         val memberName = client.guilds.first { it.id == this.guild.id }.selfMember.effectiveName
-        val message = if (this.message.contentDisplay.startsWith(Templates.prefix)) {
+        val message = if (this.message.contentDisplay.startsWith(Config.prefix)) {
             this.message.contentDisplay
-                .replaceFirst(Templates.prefix, "")
+                .replaceFirst(Config.prefix, "")
                 .trim()
         } else {
             this.message.contentDisplay

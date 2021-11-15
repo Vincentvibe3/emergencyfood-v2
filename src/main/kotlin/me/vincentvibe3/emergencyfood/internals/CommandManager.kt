@@ -4,7 +4,7 @@ import me.vincentvibe3.emergencyfood.commands.anime.Anime
 import me.vincentvibe3.emergencyfood.commands.music.*
 import me.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.core.Channel
+import me.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
 import me.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
@@ -49,13 +49,14 @@ object CommandManager {
 
     //add commands to the hashmap
     private fun registerLocal(command: GenericCommand){
-        if (command is MessageCommand){
-            messageCommandsList[command.name] = command
+        if (!Config.exclusions.contains(command.name)){
+            if (command is MessageCommand){
+                messageCommandsList[command.name] = command
+            }
+            if (command is SlashCommand){
+                slashCommandsList[command.name] = command
+            }
         }
-        if (command is SlashCommand){
-            slashCommandsList[command.name] = command
-        }
-
     }
 
     /*this method is only currently used to accelerate testing and

@@ -1,4 +1,7 @@
-.idea/
-build/
+/.idea/workspace.xml
+/.idea/discord.xml
+/build/
 .gradle/
+/botConfig.json
+/config.bot.kts
 emergencyfood.service

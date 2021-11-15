@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import me.vincentvibe3.emergencyfood.core.Bot
+import me.vincentvibe3.emergencyfood.utils.Logging
 import me.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import me.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 
@@ -46,6 +47,7 @@ class AudioLoader(private val queueManager: QueueManager, private val player:Aud
     }
 
     override fun loadFailed(exception: FriendlyException?) {
+        Logging.logger.error(exception?.message)
         throw LoadFailedException()
     }
 }

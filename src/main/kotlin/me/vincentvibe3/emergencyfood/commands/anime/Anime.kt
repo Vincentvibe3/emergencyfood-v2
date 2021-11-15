@@ -1,6 +1,5 @@
 package me.vincentvibe3.emergencyfood.commands.anime
 
-import me.vincentvibe3.emergencyfood.core.Bot
 import me.vincentvibe3.emergencyfood.internals.*
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
