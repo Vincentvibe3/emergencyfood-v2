@@ -207,8 +207,12 @@ object ConfigLoader {
         updateSetting("token", tempToken, tempConfig)
         val exclusionsValues = System.getenv("EXCLUSIONS")
         val exclusions = exclusionsValues?.replace("\"", "")?.split(" ") ?: ArrayList()
+        val prefix = System.getenv("PREFIX")
         if (exclusions.isNotEmpty()){
             updateSetting("exclusions", exclusions, tempConfig)
+        }
+        if (prefix!=null) {
+            updateSetting("prefix", prefix, tempConfig)
         }
         if (tempOwner!=null){
             updateSetting("owner", tempOwner, tempConfig)
