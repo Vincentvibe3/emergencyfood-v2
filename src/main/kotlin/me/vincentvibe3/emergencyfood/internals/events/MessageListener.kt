@@ -2,10 +2,8 @@ package me.vincentvibe3.emergencyfood.internals.events
 
 import kotlinx.coroutines.*
 import me.vincentvibe3.emergencyfood.core.Bot
-import me.vincentvibe3.emergencyfood.internals.CommandManager
-import me.vincentvibe3.emergencyfood.internals.Config
+import me.vincentvibe3.emergencyfood.internals.*
 import me.vincentvibe3.emergencyfood.utils.Logging
-import me.vincentvibe3.emergencyfood.internals.MessageCommand
 import me.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -14,6 +12,11 @@ object MessageListener: ListenerAdapter() {
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val client = Bot.getClientInstance()
         val name = client.guilds.first { it.id == event.guild.id }.selfMember.effectiveName
+        val response = MessageResponseManager.get(event.author.id, event.channel.id)
+        if (response!=null){
+            MessageResponseManager.remove(response)
+            response.handle(event)
+        }
         if (checkMessageForCommand(event)){
             Logging.logger.debug("MessageCommand received")
             val message = event.message.contentDisplay.replace("@$name", "").replace(Config.prefix, "").trim()
