@@ -9,7 +9,7 @@ object Anime:GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "anime"
 
-    override val command = CommandData(name, "anime relatd commands")
+    override val command = CommandData(name, "anime related commands")
         .addSubcommands(
             Programming.subCommand
         )
