@@ -30,7 +30,7 @@ object Bot {
 
     //start the bot
     fun start(){
-        val activity = Activity.playing("Now using Slash Commands")
+        val activity = Activity.playing(Config.status)
         try {
             client = JDABuilder.createDefault(Config.token)
                 .setActivity(activity)
