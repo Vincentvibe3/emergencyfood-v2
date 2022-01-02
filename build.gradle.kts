@@ -2,17 +2,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     application
 }
 
-group = "me.vincent.emergencyfood"
+group = "io.github.vincent.emergencyfood"
 version = "1.5.0"
 
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
+    maven ( "https://jitpack.io" )
 }
 
 dependencies {
@@ -20,11 +21,13 @@ dependencies {
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20210307")
     implementation ("org.jsoup:jsoup:1.14.3")
-    implementation("io.ktor:ktor-client-core:1.6.6")
-    implementation("io.ktor:ktor-client-cio:1.6.6")
-    implementation("ch.qos.logback:logback-classic:1.2.9")
+    implementation("io.ktor:ktor-client-core:1.6.7")
+    implementation("io.ktor:ktor-client-cio:1.6.7")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
+    implementation("com.github.Vincentvibe3:ef-player:7f213612e2")
+//    implementation(files("C:\\Users\\Vincent\\Documents\\Programming\\Projects\\Kotlin\\webmreader\\build\\libs\\efplayer-0.1-alpha.jar"))
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
@@ -33,7 +36,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.withType<ShadowJar>{
