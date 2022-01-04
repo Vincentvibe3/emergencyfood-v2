@@ -3,7 +3,7 @@ package io.github.vincentvibe3.emergencyfood.commands.music
 import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
-import io.github.vincentvibe3.emergencyfood.utils.audio.Player
+import com.github.Vincentvibe3.efplayer.core.Player
 import io.github.vincentvibe3.emergencyfood.utils.audio.player.AudioHandlerExp
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
@@ -17,13 +17,6 @@ object testmusic:GenericCommand(), SlashCommand, MessageCommand {
 
     override val command = CommandData(name, "Skip the currently playing song")
         .addOption(OptionType.STRING ,"song", "link or search query", false)
-
-    private fun connect(channel: VoiceChannel, player: Player){
-        val guild = channel.guild
-        val audioManager = guild.audioManager
-        audioManager.sendingHandler = player.getAudioHandler()
-        audioManager.openAudioConnection(channel)
-    }
 
     override suspend fun handle(event: SlashCommandEvent) {
         val channel = event.member?.voiceState?.channel
@@ -40,7 +33,7 @@ object testmusic:GenericCommand(), SlashCommand, MessageCommand {
             options.forEach { song+=" $it" }
             song
         }
-        val player = com.github.Vincentvibe3.efplayer.core.Player()
+        val player = Player()
         if (songOption != null) {
             player.play(songOption)
         }
