@@ -26,8 +26,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("com.github.Vincentvibe3:ef-player:7f213612e2")
-//    implementation(files("C:\\Users\\Vincent\\Documents\\Programming\\Projects\\Kotlin\\webmreader\\build\\libs\\efplayer-0.1-alpha.jar"))
+    implementation("com.github.Vincentvibe3:ef-player:v.1.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 

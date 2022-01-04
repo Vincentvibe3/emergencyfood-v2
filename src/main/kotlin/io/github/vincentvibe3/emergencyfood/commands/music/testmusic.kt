@@ -1,7 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.commands.music
 
-import com.github.Vincentvibe3.EfPlayer.formats.webm.EBMLHeader
-import com.github.Vincentvibe3.EfPlayer.formats.webm.WebmDocument
+import com.github.Vincentvibe3.efplayer.formats.webm.EBMLHeader
+import com.github.Vincentvibe3.efplayer.formats.webm.WebmDocument
 import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
@@ -38,18 +38,14 @@ object testmusic:GenericCommand(), SlashCommand, MessageCommand {
 //        val stream = queue.queue.first.getStream()
 //        val player = AudioPlayer()
 
-        val doc = WebmDocument()
-        doc.header = EBMLHeader()
-        val input = Files.newInputStream(Path.of("C:\\Users\\Vincent\\Downloads\\videoplayback2.webm"))
-        doc.header.parseHeader(input)
-        input.readNBytes(4)
-        doc.readSegment(input)
-
+        val player = com.github.Vincentvibe3.efplayer.core.Player()
+        player.play("https://www.youtube.com/watch?v=I0kytvnHG-Q")
 //        if (stream != null) {
             val guild = channel?.guild
             val audioManager = guild?.audioManager
             if (audioManager != null) {
-                audioManager.sendingHandler = AudioHandlerExp(doc)
+                println("setting audio handler")
+                audioManager.sendingHandler = AudioHandlerExp(player)
                 audioManager.openAudioConnection(channel)
             }
 
