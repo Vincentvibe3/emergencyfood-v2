@@ -16,7 +16,7 @@ object testmusic:GenericCommand(), SlashCommand, MessageCommand {
     override val name = "testmusic"
 
     override val command = CommandData(name, "Skip the currently playing song")
-        .addOption(OptionType.STRING ,"song", "link or search query", false)
+        .addOption(OptionType.STRING ,"song", "link or search query", true)
 
     override suspend fun handle(event: SlashCommandEvent) {
         val channel = event.member?.voiceState?.channel
@@ -25,14 +25,7 @@ object testmusic:GenericCommand(), SlashCommand, MessageCommand {
 //        queue.getTracks("https://www.youtube.com/watch?v=I0kytvnHG-Q")
 //        val stream = queue.queue.first.getStream()
 //        val player = AudioPlayer()
-        val options = event.options
-        val songOption = if (options.isEmpty()){
-            null
-        } else{
-            var song = ""
-            options.forEach { song+=" $it" }
-            song
-        }
+        val songOption = event.getOption("song")?.asString
         val player = Player()
         if (songOption != null) {
             player.play(songOption)
