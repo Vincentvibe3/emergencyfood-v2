@@ -1,23 +1,15 @@
 package io.github.vincentvibe3.emergencyfood.commands.music
 
-import com.github.Vincentvibe3.efplayer.formats.webm.EBMLHeader
-import com.github.Vincentvibe3.efplayer.formats.webm.WebmDocument
-import io.github.vincentvibe3.emergencyfood.commands.music.Play.getOptions
 import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.audio.Player
-import io.github.vincentvibe3.emergencyfood.utils.audio.player.AudioHandler
 import io.github.vincentvibe3.emergencyfood.utils.audio.player.AudioHandlerExp
-import io.github.vincentvibe3.emergencyfood.utils.audio.player.AudioPlayer
-import io.github.vincentvibe3.emergencyfood.utils.audio.player.Queue
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import java.nio.file.Files
-import java.nio.file.Path
 
 object testmusic:GenericCommand(), SlashCommand, MessageCommand {
 
