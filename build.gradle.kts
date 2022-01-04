@@ -26,7 +26,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.0")
+    implementation("com.github.Vincentvibe3:ef-player:3edecc69580a02d3831455c0f9fa469267c62a37")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
