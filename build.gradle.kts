@@ -43,7 +43,7 @@ tasks.withType<ShadowJar>{
 }
 
 application {
-    mainClass.set("me.vincentvibe3.emergencyfood.core.MainKt")
+    mainClass.set("io.github.vincentvibe3.emergencyfood.core.MainKt")
 }
 
 project.gradle.startParameter.excludedTaskNames.add("jar")
