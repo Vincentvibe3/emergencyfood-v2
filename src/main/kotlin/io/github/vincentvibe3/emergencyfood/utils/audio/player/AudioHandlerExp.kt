@@ -8,12 +8,17 @@ import java.nio.ByteBuffer
 
 class AudioHandlerExp(private var doc: Player) : AudioSendHandler {
 
+    val buffer = ByteBuffer.allocate(StandardAudioDataFormats.DISCORD_OPUS.maximumChunkSize())
+
     override fun canProvide(): Boolean {
         return doc.canProvide()
     }
 
     override fun provide20MsAudio(): ByteBuffer? {
-        return ByteBuffer.wrap(doc.provide())
+        buffer.clear()
+        buffer.put(doc.provide())
+        buffer.flip()
+        return buffer
     }
 
     override fun isOpus(): Boolean {

@@ -26,16 +26,23 @@ object testmusic:GenericCommand(), SlashCommand, MessageCommand {
 //        val stream = queue.queue.first.getStream()
 //        val player = AudioPlayer()
         val songOption = event.getOption("song")?.asString
-        val player = Player()
         if (songOption != null) {
-            player.play(songOption)
+            if (songOption=="stop") {
+                Players.player.stop()
+            }else if (songOption=="pause") {
+                Players.player.pause()
+            }else if (songOption=="resume"){
+                Players.player.resume()
+            } else {
+                Players.player.load(songOption)
+            }
         }
 //        if (stream != null) {
             val guild = channel?.guild
             val audioManager = guild?.audioManager
             if (audioManager != null) {
                 println("setting audio handler")
-                audioManager.sendingHandler = AudioHandlerExp(player)
+                audioManager.sendingHandler = AudioHandlerExp(Players.player)
                 audioManager.openAudioConnection(channel)
             }
 
