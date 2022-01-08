@@ -3,7 +3,7 @@ package io.github.vincentvibe3.emergencyfood.buttons.music.queue
 import io.github.vincentvibe3.emergencyfood.commands.music.Queue
 import io.github.vincentvibe3.emergencyfood.internals.InteractionButton
 import io.github.vincentvibe3.emergencyfood.utils.Templates
-import io.github.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.interactions.components.Button

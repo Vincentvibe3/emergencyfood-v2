@@ -4,9 +4,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import io.github.vincentvibe3.emergencyfood.internals.CommandManager
 import io.github.vincentvibe3.emergencyfood.internals.Config
-import io.github.vincentvibe3.emergencyfood.internals.ConfigLoader
-import io.github.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
-import io.github.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.internals.events.*
 import io.github.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.JDA

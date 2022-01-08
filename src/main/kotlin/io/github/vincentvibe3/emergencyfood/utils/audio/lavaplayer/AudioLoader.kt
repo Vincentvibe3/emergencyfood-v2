@@ -1,4 +1,4 @@
-package io.github.vincentvibe3.emergencyfood.utils.audio
+package io.github.vincentvibe3.emergencyfood.utils.audio.lavaplayer
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.QueueManager
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 
@@ -17,7 +18,7 @@ class AudioLoader(private val queueManager: QueueManager, private val player:Aud
         queueManager.addToQueue(track)
         if (queueManager.queue.size == 1){
             val firstSong = queueManager.queue.peek()
-            player.playTrack(firstSong)
+            player.playTrack(firstSong as AudioTrack?)
         }
     }
 
@@ -38,7 +39,7 @@ class AudioLoader(private val queueManager: QueueManager, private val player:Aud
         }
         if (initSize == 0){
             val firstSong = queueManager.queue.peek()
-            player.playTrack(firstSong)
+            player.playTrack(firstSong as AudioTrack?)
         }
     }
 

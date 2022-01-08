@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:4.3.0_346")
+    implementation("net.dv8tion:JDA:5.0.0-alpha.3")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20210307")
     implementation ("org.jsoup:jsoup:1.14.3")
@@ -26,7 +26,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("com.github.Vincentvibe3:ef-player:900e57075a")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.2.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 

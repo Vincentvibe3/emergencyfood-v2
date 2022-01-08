@@ -1,5 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.commands.music
 
+import com.github.Vincentvibe3.efplayer.core.Track
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.vincentvibe3.emergencyfood.buttons.music.queue.QueueEnd
 import io.github.vincentvibe3.emergencyfood.buttons.music.queue.QueueNext
@@ -10,8 +11,8 @@ import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
-import io.github.vincentvibe3.emergencyfood.utils.audio.Player
-import io.github.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.CommonPlayer
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
@@ -83,7 +84,7 @@ object Queue: GenericCommand(), SlashCommand, MessageCommand {
 
     }
 
-    fun getPageCount(queue: BlockingQueue<AudioTrack>):Int{
+    fun getPageCount(queue: BlockingQueue<Any>):Int{
         return if (queue.size%5 == 0){
             queue.size/5
         } else {
@@ -91,7 +92,7 @@ object Queue: GenericCommand(), SlashCommand, MessageCommand {
         }
     }
 
-    fun getEmbed(player:Player, page:Int, embedBuilder:EmbedBuilder):EmbedBuilder{
+    fun getEmbed(player: CommonPlayer, page:Int, embedBuilder:EmbedBuilder):EmbedBuilder{
         val queue = player.getQueue()
         var embed = embedBuilder
         val start = (page-1)*5
@@ -104,15 +105,45 @@ object Queue: GenericCommand(), SlashCommand, MessageCommand {
         val currentSong = queue.indexOf(player.getCurrentSong())
         for (index in start..end) {
             val track = queue.elementAt(index)
-            val songLength = track.info.length
-            val duration = getDurationFormatted(songLength)
+            val songLength = if (track is Track){
+                track.duration
+            } else if (track is AudioTrack) {
+                track.info.length
+            } else {
+                -1
+            }
+            val duration = if (songLength!=-1L){
+                getDurationFormatted(songLength)
+            } else {
+                "Unknown"
+            }
             val currentMessage = if (index==currentSong){
                 "(Now Playing)"
             } else {
                 ""
             }
-            embed = embed
-                .addField("${index+1} $currentMessage", "[${track.info.title}](${track.info.uri})  ($duration)", false)
+            val title = if (track is Track){
+                track.title
+            } else if (track is AudioTrack) {
+                track.info.title
+            } else {
+                "Unknown"
+            }
+            val url = if (track is Track){
+                track.url
+            } else if (track is AudioTrack) {
+                track.info.uri
+            } else {
+                ""
+            }
+            if (url == ""){
+                embed = embed
+                    .addField("${index+1} $currentMessage", "$title  ($duration)", false)
+            } else {
+                embed = embed
+                    .addField("${index+1} $currentMessage", "[$title]($url)  ($duration)", false)
+            }
+
         }
         return embed
     }

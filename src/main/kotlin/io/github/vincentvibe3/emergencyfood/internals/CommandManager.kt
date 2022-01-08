@@ -34,7 +34,6 @@ object CommandManager {
             registerLocal(Shuffle)
             registerLocal(Anime)
             registerLocal(KanaPractice)
-            registerLocal(testmusic)
         } catch (e:IllegalArgumentException) {
             Logging.logger.error("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }

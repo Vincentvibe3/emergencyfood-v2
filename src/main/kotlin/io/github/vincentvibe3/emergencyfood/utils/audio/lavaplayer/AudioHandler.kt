@@ -1,4 +1,4 @@
-package io.github.vincentvibe3.emergencyfood.utils.audio
+package io.github.vincentvibe3.emergencyfood.utils.audio.lavaplayer
 
 import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer

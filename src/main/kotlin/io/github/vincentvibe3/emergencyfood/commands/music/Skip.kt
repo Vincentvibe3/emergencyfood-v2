@@ -4,7 +4,7 @@ import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
-import io.github.vincentvibe3.emergencyfood.utils.audio.PlayerManager
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -17,6 +17,7 @@ object Skip:GenericCommand(), SlashCommand, MessageCommand {
     override val command = CommandData(name, "Skip the currently playing song")
 
     override suspend fun handle(event: SlashCommandEvent) {
+        event.deferReply().queue()
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
@@ -34,7 +35,8 @@ object Skip:GenericCommand(), SlashCommand, MessageCommand {
                 val message = MessageBuilder()
                     .setEmbeds(embed)
                     .build()
-                event.reply(message).queue()
+                event.hook.editOriginal(message).queue()
+
             }
         } else {
             event.reply("Failed to fetch player").queue()

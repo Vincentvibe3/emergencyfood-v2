@@ -1,4 +1,4 @@
-package io.github.vincentvibe3.emergencyfood.utils.audio
+package io.github.vincentvibe3.emergencyfood.utils.audio.common
 
 import kotlinx.coroutines.delay
 import io.github.vincentvibe3.emergencyfood.core.Bot
@@ -7,16 +7,16 @@ import net.dv8tion.jda.api.MessageBuilder
 
 object PlayerManager {
 
-    private val activeGuilds = HashMap<String, Player>()
+    private val activeGuilds = HashMap<String, CommonPlayer>()
     private val checkForCleanup = HashMap<String, Long>()
 
     //fetches the player for a guild and creates a new one if none is found
-    fun getPlayer(guild:String): Player {
+    fun getPlayer(guild:String): CommonPlayer {
         val currentPlayer = activeGuilds[guild]
         return if (currentPlayer != null){
             currentPlayer
         } else {
-            val newPlayer = Player()
+            val newPlayer = CommonPlayer(guild)
             newPlayer.setupPlayer()
             activeGuilds[guild] = newPlayer
             newPlayer

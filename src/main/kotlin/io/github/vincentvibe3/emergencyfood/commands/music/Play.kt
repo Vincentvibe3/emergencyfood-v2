@@ -3,19 +3,20 @@ package io.github.vincentvibe3.emergencyfood.commands.music
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.utils.Logging
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
-import io.github.vincentvibe3.emergencyfood.utils.audio.*
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.CommonPlayer
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.LoadResult
+import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.QueueAddException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.entities.AudioChannel
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
@@ -26,12 +27,11 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "play"
 
-
     override val command = CommandData(name, "Play a song or resume playback")
         .addOption(OptionType.STRING ,"song", "link or search query", false)
 
     //determine whether the song is a YouTube url or a search query
-    private suspend fun getTrack(query:String):String{
+    private fun getTrack(query:String):String{
         val isVideo = query.startsWith("https://www.youtube.com/watch?v=")
         val isPlaylist = query.startsWith("https://www.youtube.com/playlist?list=")
         val isMobile = query.startsWith("https://youtu.be/")
@@ -42,12 +42,13 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
                 query
             }
         } else {
-            SongSearch.getSong(query)
+            query
+//            SongSearch.getSong(query)
         }
     }
 
     //connect to the vc
-    private fun connect(channel:VoiceChannel, player: Player){
+    private fun connect(channel:AudioChannel, player: CommonPlayer){
         val guild = channel.guild
         val audioManager = guild.audioManager
         audioManager.sendingHandler = player.getAudioHandler()
@@ -55,13 +56,12 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
     }
 
 
-    //wait for the added song to load
-    //allows the queued embed to display the song title without issues
-    private fun waitForLoad(player: Player, track:String){
-        val url = formatMobileLinks(track)
-        runBlocking {
+    //wait for playlist to be loaded,
+    //allows the song added to queue count to be accurate
+    private suspend fun waitForPlaylistLoad(player: CommonPlayer, initSize:Int){
+        coroutineScope {
             val job = launch {
-                while (!player.isPlaying() || player.getLastSongUrl() != url){
+                while (!player.isPlaying() || player.getQueue().size == initSize){
                     delay(100L)
                 }
             }
@@ -69,12 +69,10 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
         }
     }
 
-    //wait for playlist to be loaded,
-    //allows the song added to queue count to be accurate
-    private suspend fun waitForPlaylistLoad(player: Player, initSize:Int){
+    private suspend fun waitForLoad(player: CommonPlayer, loadResult: LoadResult){
         coroutineScope {
             val job = launch {
-                while (!player.isPlaying() || player.getQueue().size == initSize){
+                while (!player.isPlaying() || loadResult.value==-1){
                     delay(100L)
                 }
             }
@@ -88,7 +86,7 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
     }
 
     //resume and return response depending on whether the player was resumed
-    private fun resume(player:Player): Message{
+    private fun resume(player: CommonPlayer): Message{
         return if (player.isPaused()){
             player.resume()
             val embed = Templates.getMusicEmbed()
@@ -105,9 +103,11 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
     }
 
     //plays and return response depending on whether loading was successful or not
-    private suspend fun play(player: Player, query:String):Message{
+    private suspend fun play(player: CommonPlayer, query:String):Message{
         lateinit var track:String
         val initSize = player.getQueue().size
+        val loadResult = LoadResult()
+        player.loadQueue.put(loadResult)
         try {
             track = getTrack(query)
             player.play(track)
@@ -131,10 +131,10 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
                 .setDescription("Added ${player.getQueue().size-initSize} songs from [playlist]($track)")
                 .build()
         } else {
-            waitForLoad(player, track)
+            waitForLoad(player, loadResult)
             Templates.getMusicEmbed()
                 .setTitle("Queued")
-                .setDescription("Added [${player.getLastSongTitle()}](${player.getLastSongUrl()})")
+                .setDescription("Added [${player.getSongTitle(loadResult.value)}](${player.getSongUrl(loadResult.value)})")
                 .build()
         }
         return MessageBuilder()
