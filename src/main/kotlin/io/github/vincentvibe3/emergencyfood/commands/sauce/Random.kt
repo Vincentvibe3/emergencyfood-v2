@@ -77,7 +77,6 @@ object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
                 true
             }
             attempts++
-            println(attempts)
         }
         return if (found){
             val id = entry.getInt("id")

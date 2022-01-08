@@ -75,10 +75,12 @@ object CommandManager {
                     .getter.call(command) as CommandData
 
                 Bot.getClientInstance().guilds.forEach { guild ->
-                    guild.upsertCommand(commandData).queue(
-                        { Logging.logger.info("Added ${command.name} to ${guild.name}") },
-                        { Logging.logger.error("Failed to add ${command.name} to ${guild.name}") }
-                    )
+                    if (guild.id==Config.testServer){
+                        guild.upsertCommand(commandData).queue(
+                            { Logging.logger.info("Added ${command.name} to ${guild.name}") },
+                            { Logging.logger.error("Failed to add ${command.name} to ${guild.name}") }
+                        )
+                    }
                 }
             }
         }

@@ -15,7 +15,6 @@ object MessageResponseManager {
     fun get(user:String, channel:String):MessageResponse?{
         val channelResponses = pendingResponses.getOrDefault(channel, null)
         return if (channelResponses != null){
-            println("getting response")
             channelResponses[user]?.firstOrNull()
         } else {
             null

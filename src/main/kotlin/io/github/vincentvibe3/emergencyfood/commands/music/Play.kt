@@ -106,10 +106,14 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
     private suspend fun play(player: CommonPlayer, query:String):Message{
         lateinit var track:String
         val initSize = player.getQueue().size
-        val loadResult = LoadResult()
-        player.loadQueue.put(loadResult)
+        lateinit var loadResult:LoadResult
+
         try {
             track = getTrack(query)
+            if (!track.startsWith("https://www.youtube.com/playlist?list=")) {
+                loadResult = LoadResult()
+                player.loadQueue.put(loadResult)
+            }
             player.play(track)
         } catch (e: SongNotFoundException){
             return MessageBuilder()

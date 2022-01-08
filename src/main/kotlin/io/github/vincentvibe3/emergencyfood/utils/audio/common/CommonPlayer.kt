@@ -71,7 +71,7 @@ class CommonPlayer(val guild:String) {
         return queueManager.updatesChannel
     }
 
-    suspend fun play(track:String){
+    fun play(track:String){
         if (queueManager.queue.size == Int.MAX_VALUE){
             throw QueueAddException()
         }

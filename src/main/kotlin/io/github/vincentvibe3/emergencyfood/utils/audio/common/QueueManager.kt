@@ -21,13 +21,17 @@ class QueueManager(val commonPlayer: CommonPlayer) {
     private var lastUpdatesMessage:String? = null
     private var lastUpdatesChannel:String? = null
 
-    fun addToQueue(track: AudioTrack):Boolean{
-        commonPlayer.loadQueue.take().value = queue.size
+    fun addToQueue(track: AudioTrack, isFromPlaylist:Boolean):Boolean{
+        if (!isFromPlaylist){
+            commonPlayer.loadQueue.take().value = queue.size
+        }
         return queue.offer(track)
     }
 
-    fun addToQueue(track: Track):Boolean{
-        commonPlayer.loadQueue.take().value = queue.size
+    fun addToQueue(track: Track, isFromPlaylist:Boolean):Boolean{
+        if (!isFromPlaylist){
+            commonPlayer.loadQueue.take().value = queue.size
+        }
         return queue.offer(track)
     }
 
@@ -50,7 +54,7 @@ class QueueManager(val commonPlayer: CommonPlayer) {
         val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
         if (lastChannel != null) {
             val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
-            lastMessage?.queue({it.delete().queue()}, { println("Failed to get old message")})
+            lastMessage?.queue({it.delete().queue()}, { Logging.logger.error("Failed to get old message")})
         }
         var next: Any? = null
         //clear on end

@@ -66,7 +66,6 @@ object Programming:GenericSubCommand(), SubCommand, MessageSubCommand {
     }
 
     override suspend fun handle(event: MessageReceivedEvent) {
-        println("received")
         val categoryUrl = getCategory()
         val image = getImage(categoryUrl)
         event.textChannel.sendMessage(image).queue()

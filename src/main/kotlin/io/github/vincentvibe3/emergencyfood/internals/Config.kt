@@ -8,5 +8,6 @@ object Config {
     var exclusions = ArrayList<String>()
     var prefix = "$"
     var status = "Now using Slash Commands"
+    var testServer = ""
 
 }

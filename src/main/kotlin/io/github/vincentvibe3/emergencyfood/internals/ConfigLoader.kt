@@ -87,7 +87,7 @@ object ConfigLoader {
 
     private fun jsonReadScope(tempConfig: HashMap<String, Any>, scope:Pair<String, JSONObject>){
         val stringParams = arrayOf(
-            "owner", "status", "prefix", "token"
+            "owner", "status", "prefix", "token", "testServer"
         )
         val arrayParams = arrayOf(
             "exclusions"
@@ -204,6 +204,7 @@ object ConfigLoader {
             }
         }
         val tempOwner = System.getenv("BOT_OWNER")
+        val tempTestServer = System.getenv("TEST_SERVER")
         updateSetting("token", tempToken, tempConfig)
         val exclusionsValues = System.getenv("EXCLUSIONS")
         val exclusions = exclusionsValues?.replace("\"", "")?.split(" ") ?: ArrayList()
@@ -212,6 +213,9 @@ object ConfigLoader {
         }
         if (tempOwner!=null){
             updateSetting("owner", tempOwner, tempConfig)
+        }
+        if (tempTestServer!=null){
+            updateSetting("testServer", tempTestServer, tempConfig)
         }
     }
 }
