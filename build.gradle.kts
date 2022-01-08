@@ -2,29 +2,31 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     application
 }
 
-group = "me.vincent.emergencyfood"
+group = "io.github.vincent.emergencyfood"
 version = "1.5.0"
 
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
+    maven ( "https://jitpack.io" )
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:4.3.0_346")
+    implementation("net.dv8tion:JDA:5.0.0-alpha.3")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20210307")
     implementation ("org.jsoup:jsoup:1.14.3")
-    implementation("io.ktor:ktor-client-core:1.6.6")
-    implementation("io.ktor:ktor-client-cio:1.6.6")
-    implementation("ch.qos.logback:logback-classic:1.2.9")
+    implementation("io.ktor:ktor-client-core:1.6.7")
+    implementation("io.ktor:ktor-client-cio:1.6.7")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.2.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
@@ -33,7 +35,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.withType<ShadowJar>{
@@ -41,7 +43,7 @@ tasks.withType<ShadowJar>{
 }
 
 application {
-    mainClass.set("me.vincentvibe3.emergencyfood.core.MainKt")
+    mainClass.set("io.github.vincentvibe3.emergencyfood.core.MainKt")
 }
 
 project.gradle.startParameter.excludedTaskNames.add("jar")
