@@ -2,6 +2,7 @@ package io.github.vincentvibe3.emergencyfood.internals
 
 import io.github.vincentvibe3.emergencyfood.commands.anime.Anime
 import io.github.vincentvibe3.emergencyfood.commands.kana.KanaPractice
+import io.github.vincentvibe3.emergencyfood.commands.misc.Roll
 import io.github.vincentvibe3.emergencyfood.commands.music.*
 import io.github.vincentvibe3.emergencyfood.commands.sauce.Sauce
 import io.github.vincentvibe3.emergencyfood.core.Bot
@@ -34,6 +35,7 @@ object CommandManager {
             registerLocal(Shuffle)
             registerLocal(Anime)
             registerLocal(KanaPractice)
+            registerLocal(Roll)
         } catch (e:IllegalArgumentException) {
             Logging.logger.error("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
