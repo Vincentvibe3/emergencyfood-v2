@@ -20,11 +20,20 @@ jobs:
    pool:
      vmImage: 'ubuntu-18.04'
 
-   container: gradle:7.3.3-jdk-17
-
    displayName: Build and Release
 
    steps:
+   - script: wget https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz
+    # Java tool installer
+    # Acquire a specific version of Java from a user-supplied Azure blob or the tool cache and sets JAVA_HOME
+   - task: JavaToolInstaller@0
+     inputs:
+       versionSpec: '17'
+       jdkArchitectureOption: x64 # Options: x64, x86
+       jdkSourceOption: LocalDirectory # Options: AzureStorage, LocalDirectory
+       jdkFile: ./OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz # Required when jdkSourceOption == LocalDirectory
+       jdkDestinationDirectory: $(agent.toolsDirectory)/jdk17'
+
    - task: Gradle@2
      displayName: Gradle Build
      inputs:
