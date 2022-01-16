@@ -25,17 +25,6 @@ jobs:
    displayName: Build and Release
 
    steps:
-   - task: JavaToolInstaller@0
-     inputs:
-       versionSpec: '17'
-       jdkArchitectureOption: 'x64'
-       jdkSourceOption: AzureStorage
-       azureResourceManagerEndpoint: myARMServiceConnection
-       azureStorageAccountName: myAzureStorageAccountName
-       azureContainerName: myAzureStorageContainerName
-       azureCommonVirtualFile: 'jdk1.6.0_45.zip'
-       jdkDestinationDirectory: '$(agent.toolsDirectory)/jdk17'
-       cleanDestinationDirectory: false
    - task: Gradle@2
      displayName: Gradle Build
      inputs:
