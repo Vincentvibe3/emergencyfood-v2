@@ -20,7 +20,7 @@ jobs:
    pool:
      vmImage: 'ubuntu-18.04'
 
-   container: gradle:7.3.3-jdk-17-alpine
+   container: gradle:7.3.3-jdk-17
 
    displayName: Build and Release
 
