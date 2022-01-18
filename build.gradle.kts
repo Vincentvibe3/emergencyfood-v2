@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.6.0"
+version = "1.6.1"
 
 repositories {
     mavenCentral()
@@ -26,7 +26,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.2.8")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.2.9")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
@@ -35,7 +35,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "11"
 }
 
 tasks.withType<ShadowJar>{
