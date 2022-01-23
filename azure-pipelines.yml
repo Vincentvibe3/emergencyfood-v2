@@ -97,13 +97,13 @@ jobs:
         downloadPath: $(System.ArtifactsDirectory)
 
     - task: SSH@0
-        displayName: Clean bot directory
-        inputs:
-          sshEndpoint: 'emergencyfood-ssh'
-          runOptions: 'inline'
-          inline: |
-            rm ~/current/*.jar
-          readyTimeout: '20000'
+      displayName: Clean bot directory
+      inputs:
+        sshEndpoint: 'emergencyfood-ssh'
+        runOptions: 'inline'
+        inline: |
+          rm ~/current/*.jar
+        readyTimeout: '20000'
 
     - task: CopyFilesOverSSH@0
       displayName: Copy Binary
