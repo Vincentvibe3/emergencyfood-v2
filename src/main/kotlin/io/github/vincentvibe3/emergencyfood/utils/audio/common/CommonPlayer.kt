@@ -184,16 +184,25 @@ class CommonPlayer(val guild:String) {
         return queueManager.queue.indexOf(currentSong)
     }
 
-    suspend fun skip(){
-        if (isLastSong()&&getLoop()){
+    fun skip(){
+        if (isLastSong()&&getLoop()) {
             queueManager.rebuildQueue()
             val queue = queueManager.queue
             val next = queue.elementAt(0)
-            if (next is Track){
+            if (next is Track) {
                 efPlayer.play(next)
-            } else if (next is AudioTrack){
+            } else if (next is AudioTrack) {
                 lavaplayer.playTrack(next)
             }
+        } else if (isLastSong()&&!getLoop()){
+            val queue = queueManager.queue
+            val currentTrack = queue.last
+            if (currentTrack is Track){
+                efPlayer.stop()
+            } else if (currentTrack is AudioTrack){
+                lavaplayer.stopTrack()
+            }
+            queueManager.queue.clear()
         } else {
             val queue = queueManager.queue
             val currentIndex = getCurrentSongIndex()
