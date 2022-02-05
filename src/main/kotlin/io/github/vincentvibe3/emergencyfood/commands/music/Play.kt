@@ -1,5 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.commands.music
 
+import io.github.vincentvibe3.emergencyfood.core.Bot
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,7 +53,13 @@ object Play: GenericCommand(), SlashCommand, MessageCommand {
         val guild = channel.guild
         val audioManager = guild.audioManager
         audioManager.sendingHandler = player.getAudioHandler()
-        audioManager.openAudioConnection(channel)
+        try {
+            audioManager.openAudioConnection(channel)
+        } catch (e:InsufficientPermissionException){
+            val messageChannel = Bot.getClientInstance().getTextChannelById(player.getUpdateChannel())
+            messageChannel?.sendMessage("Could not connect to channel")
+        }
+
     }
 
 

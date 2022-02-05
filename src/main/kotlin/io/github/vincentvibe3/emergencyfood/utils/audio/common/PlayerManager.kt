@@ -25,6 +25,7 @@ object PlayerManager {
 
     //removes a player from a guild
     fun removePlayer(guild: String){
+        activeGuilds[guild]?.stop()
         activeGuilds.remove(guild)
     }
 

@@ -57,6 +57,10 @@ class CommonPlayer(val guild:String) {
         queueManager.updatesChannel = channel
     }
 
+    fun getUpdateChannel():String{
+        return queueManager.updatesChannel
+    }
+
     fun getAudioHandler(): AudioSendHandler {
         return if (getCurrentSong() is AudioTrack){
             lavahandler
