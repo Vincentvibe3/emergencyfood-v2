@@ -137,21 +137,16 @@ jobs:
    condition: always()
   
    steps:
-   - task: InvokeRESTAPI@1
-     inputs:
-       connectionType: 'connectedServiceName'
-       serviceConnection: 'Discord Webhook'
-       method: 'POST'
-       headers: |
-         {
-         "Content-Type":"application/json", 
-         }
-       body: |
-         {
-         "embeds":[{
-         "title":"Build Status",
-         "type":"rich",
-         "description": $(Agent.JobStatus)
-         }]
-         }
-       waitForCompletion: 'false'
+    - task: ado-discord-webhook@1
+      inputs:
+        channelId: '942212972372185128'
+        webhookKey: 'mHhUkUFFqdl3TX5yeG81S1OMhbTS-eeaXMyrHu9czmLkcZwietB6QjHbuZStdfjgnLJn'
+        messageType: 'embeds'
+        embeds: |
+          [{
+          "embeds":[{
+          "title":"Deployment Status",
+          "type":"rich",
+          "description":"$(Agent.JobStatus)"
+          }]
+          }]
