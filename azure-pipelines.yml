@@ -130,7 +130,9 @@ jobs:
 
    pool: server
 
-   displayName: Build and Release
+   displayName: Webhook
+   
+   dependsOn: Deployment
 
    condition: always()
   
@@ -147,10 +149,9 @@ jobs:
        body: |
          {
          "embeds":[{
-         "title":"Build Status)",
+         "title":"Build Status",
          "type":"rich",
-         "description":"$(Agent.JobStatus)",
-         "color":15548997
+         "description":"${{Agent.JobStatus}}"
          }]
          }
        waitForCompletion: 'false'
