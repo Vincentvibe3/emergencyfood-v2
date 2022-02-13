@@ -138,6 +138,7 @@ jobs:
    condition: always()
   
    steps:
+    - checkout: none
     - task: ado-discord-webhook@1
       inputs:
         channelId: '942212972372185128'
@@ -145,9 +146,7 @@ jobs:
         messageType: 'embeds'
         embeds: |
           [{
-          "embeds":[{
           "title":"Deployment Status",
           "type":"rich",
           "description":"$(Agent.JobStatus)"
-          }]
           }]
