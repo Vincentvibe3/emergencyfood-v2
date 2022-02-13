@@ -125,3 +125,33 @@ jobs:
           sleep 3
           systemctl is-active emergencyfood.service
         readyTimeout: '20000'
+
+ - job: Webhook_Status
+
+   pool:
+     vmImage: 'ubuntu-18.04'
+
+   displayName: Build and Release
+
+   condition: always()
+  
+   steps:
+   - task: InvokeRESTAPI@1
+     inputs:
+       connectionType: 'connectedServiceName'
+       serviceConnection: 'Discord Webhook'
+       method: 'POST'
+       headers: |
+         {
+         "Content-Type":"application/json", 
+         }
+       body: |
+         {
+         "embeds":[{
+         "title":"Build Status)",
+         "type":"rich",
+         "description":"$(Agent.JobStatus)",
+         "color":15548997
+         }]
+         }
+       waitForCompletion: 'false'
