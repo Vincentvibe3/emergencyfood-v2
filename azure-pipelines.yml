@@ -151,7 +151,7 @@ jobs:
          "embeds":[{
          "title":"Build Status",
          "type":"rich",
-         "description":"$(Agent.JobStatus)"
+         "description": $(Agent.JobStatus)
          }]
          }
        waitForCompletion: 'false'
