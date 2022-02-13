@@ -128,8 +128,7 @@ jobs:
 
  - job: Webhook_Status
 
-   pool:
-     vmImage: 'ubuntu-18.04'
+   pool: server
 
    displayName: Build and Release
 
