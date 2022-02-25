@@ -36,8 +36,6 @@ class CommonPlayer(val guild:String) {
 
     val loadQueue = LinkedBlockingQueue<LoadResult>()
 
-    val addOrder = LinkedBlockingQueue<BigInteger>()
-
     fun setupPlayer(){
         playerManager.configuration.setFrameBufferFactory{ bufferDuration, format, stopping -> NonAllocatingAudioFrameBuffer(bufferDuration, format, stopping)}
         AudioSourceManagers.registerRemoteSources(playerManager)
@@ -221,8 +219,13 @@ class CommonPlayer(val guild:String) {
 
     fun isLastSong():Boolean{
         val queue = queueManager.queue
-        val currentIndex = queue.indexOf(lavaplayer.playingTrack)
-        return currentIndex == queue.size-1
+        if (defaultPlayer=="ef"){
+            return efPlayer.currentTrack==null
+        } else {
+            val currentIndex = queue.indexOf(lavaplayer.playingTrack)
+            return currentIndex == queue.size-1
+        }
+
     }
 
     fun clear(){
