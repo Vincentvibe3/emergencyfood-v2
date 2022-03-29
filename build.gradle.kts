@@ -19,14 +19,14 @@ repositories {
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-alpha.3")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
-    implementation("org.json:json:20211205")
+    implementation("org.json:json:20220320")
     implementation ("org.jsoup:jsoup:1.14.3")
-    implementation("io.ktor:ktor-client-core:1.6.7")
-    implementation("io.ktor:ktor-client-cio:1.6.7")
-    implementation("ch.qos.logback:logback-classic:1.2.10")
+    implementation("io.ktor:ktor-client-core:1.6.8")
+    implementation("io.ktor:ktor-client-cio:1.6.8")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.2.12")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.2.13")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
