@@ -2,7 +2,7 @@ package io.github.vincentvibe3.emergencyfood.utils
 
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import io.ktor.client.*
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.delay
@@ -46,7 +46,7 @@ object RequestHandler {
         val client = HttpClient()
         try {
             val response: HttpResponse = client.get(originalUrl)
-            body = response.readText()
+            body = response.bodyAsText()
             success = true
         } catch (e: ConnectException) {
             success = false
