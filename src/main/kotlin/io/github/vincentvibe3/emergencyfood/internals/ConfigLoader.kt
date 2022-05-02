@@ -5,11 +5,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.FileNotFoundException
-import java.lang.reflect.InvocationTargetException
 import kotlin.IllegalArgumentException
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.javaField
 import kotlin.system.exitProcess
 
 object ConfigLoader {
@@ -25,6 +21,11 @@ object ConfigLoader {
     private const val KTS = "config.bot.kts"
     private const val JSON = "botConfig.json"
     private val required = arrayOf("channel", "token", "owner")
+    private val requiredSet = hashMapOf(
+        "channel" to false,
+        "token" to false,
+        "owner" to false
+    )
 
     /** preferred methods of config
         1. json
@@ -51,24 +52,26 @@ object ConfigLoader {
     }
 
     private fun checkSetting(): Pair<String, Boolean> {
-        Config::class.declaredMemberProperties.forEach {
-            if (it.isLateinit && it.javaField?.get(Config) == null){
-                return Pair(it.name, false)
+        requiredSet.forEach {
+            if (!it.value) {
+                return Pair(it.key, false)
             }
         }
         return Pair("ok", true)
     }
 
     private fun applySetting(tempConfig: HashMap<String, Any> ){
-        tempConfig.forEach{
-            val setting = Config::class.declaredMemberProperties.first { property ->
-                property.name == it.key
+        tempConfig.forEach {
+            when (it.key){
+                "channel" -> Config.channel = it.value as Channel
+                "token" -> Config.token = it.value as String
+                "owner" -> Config.owner = it.value as String
+                "exclusions" -> Config.exclusions = it.value as ArrayList<String>
+                "prefix" -> Config.prefix = it.value as String
+                "status" -> Config.status = it.value as String
+                "testServer" -> Config.testServer = it.value as String
             }
-            setting.takeIf { property -> property is KMutableProperty<*> }
-                .let { property -> property as KMutableProperty<*> }
-                .setter.call(Config, tempConfig[setting.name])
         }
-
     }
 
     private fun loadFile(path:String):String{
@@ -81,6 +84,9 @@ object ConfigLoader {
 
     private fun updateSetting(key:String, value:Any, tempConfig: HashMap<String, Any>){
         if (tempConfig[key] == null){
+            if (requiredSet.containsKey(key)){
+                requiredSet[key] = true
+            }
             tempConfig[key] = value
         }
     }
