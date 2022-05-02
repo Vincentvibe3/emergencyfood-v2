@@ -9,9 +9,6 @@ import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.ConfigLoader.Channel
 import io.github.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.interactions.commands.Command
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.memberProperties
 
 object CommandManager {
 
@@ -72,18 +69,18 @@ object CommandManager {
         if (channel!=Channel.STABLE){
             slashCommandsList.forEach{
                 val command = it.value as GenericCommand
-                val commandData = command::class.memberProperties
-                    .first{item -> item.name == "command"}
-                    .getter.call(command) as CommandData
-
-                Bot.getClientInstance().guilds.forEach { guild ->
-                    if (guild.id==Config.testServer){
-                        guild.upsertCommand(commandData).queue(
-                            { Logging.logger.info("Added ${command.name} to ${guild.name}") },
-                            { Logging.logger.error("Failed to add ${command.name} to ${guild.name}") }
-                        )
+                if (command is SlashCommand){
+                    val commandData = command.command
+                    Bot.getClientInstance().guilds.forEach { guild ->
+                        if (guild.id==Config.testServer){
+                            guild.upsertCommand(commandData).queue(
+                                { Logging.logger.info("Added ${command.name} to ${guild.name}") },
+                                { Logging.logger.error("Failed to add ${command.name} to ${guild.name}") }
+                            )
+                        }
                     }
                 }
+
             }
         }
         //remove old guild commands
@@ -111,23 +108,24 @@ object CommandManager {
         //upsert new commands
         slashCommandsList.forEach {
             val command = it.value as GenericCommand
-            val isStable =
-                command::class.annotations.none { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass }
-            val commandData = command::class.memberProperties
-                .first { item -> item.name == "command" }
-                .getter.call(command) as CommandData
+            val isStable = !command.beta
+            if (command is SlashCommand){
+                val commandData = command.command
+                val upsert = if (channel == Channel.STABLE && isStable) {
+                    true
+                } else channel != Channel.STABLE && isStable
 
-            val upsert = if (channel == Channel.STABLE && isStable) {
-                true
-            } else channel != Channel.STABLE && isStable
-            //upsert
-            if (upsert){
-                Bot.getClientInstance()
-                    .upsertCommand(commandData)
-                    .queue(
-                        { Logging.logger.info("Added ${command.name}") },
-                        { Logging.logger.error("Failed to add ${command.name}") })
+                //upsert
+                if (upsert){
+                    Bot.getClientInstance()
+                        .upsertCommand(commandData)
+                        .queue(
+                            { Logging.logger.info("Added ${command.name}") },
+                            { Logging.logger.error("Failed to add ${command.name}") }
+                        )
+                }
             }
+
 
         }
 
@@ -148,9 +146,8 @@ object CommandManager {
             if (channel==Channel.STABLE){
                 remoteCommandList.filter { slashCommandsList.containsKey(it.name) }
                     .filter {
-                        slashCommandsList.getValue(it.name)::class.annotations
-                            .firstOrNull { annotation -> annotation.annotationClass == Bot.Beta::class.createInstance().annotationClass } != null }
-                    .forEach {
+                        (slashCommandsList.getValue(it.name) as GenericCommand).beta
+                    }.forEach {
                         toDelete["global"]?.add(it)
                     }
             }

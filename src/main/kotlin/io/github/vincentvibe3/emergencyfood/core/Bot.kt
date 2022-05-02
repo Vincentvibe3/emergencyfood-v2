@@ -15,10 +15,6 @@ import kotlin.system.exitProcess
 
 object Bot {
 
-    //use annotation to mark commands as beta to not register on stable channels
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class Beta
-
     private lateinit var client:JDA
 
     //get the running bot client
