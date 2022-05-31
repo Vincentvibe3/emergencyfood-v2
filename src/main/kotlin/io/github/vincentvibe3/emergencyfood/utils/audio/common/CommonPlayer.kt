@@ -17,7 +17,6 @@ import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.QueueAddException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 import net.dv8tion.jda.api.audio.AudioSendHandler
-import java.math.BigInteger
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.LinkedBlockingDeque
@@ -47,7 +46,7 @@ class CommonPlayer(val guild:String) {
         return queueManager.loop
     }
 
-    fun getLoop():Boolean{
+    fun looped():Boolean{
         return queueManager.loop
     }
 
@@ -183,7 +182,8 @@ class CommonPlayer(val guild:String) {
     }
 
     fun skip(){
-        if (isLastSong()&&getLoop()) {
+        println(isLastSong())
+        if (isLastSong()&&looped()) {
             queueManager.rebuildQueue()
             val queue = queueManager.queue
             val next = queue.elementAt(0)
@@ -192,7 +192,7 @@ class CommonPlayer(val guild:String) {
             } else if (next is AudioTrack) {
                 lavaplayer.playTrack(next)
             }
-        } else if (isLastSong()&&!getLoop()){
+        } else if (isLastSong()&&!looped()){
             val queue = queueManager.queue
             val currentTrack = queue.last
             if (currentTrack is Track){
@@ -219,13 +219,12 @@ class CommonPlayer(val guild:String) {
 
     fun isLastSong():Boolean{
         val queue = queueManager.queue
-        if (defaultPlayer=="ef"){
-            return efPlayer.currentTrack==null
+        val currentIndex =if (defaultPlayer=="ef"){
+            queue.indexOf(efPlayer.currentTrack)
         } else {
-            val currentIndex = queue.indexOf(lavaplayer.playingTrack)
-            return currentIndex == queue.size-1
+            queue.indexOf(lavaplayer.playingTrack)
         }
-
+        return currentIndex == queue.size-1
     }
 
     fun clear(){

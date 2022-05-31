@@ -4,8 +4,10 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("org.graalvm.buildtools.native") version "0.9.4"
     application
 }
+
 
 group = "io.github.vincent.emergencyfood"
 version = "1.6.7"
@@ -14,6 +16,7 @@ repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
     maven ( "https://jitpack.io" )
+    gradlePluginPortal()
 }
 
 dependencies {
@@ -25,7 +28,6 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:1.6.8")
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     implementation("com.github.Vincentvibe3:ef-player:v.1.2.14")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }

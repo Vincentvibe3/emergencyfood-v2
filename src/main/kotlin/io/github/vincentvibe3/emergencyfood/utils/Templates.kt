@@ -1,11 +1,10 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
 import net.dv8tion.jda.api.EmbedBuilder
-import java.awt.Color
 
 object Templates {
-    private val musicEmbedColor = Color(176, 0, 50)
-    private val sauceEmbedColor = Color(0,141,163)
+    private const val musicEmbedColor = 0xb00032//Color(176, 0, 50)
+    private const val sauceEmbedColor = 0x008da3//Color(0,141,163)
     //requests per second
     const val defaultRateLimit  = 5L
 

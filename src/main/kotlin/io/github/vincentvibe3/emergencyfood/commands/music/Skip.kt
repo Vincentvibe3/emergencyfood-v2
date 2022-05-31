@@ -24,7 +24,7 @@ object Skip:GenericCommand(), SlashCommand, MessageCommand {
             if (player.isQueueEmpty()){
                 event.reply("Cannot skip, the queue is empty").queue()
             } else {
-                if (player.isLastSong()&&!player.getLoop()){
+                if (player.isLastSong()&&!player.looped()){
                     player.clear()
                 } else {
                     player.skip()
@@ -50,7 +50,7 @@ object Skip:GenericCommand(), SlashCommand, MessageCommand {
         if (player.isQueueEmpty()){
             channel.sendMessage("Cannot skip, the queue is empty").queue()
         } else {
-            if (player.isLastSong()&&!player.getLoop()){
+            if (player.isLastSong()&&!player.looped()){
                 player.clear()
             } else {
                 player.skip()
