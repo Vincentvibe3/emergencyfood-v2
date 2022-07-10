@@ -1,6 +1,5 @@
 package io.github.vincentvibe3.emergencyfood.commands.anime
 
-import io.ktor.http.*
 import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
@@ -24,7 +23,7 @@ object Programming:GenericSubCommand(), SubCommand, MessageSubCommand {
         lateinit var category: String
         lateinit var categories: String
         try {
-            categories = RequestHandler.get("https://api.github.com/repos/laynH/Anime-Girls-Holding-Programming-Books/contents/")
+            categories = RequestHandler.get("https://api.github.com/repos/cat-milk/Anime-Girls-Holding-Programming-Books/contents/")
         } catch (e:RequestFailedException){
             throw e
         }
@@ -41,7 +40,7 @@ object Programming:GenericSubCommand(), SubCommand, MessageSubCommand {
             } catch (e:JSONException){ }
             ok = type=="dir"
         }
-        return "https://api.github.com/repos/laynH/Anime-Girls-Holding-Programming-Books/contents/$category"
+        return "https://api.github.com/repos/cat-milk/Anime-Girls-Holding-Programming-Books/contents/$category"
     }
 
     private suspend fun getImage(catUrl:String):String{

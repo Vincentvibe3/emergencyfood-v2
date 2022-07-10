@@ -5,8 +5,11 @@
             <pattern>[ %highlight(%level) ] %msg%n \\_[ %d{HH:mm:ss.SSS} %boldCyan(%.-34thread) %red(%.10X{jda.shard}) %boldGreen(%.-15logger{0}) ]%n</pattern>
         </encoder>
     </appender>
+    <appender name="LOGFLARE" class="io.github.vincentvibe3.emergencyfood.utils.logging.LogflareAppender">
+    </appender>
 
     <root level="info">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOGFLARE" />
     </root>
 </configuration>

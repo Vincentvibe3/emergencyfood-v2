@@ -70,6 +70,9 @@ object ConfigLoader {
                 "prefix" -> Config.prefix = it.value as String
                 "status" -> Config.status = it.value as String
                 "testServer" -> Config.testServer = it.value as String
+                "logflareUrl" -> Config.logflareUrl = it.value as String
+                "logflareKey" -> Config.logflareKey = it.value as String
+                "envName" -> Config.envName = it.value as String
             }
         }
     }
@@ -93,7 +96,7 @@ object ConfigLoader {
 
     private fun jsonReadScope(tempConfig: HashMap<String, Any>, scope:Pair<String, JSONObject>){
         val stringParams = arrayOf(
-            "owner", "status", "prefix", "token", "testServer"
+            "owner", "status", "prefix", "token", "testServer", "logflareUrl", "logflareKey", "envName"
         )
         val arrayParams = arrayOf(
             "exclusions"
@@ -214,6 +217,18 @@ object ConfigLoader {
         updateSetting("token", tempToken, tempConfig)
         val exclusionsValues = System.getenv("EXCLUSIONS")
         val exclusions = exclusionsValues?.replace("\"", "")?.split(" ") ?: ArrayList()
+        val tempLogflareUrl = System.getenv("LOGFLARE_URL")
+        val tempLogflareKey = System.getenv("LOGFLARE_KEY")
+        val tempEnvName = System.getenv("ENV_NAME")
+        if (tempEnvName != null){
+            updateSetting("envName", tempEnvName, tempConfig)
+        }
+        if (tempLogflareUrl != null){
+            updateSetting("logflareUrl", tempLogflareUrl, tempConfig)
+        }
+        if (tempLogflareKey != null){
+            updateSetting("logflareKey", tempLogflareKey, tempConfig)
+        }
         if (exclusions.isNotEmpty()){
             updateSetting("exclusions", exclusions, tempConfig)
         }

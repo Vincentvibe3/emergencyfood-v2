@@ -9,5 +9,8 @@ object Config {
     var prefix = "$"
     var status = "Now using Slash Commands"
     var testServer = ""
+    var logflareUrl = ""
+    var logflareKey = ""
+    var envName = "unknown"
 
 }
