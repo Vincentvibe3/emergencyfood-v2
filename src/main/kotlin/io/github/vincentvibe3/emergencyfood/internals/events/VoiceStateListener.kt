@@ -1,7 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.internals.events
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent

@@ -1,4 +1,4 @@
-package io.github.vincentvibe3.emergencyfood.utils
+package io.github.vincentvibe3.emergencyfood.utils.logging
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import org.slf4j.Logger

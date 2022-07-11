@@ -1,5 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
+import io.github.vincentvibe3.emergencyfood.internals.Config
 import net.dv8tion.jda.api.EmbedBuilder
 
 object Templates {
@@ -25,5 +26,6 @@ object Templates {
 
     fun setRateLimits() {
         RequestHandler.rateLimits["api.github.com"] = 2L
+        RequestHandler.rateLimits[Config.logflareUrl] = 5L
     }
 }

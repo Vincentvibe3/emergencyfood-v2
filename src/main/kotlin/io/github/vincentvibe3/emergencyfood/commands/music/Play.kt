@@ -4,7 +4,7 @@ import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.CommonPlayer
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.LoadResult

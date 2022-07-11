@@ -2,7 +2,7 @@ package io.github.vincentvibe3.emergencyfood.core
 
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.internals.ConfigLoader
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 
 fun main() {

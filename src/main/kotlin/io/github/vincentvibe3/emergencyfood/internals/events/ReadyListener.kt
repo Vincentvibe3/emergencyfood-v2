@@ -1,6 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.internals.events
 
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 

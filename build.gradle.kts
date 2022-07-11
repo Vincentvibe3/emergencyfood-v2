@@ -2,14 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.graalvm.buildtools.native") version "0.9.4"
     application
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.6.9"
+version = "1.6.10"
 
 repositories {
     mavenCentral()
@@ -23,11 +23,9 @@ dependencies {
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20220320")
     implementation ("org.jsoup:jsoup:1.14.3")
-    implementation("io.ktor:ktor-client-core:1.6.8")
-    implementation("io.ktor:ktor-client-cio:1.6.8")
     implementation("ch.qos.logback:logback-classic:1.2.11")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.2.14")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.2.16")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 

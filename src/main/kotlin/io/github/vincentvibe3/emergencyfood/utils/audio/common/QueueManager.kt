@@ -3,7 +3,7 @@ package io.github.vincentvibe3.emergencyfood.utils.audio.common
 import com.github.Vincentvibe3.efplayer.core.Track
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.vincentvibe3.emergencyfood.core.Bot
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.MessageBuilder
 import java.util.concurrent.BlockingDeque

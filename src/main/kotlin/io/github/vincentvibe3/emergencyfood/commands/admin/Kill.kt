@@ -3,7 +3,7 @@ package io.github.vincentvibe3.emergencyfood.commands.admin
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageSubCommand
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import kotlin.system.exitProcess
 

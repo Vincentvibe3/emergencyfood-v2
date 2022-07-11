@@ -4,7 +4,7 @@ import com.github.Vincentvibe3.efplayer.core.EventListener
 import com.github.Vincentvibe3.efplayer.core.Player
 import com.github.Vincentvibe3.efplayer.core.Track
 import io.github.vincentvibe3.emergencyfood.core.Bot
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.QueueManager
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import kotlinx.coroutines.runBlocking

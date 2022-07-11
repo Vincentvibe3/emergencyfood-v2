@@ -2,7 +2,7 @@ package io.github.vincentvibe3.emergencyfood.internals.events
 
 import io.github.vincentvibe3.emergencyfood.internals.CommandManager
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent

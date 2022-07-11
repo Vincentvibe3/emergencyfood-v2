@@ -5,7 +5,7 @@ import io.github.vincentvibe3.emergencyfood.internals.CommandManager
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageResponseManager
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent

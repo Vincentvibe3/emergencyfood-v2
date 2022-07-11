@@ -6,7 +6,7 @@ import io.github.vincentvibe3.emergencyfood.internals.CommandManager
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.internals.events.*
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity

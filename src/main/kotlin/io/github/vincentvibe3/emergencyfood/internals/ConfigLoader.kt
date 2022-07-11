@@ -1,6 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.internals
 
-import io.github.vincentvibe3.emergencyfood.utils.Logging
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
