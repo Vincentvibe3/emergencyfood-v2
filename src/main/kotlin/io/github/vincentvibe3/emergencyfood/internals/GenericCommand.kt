@@ -1,7 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.internals
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 abstract class GenericCommand {
@@ -15,9 +15,9 @@ abstract class GenericCommand {
         this.subCommands[subCommand.name] = subCommand
     }
 
-    suspend fun handleSubCommands(event:SlashCommandEvent){
+    suspend fun handleSubCommands(event: SlashCommandInteractionEvent) {
         val subCommand = subCommands[event.subcommandName]
-        if (subCommand!=null){
+        if (subCommand != null) {
             (subCommand as SubCommand).handle(event)
         }
 

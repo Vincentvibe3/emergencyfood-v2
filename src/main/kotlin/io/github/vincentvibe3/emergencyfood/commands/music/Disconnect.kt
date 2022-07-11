@@ -6,20 +6,20 @@ import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.api.interactions.commands.build.Commands
 
-object Disconnect: GenericCommand(), SlashCommand, MessageCommand {
+object Disconnect : GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "disconnect"
 
-    override val command = CommandData(name, "Disconnects from the voice channel")
+    override val command = Commands.slash(name, "Disconnects from the voice channel")
 
-    override suspend fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandInteractionEvent) {
         val guild = event.guild
         if (guild != null) {
-            if (guild.audioManager.isConnected){
+            if (guild.audioManager.isConnected) {
                 guild.audioManager.closeAudioConnection()
                 PlayerManager.removePlayer(guild.id)
                 val embed = Templates.getMusicEmbed()
@@ -40,7 +40,7 @@ object Disconnect: GenericCommand(), SlashCommand, MessageCommand {
     override suspend fun handle(event: MessageReceivedEvent) {
         val guild = event.guild
         val channel = event.textChannel
-        if (guild.audioManager.isConnected){
+        if (guild.audioManager.isConnected) {
             guild.audioManager.closeAudioConnection()
             PlayerManager.removePlayer(guild.id)
             val embed = Templates.getMusicEmbed()

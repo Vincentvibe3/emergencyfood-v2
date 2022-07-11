@@ -13,7 +13,7 @@ import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -21,11 +21,11 @@ import net.dv8tion.jda.api.interactions.components.ActionRow
 import org.json.JSONException
 import org.json.JSONObject
 
-object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
+object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
     override val name = "read"
 
     override val subCommand = SubcommandData("read", "Read a sauce")
-        .addOption(OptionType.INTEGER,"numbers", "the number to the sauce", true)
+        .addOption(OptionType.INTEGER, "numbers", "the number to the sauce", true)
         .addOption(OptionType.INTEGER, "start", "the page to start on", false)
 
     init {
@@ -35,22 +35,22 @@ object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
         ButtonManager.registerLocal(SauceEnd)
     }
 
-    private suspend fun getInfo(id:String?): JSONObject {
+    private suspend fun getInfo(id: String?): JSONObject {
         lateinit var jsonResponse: JSONObject
-        try{
+        try {
             val response = RequestHandler.get("https://nhentai.net/api/gallery/$id")
             jsonResponse = JSONObject(response)
-        } catch (e: RequestFailedException){
+        } catch (e: RequestFailedException) {
             throw e
-        } catch (e: JSONException){
+        } catch (e: JSONException) {
             throw e
         }
         return jsonResponse
     }
 
-    private fun getImageFormat(image:JSONObject):String{
-        lateinit var ext:String
-        when(image.getString("t")){
+    private fun getImageFormat(image: JSONObject): String {
+        lateinit var ext: String
+        when (image.getString("t")) {
             "j" -> ext = "jpg"
             "p" -> ext = "png"
             "g" -> ext = "gif"
@@ -58,24 +58,24 @@ object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
         return ext
     }
 
-    private fun getImage(info:JSONObject, index: Long):String{
+    private fun getImage(info: JSONObject, index: Long): String {
         //index starts at 1
         val pageInfo = info.getJSONObject("images").getJSONArray("pages")
-        val page = pageInfo.getJSONObject((index-1).toInt())
+        val page = pageInfo.getJSONObject((index - 1).toInt())
         val format = getImageFormat(page)
         val id = info.getString("media_id")
         return "https://i.nhentai.net/galleries/$id/${index}.$format"
     }
 
-    private fun getButtonsRow(currentPage:Long, lastPage:Long): ActionRow {
-        return if (currentPage==lastPage&&lastPage!=1L){
+    private fun getButtonsRow(currentPage: Long, lastPage: Long): ActionRow {
+        return if (currentPage == lastPage && lastPage != 1L) {
             ActionRow.of(
                 SauceStart.getEnabled(),
                 SaucePrev.getEnabled(),
                 SauceNext.getDisabled(),
                 SauceEnd.getDisabled()
             )
-        } else if (currentPage==1L){
+        } else if (currentPage == 1L) {
             ActionRow.of(
                 SauceStart.getDisabled(),
                 SaucePrev.getDisabled(),
@@ -93,7 +93,7 @@ object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
 
     }
 
-    suspend fun getMessage(id:String, currentPage: Long):Message {
+    suspend fun getMessage(id: String, currentPage: Long): Message {
         //currentPage is the index of the page
         //Note: starts at 1
         lateinit var sauceInfo: JSONObject
@@ -121,15 +121,15 @@ object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
         val textChannel = event.textChannel
         val options = event.getOptions()
         val id = options.getOrNull(0)
-        val page = if (options.size>=2){
+        val page = if (options.size >= 2) {
             options[2].toLongOrNull()
         } else {
             1L
         }
-        if (id != null&&page!=null){
+        if (id != null && page != null) {
             val message = getMessage(id, page)
             textChannel.sendMessage(message).queue()
-        } else if (id == null){
+        } else if (id == null) {
             textChannel.sendMessage("A sauce is required").queue()
         } else if (page == null) {
             textChannel.sendMessage("The page number must be a number").queue()
@@ -138,12 +138,12 @@ object Read: GenericSubCommand(), SubCommand, MessageSubCommand {
         }
     }
 
-    override suspend fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandInteractionEvent) {
         event.deferReply().queue()
         val id = event.getOption("numbers")?.asString
         var page = event.getOption("start")?.asLong
-        if (id != null){
-            if (page==null){
+        if (id != null) {
+            if (page == null) {
                 page = 1L
             }
             val message = getMessage(id, page)

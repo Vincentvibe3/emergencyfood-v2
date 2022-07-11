@@ -9,7 +9,7 @@ import io.github.vincentvibe3.emergencyfood.utils.audio.common.QueueManager
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import kotlinx.coroutines.runBlocking
 
-class PlaybackHandler(private val queueManager: QueueManager): EventListener() {
+class PlaybackHandler(private val queueManager: QueueManager) : EventListener() {
 
     override fun onLoadFailed() {
         Logging.logger.error("Failed to load a track")
@@ -20,17 +20,17 @@ class PlaybackHandler(private val queueManager: QueueManager): EventListener() {
         val initSize = queueManager.queue.size
         var successCount = 0
         tracks.forEach {
-            if (queueManager.addToQueue(it, true)){
+            if (queueManager.addToQueue(it, true)) {
                 successCount++
             }
         }
-        if (successCount!=tracks.size){
+        if (successCount != tracks.size) {
             val client = Bot.getClientInstance()
             val channelId = queueManager.updatesChannel
             val channel = client.getTextChannelById(channelId)
-            channel?.sendMessage("Failed to add ${tracks.size-successCount}, the rest was added")?.queue()
+            channel?.sendMessage("Failed to add ${tracks.size - successCount}, the rest was added")?.queue()
         }
-        if (initSize == 0){
+        if (initSize == 0) {
             val firstSong = queueManager.queue.peek()
             player.play(firstSong as Track)
         }
@@ -56,7 +56,7 @@ class PlaybackHandler(private val queueManager: QueueManager): EventListener() {
 
     override fun onTrackLoad(track: Track, player: Player) {
         queueManager.addToQueue(track, false)
-        if (queueManager.queue.size == 1){
+        if (queueManager.queue.size == 1) {
             val firstSong = queueManager.queue.peek()
             player.play(firstSong as Track)
         }

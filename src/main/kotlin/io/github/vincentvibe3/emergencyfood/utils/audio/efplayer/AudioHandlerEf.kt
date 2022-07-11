@@ -7,13 +7,13 @@ import java.nio.ByteBuffer
 
 class AudioHandlerEf(private var player: Player) : AudioSendHandler {
 
-    val buffer = ByteBuffer.allocate(StandardAudioDataFormats.DISCORD_OPUS.maximumChunkSize())
+    private val buffer: ByteBuffer = ByteBuffer.allocate(StandardAudioDataFormats.DISCORD_OPUS.maximumChunkSize())
 
     override fun canProvide(): Boolean {
         return player.canProvide()
     }
 
-    override fun provide20MsAudio(): ByteBuffer? {
+    override fun provide20MsAudio(): ByteBuffer {
         buffer.clear()
         buffer.put(player.provide())
         buffer.flip()

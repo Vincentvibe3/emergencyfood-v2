@@ -8,7 +8,6 @@ plugins {
     application
 }
 
-
 group = "io.github.vincent.emergencyfood"
 version = "1.6.9"
 
@@ -20,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:5.0.0-alpha.3")
+    implementation("net.dv8tion:JDA:5.0.0-alpha.13")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
     implementation("org.json:json:20220320")
     implementation ("org.jsoup:jsoup:1.14.3")

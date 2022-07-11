@@ -6,21 +6,21 @@ import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.api.interactions.commands.build.Commands
 
-object Clear: GenericCommand(), SlashCommand, MessageCommand {
+object Clear : GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "clear"
 
-    override val command = CommandData(name, "Clears the queue")
+    override val command = Commands.slash(name, "Clears the queue")
 
-    override suspend fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandInteractionEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
-            if (player.isQueueEmpty()){
+            if (player.isQueueEmpty()) {
                 event.reply("Cannot clear, the queue is already empty").queue()
             } else {
                 player.clear()
@@ -41,7 +41,7 @@ object Clear: GenericCommand(), SlashCommand, MessageCommand {
         val guildId = event.guild.id
         val channel = event.textChannel
         val player = guildId.let { PlayerManager.getPlayer(it) }
-        if (player.isQueueEmpty()){
+        if (player.isQueueEmpty()) {
             channel.sendMessage("Cannot clear, the queue is already empty").queue()
         } else {
             player.clear()

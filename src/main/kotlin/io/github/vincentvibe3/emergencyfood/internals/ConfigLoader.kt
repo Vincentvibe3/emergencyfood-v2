@@ -11,8 +11,8 @@ import kotlin.system.exitProcess
 object ConfigLoader {
 
     /**
-        enum representing environments
-        in which the bot may
+    enum representing environments
+    in which the bot may
      **/
     enum class Channel {
         BETA, STABLE, LOCAL
@@ -28,24 +28,24 @@ object ConfigLoader {
     )
 
     /** preferred methods of config
-        1. json
-        2. kotlin script
-        3. environment variables
-    **/
-    fun load(){
+    1. json
+    2. kotlin script
+    3. environment variables
+     **/
+    fun load() {
         val tempConfig = HashMap<String, Any>()
-        val tasks = ArrayList< (HashMap<String, Any>) -> Unit >()
+        val tasks = ArrayList<(HashMap<String, Any>) -> Unit>()
         tasks.add { loadJSON(tempConfig) }
 //        tasks.add { loadKTS(tempConfig) }
         tasks.add { loadENV(tempConfig) }
         tasks.forEach {
-            if (!checkSetting().second){
+            if (!checkSetting().second) {
                 it.invoke(tempConfig)
                 applySetting(tempConfig)
             }
         }
         val checkResult = checkSetting()
-        if (!checkResult.second){
+        if (!checkResult.second) {
             Logging.logger.error("Unable to load required setting (${checkResult.first}) from config")
             exitProcess(1)
         }
@@ -77,7 +77,7 @@ object ConfigLoader {
         }
     }
 
-    private fun loadFile(path:String):String{
+    private fun loadFile(path: String): String {
         val file = File(path)
         return file.bufferedReader()
             .lines()
@@ -94,78 +94,78 @@ object ConfigLoader {
         }
     }
 
-    private fun jsonReadScope(tempConfig: HashMap<String, Any>, scope:Pair<String, JSONObject>){
+    private fun jsonReadScope(tempConfig: HashMap<String, Any>, scope: Pair<String, JSONObject>) {
         val stringParams = arrayOf(
             "owner", "status", "prefix", "token", "testServer", "logflareUrl", "logflareKey", "envName"
         )
         val arrayParams = arrayOf(
             "exclusions"
         )
-        for (key in stringParams){
+        for (key in stringParams) {
             try {
                 val value = scope.second.getString(key)
-                if (value!=""){
+                if (value != "") {
                     updateSetting(key, value, tempConfig)
-                }else if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
+                } else if (required.contains(key) && scope.first != "Global" && !tempConfig.containsKey(key)) {
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
-            } catch (e:JSONException){
-                if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
+            } catch (e: JSONException) {
+                if (required.contains(key) && scope.first != "Global" && !tempConfig.containsKey(key)) {
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
             }
         }
-        for (key in arrayParams){
+        for (key in arrayParams) {
             try {
                 val paramArray = ArrayList<String>()
                 val value = scope.second.getJSONArray(key)
-                for (index in 0 until value.length()){
+                for (index in 0 until value.length()) {
                     val stringVal = value.optString(index)
                     paramArray.add(stringVal)
                 }
                 updateSetting(key, paramArray, tempConfig)
-            } catch (e:JSONException){
-                if (required.contains(key)&&scope.first!="Global"&&!tempConfig.containsKey(key)){
+            } catch (e: JSONException) {
+                if (required.contains(key) && scope.first != "Global" && !tempConfig.containsKey(key)) {
                     Logging.logger.warn("Could not load $key from botConfig.json in ${scope.first} scope")
                 }
             }
         }
     }
 
-    private fun loadJSON(tempConfig:HashMap<String, Any>){
+    private fun loadJSON(tempConfig: HashMap<String, Any>) {
         Logging.logger.info("Loading botConfig.json...")
-        lateinit var data:String
+        lateinit var data: String
         try {
             data = loadFile(JSON)
-        } catch (e:FileNotFoundException){
+        } catch (e: FileNotFoundException) {
             return
         }
 
-        lateinit var jsonData:JSONObject
+        lateinit var jsonData: JSONObject
         try {
             jsonData = JSONObject(data)
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             Logging.logger.warn("Invalid botConfig.json file. Trying config.bot.kts")
             return
         }
 
-        lateinit var channelValue:Channel
-        lateinit var channelName:String
+        lateinit var channelValue: Channel
+        lateinit var channelName: String
         //load required
         try {
             channelName = jsonData.getString("Channel")
             channelValue = Channel.valueOf(channelName.uppercase())
             updateSetting("channel", channelValue, tempConfig)
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             Logging.logger.warn("Channel could not be read from botConfig.json")
-        } catch (e:IllegalArgumentException){
+        } catch (e: IllegalArgumentException) {
             Logging.logger.warn("Invalid channel value found in botConfig.json")
         }
 
-        try{
+        try {
             val globalSettings = jsonData.getJSONObject("Global")
             jsonReadScope(tempConfig, Pair("Global", globalSettings))
-            val scope = when (channelValue){
+            val scope = when (channelValue) {
                 Channel.STABLE -> {
                     jsonData.getJSONObject("Stable")
                 }
@@ -177,26 +177,26 @@ object ConfigLoader {
                 }
             }
             jsonReadScope(tempConfig, Pair(channelName, scope))
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             Logging.logger.warn("Global scope or specific scope was not found in botConfig.json")
-        } catch (e:UninitializedPropertyAccessException){
+        } catch (e: UninitializedPropertyAccessException) {
             return
         }
     }
 
-    private fun loadKTS(tempConfig:HashMap<String, Any>){
+    private fun loadKTS(tempConfig: HashMap<String, Any>) {
         val file = File(KTS)
     }
 
-    private fun loadENV(tempConfig:HashMap<String, Any>){
+    private fun loadENV(tempConfig: HashMap<String, Any>) {
         Logging.logger.info("Loading config from Env")
         val channelValue = System.getenv("CHANNEL")
-        val channelType = if (channelValue==null){
+        val channelType = if (channelValue == null) {
             Channel.STABLE
-        } else{
+        } else {
             try {
                 Channel.valueOf(channelValue)
-            } catch (e:IllegalArgumentException){
+            } catch (e: IllegalArgumentException) {
                 Channel.STABLE
             }
         }
@@ -232,10 +232,10 @@ object ConfigLoader {
         if (exclusions.isNotEmpty()){
             updateSetting("exclusions", exclusions, tempConfig)
         }
-        if (tempOwner!=null){
+        if (tempOwner != null) {
             updateSetting("owner", tempOwner, tempConfig)
         }
-        if (tempTestServer!=null){
+        if (tempTestServer != null) {
             updateSetting("testServer", tempTestServer, tempConfig)
         }
     }

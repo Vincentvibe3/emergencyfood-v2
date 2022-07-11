@@ -1,8 +1,8 @@
 package io.github.vincentvibe3.emergencyfood.utils.audio.common
 
-import kotlinx.coroutines.delay
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.Templates
+import kotlinx.coroutines.delay
 import net.dv8tion.jda.api.MessageBuilder
 
 object PlayerManager {
@@ -11,9 +11,9 @@ object PlayerManager {
     private val checkForCleanup = HashMap<String, Long>()
 
     //fetches the player for a guild and creates a new one if none is found
-    fun getPlayer(guild:String): CommonPlayer {
+    fun getPlayer(guild: String): CommonPlayer {
         val currentPlayer = activeGuilds[guild]
-        return if (currentPlayer != null){
+        return if (currentPlayer != null) {
             currentPlayer
         } else {
             val newPlayer = CommonPlayer(guild)
@@ -24,24 +24,24 @@ object PlayerManager {
     }
 
     //removes a player from a guild
-    fun removePlayer(guild: String){
+    fun removePlayer(guild: String) {
         activeGuilds[guild]?.stop()
         activeGuilds.remove(guild)
     }
 
-    suspend fun startCleanupLoop(){
+    suspend fun startCleanupLoop() {
         while (true) {
-            if (checkForCleanup.isEmpty()){
+            if (checkForCleanup.isEmpty()) {
                 delay(30000L)
             } else {
                 val checkTime = checkForCleanup.values.first()
                 val guild = checkForCleanup.keys.first()
                 val currentTime = System.currentTimeMillis()
-                if (currentTime>=checkTime){
+                if (currentTime >= checkTime) {
                     cleanUp(guild)
                 } else {
-                    delay(checkTime-currentTime)
-                    if (checkForCleanup.keys.first()==guild){
+                    delay(checkTime - currentTime)
+                    if (checkForCleanup.keys.first() == guild) {
                         cleanUp(guild)
                     }
                 }
@@ -49,11 +49,11 @@ object PlayerManager {
         }
     }
 
-    fun isSetForCleanup(guildId: String):Boolean{
+    fun isSetForCleanup(guildId: String): Boolean {
         return checkForCleanup.contains(guildId)
     }
 
-    private fun cleanUp(guildId: String){
+    private fun cleanUp(guildId: String) {
         val client = Bot.getClientInstance()
         val guild = client.getGuildById(guildId)
         val updatedPlayer = getPlayer(guildId)
@@ -70,14 +70,14 @@ object PlayerManager {
         unsetForCleanup(guildId)
     }
 
-    fun setForCleanup(guild: String){
+    fun setForCleanup(guild: String) {
         val currentTime = System.currentTimeMillis()
         val timeout = 5
-        val checkTime = currentTime+(timeout*60*1000)
+        val checkTime = currentTime + (timeout * 60 * 1000)
         checkForCleanup[guild] = checkTime
     }
 
-    fun unsetForCleanup(guild: String){
+    fun unsetForCleanup(guild: String) {
         checkForCleanup.remove(guild)
     }
 

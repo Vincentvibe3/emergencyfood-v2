@@ -11,12 +11,12 @@ import io.github.vincentvibe3.emergencyfood.utils.audio.common.QueueManager
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
 
-class AudioLoader(private val queueManager: QueueManager, private val player:AudioPlayer): AudioLoadResultHandler {
+class AudioLoader(private val queueManager: QueueManager, private val player: AudioPlayer) : AudioLoadResultHandler {
 
     // add loaded tracks to queue and play if queue was empty
     override fun trackLoaded(track: AudioTrack) {
         queueManager.addToQueue(track, false)
-        if (queueManager.queue.size == 1){
+        if (queueManager.queue.size == 1) {
             val firstSong = queueManager.queue.peek()
             player.playTrack(firstSong as AudioTrack?)
         }
@@ -27,17 +27,17 @@ class AudioLoader(private val queueManager: QueueManager, private val player:Aud
         val initSize = queueManager.queue.size
         var successCount = 0
         playlist.tracks.forEach {
-            if (queueManager.addToQueue(it, true)){
+            if (queueManager.addToQueue(it, true)) {
                 successCount++
             }
         }
-        if (successCount!=playlist.tracks.size){
+        if (successCount != playlist.tracks.size) {
             val client = Bot.getClientInstance()
             val channelId = queueManager.updatesChannel
             val channel = client.getTextChannelById(channelId)
-            channel?.sendMessage("Failed to add ${playlist.tracks.size-successCount}, the rest was added")?.queue()
+            channel?.sendMessage("Failed to add ${playlist.tracks.size - successCount}, the rest was added")?.queue()
         }
-        if (initSize == 0){
+        if (initSize == 0) {
             val firstSong = queueManager.queue.peek()
             player.playTrack(firstSong as AudioTrack?)
         }

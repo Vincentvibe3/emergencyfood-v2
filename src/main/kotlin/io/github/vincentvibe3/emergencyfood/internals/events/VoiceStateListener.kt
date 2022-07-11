@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
-object VoiceStateListener: ListenerAdapter() {
+object VoiceStateListener : ListenerAdapter() {
 
     //check if the bot is alone
     override fun onGuildVoiceUpdate(event: GuildVoiceUpdateEvent) {
@@ -22,26 +22,26 @@ object VoiceStateListener: ListenerAdapter() {
             if (channelJoin != null && channelJoin.members.contains(selfMember)) {
                 Logging.logger.debug("User Connected to vc")
                 PlayerManager.unsetForCleanup(guildId)
-            } else if (channelLeft!=null && channelLeft.members.contains(selfMember)){
+            } else if (channelLeft != null && channelLeft.members.contains(selfMember)) {
                 Logging.logger.debug("User Disconnected from vc")
-                if (channelLeft.members.none { !it.user.isBot } ){
+                if (channelLeft.members.none { !it.user.isBot }) {
                     PlayerManager.setForCleanup(guildId)
                 }
             }
         } else {
-            if (event.member.user.id == selfId && channelJoin != null){
-                if (channelJoin.members.none { !it.user.isBot }){
+            if (event.member.user.id == selfId && channelJoin != null) {
+                if (channelJoin.members.none { !it.user.isBot }) {
                     PlayerManager.setForCleanup(guildId)
                 }
-            } else if (event.member.user.id == selfId && channelLeft != null && !PlayerManager.isSetForCleanup(guildId)){
+            } else if (event.member.user.id == selfId && channelLeft != null && !PlayerManager.isSetForCleanup(guildId)) {
                 PlayerManager.removePlayer(guildId)
             }
         }
     }
 
     override fun onGuildVoiceGuildDeafen(event: GuildVoiceGuildDeafenEvent) {
-        if (event.member.id == Bot.getClientInstance().selfUser.id){
-            if (!event.isGuildDeafened){
+        if (event.member.id == Bot.getClientInstance().selfUser.id) {
+            if (!event.isGuildDeafened) {
                 event.member.deafen(true).queue()
                 val guild = event.guild.id
                 val player = PlayerManager.getPlayer(guild)

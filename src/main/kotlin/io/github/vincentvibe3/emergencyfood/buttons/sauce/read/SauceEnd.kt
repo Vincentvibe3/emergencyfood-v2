@@ -1,17 +1,16 @@
 package io.github.vincentvibe3.emergencyfood.buttons.sauce.read
 
-import io.github.vincentvibe3.emergencyfood.buttons.music.queue.QueueEnd
 import io.github.vincentvibe3.emergencyfood.commands.sauce.Read
 import io.github.vincentvibe3.emergencyfood.internals.InteractionButton
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
-import net.dv8tion.jda.api.interactions.components.Button
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.interactions.components.buttons.Button
 
-object SauceEnd:InteractionButton() {
+object SauceEnd : InteractionButton() {
     override val name = "SauceEnd"
 
     override val button = Button.secondary(name, "Last")
 
-    override suspend fun handle(event: ButtonClickEvent) {
+    override suspend fun handle(event: ButtonInteractionEvent) {
         val originalEmbed = event.message.embeds.firstOrNull()
         val description = originalEmbed?.description
         val id = description?.substringAfter("[")?.substringBefore("]")

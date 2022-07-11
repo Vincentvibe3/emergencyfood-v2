@@ -22,12 +22,12 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.LinkedBlockingQueue
 
-class CommonPlayer(val guild:String) {
+class CommonPlayer(val guild: String) {
     private val playerManager = DefaultAudioPlayerManager()
     private val queueManager = QueueManager(this)
     val lavaplayer: AudioPlayer = playerManager.createPlayer()
-    private val efListener:EventListener = PlaybackHandler(queueManager)
-    val efPlayer: Player= Player(efListener)
+    private val efListener: EventListener = PlaybackHandler(queueManager)
+    val efPlayer: Player = Player(efListener)
     private val eventAdapter = EventAdapter(queueManager)
     private val efHandler = AudioHandlerEf(efPlayer)
     private val lavahandler = AudioHandler(lavaplayer)
@@ -35,13 +35,19 @@ class CommonPlayer(val guild:String) {
 
     val loadQueue = LinkedBlockingQueue<LoadResult>()
 
-    fun setupPlayer(){
-        playerManager.configuration.setFrameBufferFactory{ bufferDuration, format, stopping -> NonAllocatingAudioFrameBuffer(bufferDuration, format, stopping)}
+    fun setupPlayer() {
+        playerManager.configuration.setFrameBufferFactory { bufferDuration, format, stopping ->
+            NonAllocatingAudioFrameBuffer(
+                bufferDuration,
+                format,
+                stopping
+            )
+        }
         AudioSourceManagers.registerRemoteSources(playerManager)
         lavaplayer.addListener(eventAdapter)
     }
 
-    fun toggleLoop(): Boolean{
+    fun toggleLoop(): Boolean {
         queueManager.loop = !queueManager.loop
         return queueManager.loop
     }
@@ -50,40 +56,40 @@ class CommonPlayer(val guild:String) {
         return queueManager.loop
     }
 
-    fun setUpdateChannel(channel:String){
+    fun setUpdateChannel(channel: String) {
         queueManager.updatesChannel = channel
     }
 
-    fun getUpdateChannel():String{
+    fun getUpdateChannel(): String {
         return queueManager.updatesChannel
     }
 
     fun getAudioHandler(): AudioSendHandler {
-        return if (getCurrentSong() is AudioTrack){
+        return if (getCurrentSong() is AudioTrack) {
             lavahandler
-        } else if (getCurrentSong() is Track){
+        } else if (getCurrentSong() is Track) {
             efHandler
-        } else{
+        } else {
             efHandler
         }
     }
 
-    fun getAnnouncementChannel():String {
+    fun getAnnouncementChannel(): String {
         return queueManager.updatesChannel
     }
 
-    fun play(track:String){
-        if (queueManager.queue.size == Int.MAX_VALUE){
+    fun play(track: String) {
+        if (queueManager.queue.size == Int.MAX_VALUE) {
             throw QueueAddException()
         }
         try {
-            if (defaultPlayer=="ef"){
+            if (defaultPlayer == "ef") {
                 efPlayer.load(track)
             } else {
-                val load = playerManager.loadItemOrdered(lavaplayer,  track, AudioLoader(queueManager, lavaplayer))
+                val load = playerManager.loadItemOrdered(lavaplayer, track, AudioLoader(queueManager, lavaplayer))
                 load.get()
             }
-        } catch (e:ExecutionException) {
+        } catch (e: ExecutionException) {
             when (e.cause?.javaClass) {
                 LoadFailedException::class.java -> {
                     throw LoadFailedException()
@@ -96,43 +102,43 @@ class CommonPlayer(val guild:String) {
 
     }
 
-    fun getQueue(): BlockingQueue<Any>{
+    fun getQueue(): BlockingQueue<Any> {
         return queueManager.queue
     }
 
     fun getCurrentSong(): Any? {
-        val lpTrack =lavaplayer.playingTrack
+        val lpTrack = lavaplayer.playingTrack
         val efTrack = efPlayer.currentTrack
         return efTrack ?: lpTrack
     }
 
-    fun getCurrentSongUrl(): String{
+    fun getCurrentSongUrl(): String {
         val currentSong = getCurrentSong()
-        return if (currentSong is Track){
+        return if (currentSong is Track) {
             currentSong.url
-        } else if (currentSong is AudioTrack){
+        } else if (currentSong is AudioTrack) {
             currentSong.info.uri
         } else {
             ""
         }
     }
 
-    fun getCurrentSongTitle(): String{
+    fun getCurrentSongTitle(): String {
         val currentSong = getCurrentSong()
-        return if (currentSong is Track){
+        return if (currentSong is Track) {
             currentSong.title ?: ""
-        } else if (currentSong is AudioTrack){
+        } else if (currentSong is AudioTrack) {
             currentSong.info.title
         } else {
             ""
         }
     }
 
-    fun getLastSongUrl():String{
+    fun getLastSongUrl(): String {
         val last = queueManager.queue.last()
-        return if (last is AudioTrack){
+        return if (last is AudioTrack) {
             last.info.uri
-        } else if (last is Track){
+        } else if (last is Track) {
             last.url
         } else {
             ""
@@ -141,22 +147,22 @@ class CommonPlayer(val guild:String) {
 
     }
 
-    fun getLastSongTitle():String{
+    fun getLastSongTitle(): String {
         val last = queueManager.queue.last()
-        return if (last is AudioTrack){
+        return if (last is AudioTrack) {
             last.info.title
-        } else if (last is Track){
+        } else if (last is Track) {
             last.title ?: ""
         } else {
             ""
         }
     }
 
-    fun getSongUrl(pos:Int):String{
+    fun getSongUrl(pos: Int): String {
         val last = queueManager.queue.elementAt(pos)
-        return if (last is AudioTrack){
+        return if (last is AudioTrack) {
             last.info.uri
-        } else if (last is Track){
+        } else if (last is Track) {
             last.url
         } else {
             ""
@@ -165,24 +171,23 @@ class CommonPlayer(val guild:String) {
 
     }
 
-    fun getSongTitle(pos: Int):String{
+    fun getSongTitle(pos: Int): String {
         val last = queueManager.queue.elementAt(pos)
-        return if (last is AudioTrack){
+        return if (last is AudioTrack) {
             last.info.title
-        } else if (last is Track){
+        } else if (last is Track) {
             last.title ?: ""
         } else {
             ""
         }
     }
 
-    fun getCurrentSongIndex():Int{
+    fun getCurrentSongIndex(): Int {
         val currentSong = getCurrentSong()
         return queueManager.queue.indexOf(currentSong)
     }
 
     fun skip(){
-        println(isLastSong())
         if (isLastSong()&&looped()) {
             queueManager.rebuildQueue()
             val queue = queueManager.queue
@@ -195,29 +200,29 @@ class CommonPlayer(val guild:String) {
         } else if (isLastSong()&&!looped()){
             val queue = queueManager.queue
             val currentTrack = queue.last
-            if (currentTrack is Track){
+            if (currentTrack is Track) {
                 efPlayer.stop()
-            } else if (currentTrack is AudioTrack){
+            } else if (currentTrack is AudioTrack) {
                 lavaplayer.stopTrack()
             }
             queueManager.queue.clear()
         } else {
             val queue = queueManager.queue
             val currentIndex = getCurrentSongIndex()
-            val next = queue.elementAt(currentIndex+1)
-            if (next is Track){
+            val next = queue.elementAt(currentIndex + 1)
+            if (next is Track) {
                 efPlayer.play(next)
-            } else if (next is AudioTrack){
+            } else if (next is AudioTrack) {
                 lavaplayer.playTrack(next)
             }
         }
     }
 
-    fun isQueueEmpty(): Boolean{
+    fun isQueueEmpty(): Boolean {
         return queueManager.queue.size == 0
     }
 
-    fun isLastSong():Boolean{
+    fun isLastSong(): Boolean {
         val queue = queueManager.queue
         val currentIndex =if (defaultPlayer=="ef"){
             queue.indexOf(efPlayer.currentTrack)
@@ -233,47 +238,47 @@ class CommonPlayer(val guild:String) {
         efPlayer.stop()
     }
 
-    fun stop(){
+    fun stop() {
         efPlayer.stop()
         lavaplayer.stopTrack()
     }
 
-    fun resume(){
+    fun resume() {
         efPlayer.resume()
         lavaplayer.isPaused = false
     }
 
-    fun pause(){
+    fun pause() {
         efPlayer.pause()
         lavaplayer.isPaused = true
     }
 
-    fun isPaused(): Boolean{
-        return if (getCurrentSong() is AudioTrack){
+    fun isPaused(): Boolean {
+        return if (getCurrentSong() is AudioTrack) {
             lavaplayer.isPaused
-        } else if (getCurrentSong() is Track){
+        } else if (getCurrentSong() is Track) {
             efPlayer.paused
-        } else{
+        } else {
             false
         }
     }
 
-    fun isPlaying(): Boolean{
+    fun isPlaying(): Boolean {
         return lavaplayer.playingTrack != null || efPlayer.currentTrack != null
     }
 
-    fun shuffle(){
+    fun shuffle() {
         val newQueue: BlockingQueue<Any> = LinkedBlockingQueue()
         val nowPlaying = getCurrentSong()
-        queueManager.queue.filter { it!=nowPlaying }.forEach{
-            if (it is AudioTrack){
+        queueManager.queue.filter { it != nowPlaying }.forEach {
+            if (it is AudioTrack) {
                 newQueue.offer(it.makeClone())
-            } else if (it is Track){
+            } else if (it is Track) {
                 newQueue.offer(it)
             }
         }
         queueManager.queue = LinkedBlockingDeque(newQueue.shuffled())
-        if (nowPlaying!=null){
+        if (nowPlaying != null) {
             queueManager.queue.offerFirst(nowPlaying)
         }
     }

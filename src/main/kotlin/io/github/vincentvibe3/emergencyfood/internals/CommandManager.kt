@@ -1,5 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.internals
 
+import io.github.vincentvibe3.emergencyfood.commands.admin.Admin
 import io.github.vincentvibe3.emergencyfood.commands.anime.Anime
 import io.github.vincentvibe3.emergencyfood.commands.kana.KanaPractice
 import io.github.vincentvibe3.emergencyfood.commands.misc.Roll
@@ -17,7 +18,7 @@ object CommandManager {
     private val messageCommandsList = HashMap<String, MessageCommand>()
 
     init {
-        try{
+        try {
             //set commands to add here
             registerLocal(Sauce)
             registerLocal(Play)
@@ -33,28 +34,29 @@ object CommandManager {
             registerLocal(Anime)
             registerLocal(KanaPractice)
             registerLocal(Roll)
-        } catch (e:IllegalArgumentException) {
+            registerLocal(Admin)
+        } catch (e: IllegalArgumentException) {
             Logging.logger.error("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
 
     }
 
     //get hashmap with commands
-    fun getSlashCommands():HashMap<String, SlashCommand> {
+    fun getSlashCommands(): HashMap<String, SlashCommand> {
         return slashCommandsList
     }
 
-    fun getMessageCommands():HashMap<String, MessageCommand> {
+    fun getMessageCommands(): HashMap<String, MessageCommand> {
         return messageCommandsList
     }
 
     //add commands to the hashmap
-    private fun registerLocal(command: GenericCommand){
-        if (!Config.exclusions.contains(command.name)){
-            if (command is MessageCommand){
+    private fun registerLocal(command: GenericCommand) {
+        if (!Config.exclusions.contains(command.name)) {
+            if (command is MessageCommand) {
                 messageCommandsList[command.name] = command
             }
-            if (command is SlashCommand){
+            if (command is SlashCommand) {
                 slashCommandsList[command.name] = command
             }
         }
@@ -62,12 +64,12 @@ object CommandManager {
 
     /*this method is only currently used to accelerate testing and
     * therefore does not support use of actual guild commands*/
-    fun registerGuildRemote(channel: Channel){
+    fun registerGuildRemote(channel: Channel) {
         Logging.logger.info("Starting guild command registration")
 
         //register guild commands if not on stable
-        if (channel!=Channel.STABLE){
-            slashCommandsList.forEach{
+        if (channel != Channel.STABLE) {
+            slashCommandsList.forEach {
                 val command = it.value as GenericCommand
                 if (command is SlashCommand){
                     val commandData = command.command
@@ -80,12 +82,11 @@ object CommandManager {
                         }
                     }
                 }
-
             }
         }
         //remove old guild commands
         Bot.getClientInstance().guilds.forEach { guild ->
-            guild.retrieveCommands().queue ({ commandList ->
+            guild.retrieveCommands().queue({ commandList ->
                 commandList.filter { !slashCommandsList.containsKey(it.name) }.forEach { command ->
                     try {
                         command.delete().queue(
@@ -103,7 +104,7 @@ object CommandManager {
     }
 
     //register commands on discord
-    fun registerRemote(channel: Channel){
+    fun registerRemote(channel: Channel) {
         Logging.logger.info("Starting command registration")
         //upsert new commands
         slashCommandsList.forEach {
@@ -126,24 +127,23 @@ object CommandManager {
                 }
             }
 
-
         }
 
         //old command deletion
         val toDelete = HashMap<String, ArrayList<Command>>()
         toDelete["guild"] = ArrayList()
         toDelete["global"] = ArrayList()
-        if (channel==Channel.STABLE){
-            Bot.getClientInstance().guilds.forEach{ guild ->
-                guild.retrieveCommands().queue{ guildCommands ->
-                    guildCommands.forEach{ toDelete["guild"]?.add(it) }
+        if (channel == Channel.STABLE) {
+            Bot.getClientInstance().guilds.forEach { guild ->
+                guild.retrieveCommands().queue { guildCommands ->
+                    guildCommands.forEach { toDelete["guild"]?.add(it) }
                 }
             }
         }
 
-        Bot.getClientInstance().retrieveCommands().queue{ remoteCommandList ->
+        Bot.getClientInstance().retrieveCommands().queue { remoteCommandList ->
             //delete remote commands that are locally marked as beta
-            if (channel==Channel.STABLE){
+            if (channel == Channel.STABLE) {
                 remoteCommandList.filter { slashCommandsList.containsKey(it.name) }
                     .filter {
                         (slashCommandsList.getValue(it.name) as GenericCommand).beta

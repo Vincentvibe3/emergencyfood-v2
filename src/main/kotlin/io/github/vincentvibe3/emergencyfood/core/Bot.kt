@@ -18,19 +18,19 @@ object Bot {
     private lateinit var client:JDA
 
     //get the running bot client
-    fun getClientInstance():JDA{
+    fun getClientInstance(): JDA {
         return client
     }
 
     //start the bot
-    fun start(){
+    fun start() {
         val activity = Activity.playing(Config.status)
         try {
             client = JDABuilder.createDefault(Config.token)
                 .setActivity(activity)
                 .addEventListeners(ReadyListener)
                 .build()
-        } catch (e:LoginException){
+        } catch (e: LoginException) {
             Logging.logger.error("Invalid Token was passed")
             exitProcess(1)
         }

@@ -6,21 +6,21 @@ import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.api.interactions.commands.build.Commands
 
-object Pause: GenericCommand(), SlashCommand, MessageCommand {
+object Pause : GenericCommand(), SlashCommand, MessageCommand {
 
     override val name = "pause"
 
-    override val command = CommandData(name, "Pause playback")
+    override val command = Commands.slash(name, "Pause playback")
 
-    override suspend fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandInteractionEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
-        if (player != null){
-            if (player.isPlaying() && !player.isPaused()){
+        if (player != null) {
+            if (player.isPlaying() && !player.isPaused()) {
                 player.pause()
                 val embed = Templates.getMusicEmbed()
                     .setTitle("Paused")
@@ -40,7 +40,7 @@ object Pause: GenericCommand(), SlashCommand, MessageCommand {
     override suspend fun handle(event: MessageReceivedEvent) {
         val guildId = event.guild.id
         val player = guildId.let { PlayerManager.getPlayer(it) }
-        if (player.isPlaying() && !player.isPaused()){
+        if (player.isPlaying() && !player.isPaused()) {
             player.pause()
             val embed = Templates.getMusicEmbed()
                 .setTitle("Paused")

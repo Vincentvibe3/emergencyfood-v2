@@ -6,24 +6,24 @@ object Templates {
     private const val musicEmbedColor = 0xb00032//Color(176, 0, 50)
     private const val sauceEmbedColor = 0x008da3//Color(0,141,163)
     //requests per second
-    const val defaultRateLimit  = 5L
+    const val defaultRateLimit = 5L
 
-    fun getMusicEmbed():EmbedBuilder{
+    fun getMusicEmbed(): EmbedBuilder {
         return EmbedBuilder()
             .setColor(musicEmbedColor)
     }
 
-    fun getMusicQueueEmbed():EmbedBuilder{
+    fun getMusicQueueEmbed(): EmbedBuilder {
         return getMusicEmbed()
             .setTitle("Queue")
     }
 
-    fun getSauceEmbed():EmbedBuilder{
+    fun getSauceEmbed(): EmbedBuilder {
         return EmbedBuilder()
             .setColor(sauceEmbedColor)
     }
 
-    fun setRateLimits(){
+    fun setRateLimits() {
         RequestHandler.rateLimits["api.github.com"] = 2L
     }
 }

@@ -1,19 +1,19 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
+import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
 import io.ktor.client.*
 import io.ktor.client.features.*
-import kotlinx.coroutines.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import java.net.ConnectException
 import java.net.URI
+import java.net.URISyntaxException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import java.net.ConnectException
-import java.net.URISyntaxException
 
 object RequestHandler {
 
@@ -21,14 +21,14 @@ object RequestHandler {
     val rateLimits = HashMap<String, Long>()
     private val mutex = Mutex()
 
-    suspend fun get(originalUrl: String):String{
-        val host = if (rateLimits.containsKey(originalUrl)){
+    suspend fun get(originalUrl: String): String {
+        val host = if (rateLimits.containsKey(originalUrl)) {
             originalUrl
         } else {
             try {
                 URI(originalUrl).host
-            } catch (e:URISyntaxException){
-               throw RequestFailedException()
+            } catch (e: URISyntaxException) {
+                throw RequestFailedException()
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -36,54 +36,54 @@ object RequestHandler {
         mutex.withLock {
             queueTime = getQueuePos(host)
         }
-        while (System.currentTimeMillis()/1000 < queueTime) {
+        while (System.currentTimeMillis() / 1000 < queueTime) {
             delay(100L)
         }
         cleanQueue(queueTime)
 
         var body = ""
-        var success:Boolean
+        var success: Boolean
         val client = HttpClient()
         try {
             val response: HttpResponse = client.get(originalUrl)
             body = response.readText()
             success = true
-        } catch (e:ConnectException){
+        } catch (e: ConnectException) {
             success = false
-        } catch (e:RedirectResponseException){
+        } catch (e: RedirectResponseException) {
             success = false
-        } catch (e:ClientRequestException){
+        } catch (e: ClientRequestException) {
             success = false
-        } catch (e:ServerResponseException){
+        } catch (e: ServerResponseException) {
             success = false
         }
 
-        if (!success){
+        if (!success) {
             throw RequestFailedException()
         } else {
             return body
         }
     }
 
-    private fun getQueuePos(entry: String):Long{
+    private fun getQueuePos(entry: String): Long {
         val queueToCheck = queue[entry]
         val currentTime = (System.currentTimeMillis().toDouble() / 1000).roundToLong()
         if (queueToCheck != null) {
-            if (queueToCheck.isEmpty()){
+            if (queueToCheck.isEmpty()) {
                 queue[entry]?.set(currentTime, 1)
                 return currentTime
             } else {
                 val lastTime = queueToCheck.keys.maxOrNull()!!
-                if (currentTime > lastTime){
+                if (currentTime > lastTime) {
                     queueToCheck[currentTime] = 1
                     return currentTime
                 }
-                return if (queueToCheck[lastTime]!! == rateLimits.getOrDefault(entry, Templates.defaultRateLimit)){
-                    val queuedTime = lastTime+1
+                return if (queueToCheck[lastTime]!! == rateLimits.getOrDefault(entry, Templates.defaultRateLimit)) {
+                    val queuedTime = lastTime + 1
                     queueToCheck[queuedTime] = 1
                     queuedTime
                 } else {
-                    queueToCheck.replace(lastTime, queueToCheck[lastTime]!!+1)
+                    queueToCheck.replace(lastTime, queueToCheck[lastTime]!! + 1)
                     lastTime
                 }
             }
@@ -95,7 +95,7 @@ object RequestHandler {
         }
     }
 
-    private fun cleanQueue(currentTime:Long){
+    private fun cleanQueue(currentTime: Long) {
         queue.forEach { entry ->
             entry.value
                 .filter { it.key < currentTime }

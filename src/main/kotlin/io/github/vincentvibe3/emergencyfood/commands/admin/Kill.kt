@@ -7,7 +7,7 @@ import io.github.vincentvibe3.emergencyfood.utils.Logging
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import kotlin.system.exitProcess
 
-object Kill:GenericSubCommand(), MessageSubCommand {
+object Kill : GenericSubCommand(), MessageSubCommand {
 
     override val name = "kill"
 

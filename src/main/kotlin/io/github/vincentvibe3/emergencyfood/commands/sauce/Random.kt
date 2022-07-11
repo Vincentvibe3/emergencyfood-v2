@@ -5,7 +5,7 @@ import io.github.vincentvibe3.emergencyfood.internals.MessageSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -14,52 +14,58 @@ import org.json.JSONObject
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
+object Random : GenericSubCommand(), SubCommand, MessageSubCommand {
     override val name = "random"
 
     override val subCommand = SubcommandData(name, "Get a random sauce")
         .addOption(OptionType.STRING, "query", "Search query for a random sauce", false)
-        .addOption(OptionType.BOOLEAN, "strict", "uses query as words to match in tags returning only if all are found", false)
+        .addOption(
+            OptionType.BOOLEAN,
+            "strict",
+            "uses query as words to match in tags returning only if all are found",
+            false
+        )
 
-    private suspend fun search(query:String):JSONObject{
-        lateinit var jsonResponse:JSONObject
-        try{
+    private suspend fun search(query: String): JSONObject {
+        lateinit var jsonResponse: JSONObject
+        try {
             val response = RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query")
             jsonResponse = JSONObject(response)
-        } catch (e:RequestFailedException){
+        } catch (e: RequestFailedException) {
             throw e
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             throw e
         }
         return jsonResponse
     }
 
-    private suspend fun getPage(response:JSONObject, query: String):JSONObject?{
+    private suspend fun getPage(response: JSONObject, query: String): JSONObject? {
         val totalPages = response.getInt("num_pages")
-        if (totalPages<1){
+        if (totalPages < 1) {
             return null
         }
         val pageToGet = Random.nextInt(1..totalPages)
-        lateinit var jsonResponse:JSONObject
-        try{
-            val pageResponse = RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query&page=$pageToGet")
+        lateinit var jsonResponse: JSONObject
+        try {
+            val pageResponse =
+                RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query&page=$pageToGet")
             jsonResponse = JSONObject(pageResponse)
-        } catch (e:RequestFailedException){
+        } catch (e: RequestFailedException) {
             throw e
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             throw e
         }
         return jsonResponse
     }
 
-    private fun getEntry(response: JSONObject, strict:Boolean, query: String):String{
+    private fun getEntry(response: JSONObject, strict: Boolean, query: String): String {
         var found = false
         val searchTags = query.split("+")
-        lateinit var entry:JSONObject
+        lateinit var entry: JSONObject
         val entries = response.getJSONArray("result")
-        val max = entries.length()-1
+        val max = entries.length() - 1
         var attempts = 0
-        while (!found&&attempts<=max){
+        while (!found && attempts <= max) {
             val entryIndex = Random.nextInt(0..max)
             entry = entries.getJSONObject(entryIndex)
             val tags = entry.getJSONArray("tags")
@@ -69,7 +75,7 @@ object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
                     tagNames.add(it.getString("name"))
                 }
             }
-            found = if (strict){
+            found = if (strict) {
                 searchTags.size == searchTags
                     .filter { tagName -> tagNames.any { it == tagName } }
                     .size
@@ -78,7 +84,7 @@ object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
             }
             attempts++
         }
-        return if (found){
+        return if (found) {
             val id = entry.getInt("id")
             "https://nhentai.net/g/$id"
         } else {
@@ -90,58 +96,58 @@ object Random: GenericSubCommand(), SubCommand, MessageSubCommand{
     override suspend fun handle(event: MessageReceivedEvent) {
         val textChannel = event.textChannel
         val options = event.getOptions()
-        var tags:String? = ""
+        var tags: String? = ""
         var strict = false
-        if (options.isEmpty()){
+        if (options.isEmpty()) {
             tags = null
-        }else if (options.last().lowercase().toBooleanStrictOrNull() == null||options.size==1){
-            options.subList(0, options.size).forEach { tags+="$it " }
+        } else if (options.last().lowercase().toBooleanStrictOrNull() == null || options.size == 1) {
+            options.subList(0, options.size).forEach { tags += "$it " }
         } else {
-            options.subList(0, options.size-1).forEach { tags+="$it " }
+            options.subList(0, options.size - 1).forEach { tags += "$it " }
             strict = options.last().lowercase().toBooleanStrict()
         }
         var query = tags?.trim()?.replace(" ", "+")
-        if (query==null){
+        if (query == null) {
             query = "english"
         }
-        try{
+        try {
             val pages = search(query)
             val page = getPage(pages, query)
-            if (page!=null){
+            if (page != null) {
                 val url = getEntry(page, strict, query)
                 textChannel.sendMessage(url).queue()
             } else {
                 textChannel.sendMessage("No result was found").queue()
             }
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             textChannel.sendMessage("An unknown error occurred").queue()
-        } catch (e:RequestFailedException){
+        } catch (e: RequestFailedException) {
             textChannel.sendMessage("An unknown error occurred").queue()
         }
     }
 
-    override suspend fun handle(event: SlashCommandEvent) {
+    override suspend fun handle(event: SlashCommandInteractionEvent) {
         event.deferReply().queue()
         var query = event.getOption("query")?.asString?.replace(" ", "+")
         var strict = event.getOption("strict")?.asBoolean
-        if (query==null){
+        if (query == null) {
             query = "english"
         }
-        if (strict == null){
+        if (strict == null) {
             strict = false
         }
-        try{
+        try {
             val pages = search(query)
             val page = getPage(pages, query)
-            if (page!=null){
+            if (page != null) {
                 val url = getEntry(page, strict, query)
                 event.hook.editOriginal(url).queue()
             } else {
                 event.hook.editOriginal("No result was found").queue()
             }
-        } catch (e:JSONException){
+        } catch (e: JSONException) {
             event.hook.editOriginal("An unknown error occurred").queue()
-        } catch (e:RequestFailedException){
+        } catch (e: RequestFailedException) {
             event.hook.editOriginal("An unknown error occurred").queue()
         }
     }

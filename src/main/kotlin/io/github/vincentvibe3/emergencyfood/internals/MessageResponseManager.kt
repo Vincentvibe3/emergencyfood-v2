@@ -4,17 +4,17 @@ object MessageResponseManager {
 
     private val pendingResponses = HashMap<String, HashMap<String, ArrayList<MessageResponse>>>()
 
-    fun add(response: MessageResponse){
+    fun add(response: MessageResponse) {
         val user = response.user
-        val channel  = response.channel
+        val channel = response.channel
         val channelResponses = pendingResponses.getOrPut(channel) { HashMap() }
-        val responseList = channelResponses.getOrPut(user){ ArrayList() }
+        val responseList = channelResponses.getOrPut(user) { ArrayList() }
         responseList.add(response)
     }
 
-    fun get(user:String, channel:String):MessageResponse?{
+    fun get(user: String, channel: String): MessageResponse? {
         val channelResponses = pendingResponses.getOrDefault(channel, null)
-        return if (channelResponses != null){
+        return if (channelResponses != null) {
             channelResponses[user]?.firstOrNull()
         } else {
             null

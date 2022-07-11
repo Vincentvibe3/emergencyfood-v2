@@ -5,15 +5,15 @@ import io.github.vincentvibe3.emergencyfood.internals.InteractionButton
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
-import net.dv8tion.jda.api.interactions.components.Button
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.interactions.components.buttons.Button
 
-object QueueNext: InteractionButton() {
+object QueueNext : InteractionButton() {
     override val name = "QueueNext"
 
     override val button = Button.primary(name, "Next")
 
-    override suspend fun handle(event: ButtonClickEvent) {
+    override suspend fun handle(event: ButtonInteractionEvent) {
         val guildId = event.guild?.id
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
@@ -27,10 +27,10 @@ object QueueNext: InteractionButton() {
                 if (pagesInfo != null) {
                     val currentPage = pagesInfo[0].toInt()
                     val embedBuilder = Templates.getMusicQueueEmbed()
-                    val next = if (currentLastPage<=currentPage){
+                    val next = if (currentLastPage <= currentPage) {
                         currentLastPage
                     } else {
-                        currentPage+1
+                        currentPage + 1
                     }
                     Queue.getEmbed(player, next, embedBuilder)
                     val buttons = Queue.getButtonsRow(next, currentLastPage)
