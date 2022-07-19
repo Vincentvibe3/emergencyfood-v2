@@ -1,6 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.utils.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
+import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.internals.InteractionSelectMenu
 import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
@@ -154,6 +155,9 @@ object NamerouletteEventLoop {
     }
 
     suspend fun startLoop() {
+        if (Config.exclusions.contains("nameroulette")){
+            return
+        }
         var elapsed = 0
         while (true) {
             if (elapsed == 15||elapsed==0){
