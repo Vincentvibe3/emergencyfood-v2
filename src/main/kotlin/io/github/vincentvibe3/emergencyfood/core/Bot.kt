@@ -6,10 +6,13 @@ import io.github.vincentvibe3.emergencyfood.internals.CommandManager
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.internals.events.*
+import io.github.vincentvibe3.emergencyfood.utils.NamerouletteEventLoop
 import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.MemberCachePolicy
 import javax.security.auth.login.LoginException
 import kotlin.system.exitProcess
 
@@ -27,8 +30,9 @@ object Bot {
         val activity = Activity.playing(Config.status)
         try {
             client = JDABuilder.createDefault(Config.token)
+                .enableIntents( GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
                 .setActivity(activity)
-                .addEventListeners(ReadyListener)
+                .addEventListeners(UniversalListener)
                 .build()
         } catch (e: LoginException) {
             Logging.logger.error("Invalid Token was passed")
@@ -38,14 +42,13 @@ object Bot {
         CommandManager.registerRemote(Config.channel)
         CommandManager.registerGuildRemote(Config.channel)
         runBlocking {
+            //run background check loops here
             launch {
-                //run background check loops here
                 PlayerManager.startCleanupLoop()
             }
-            client.addEventListener(SlashCommandListener)
-            client.addEventListener(ButtonsListener)
-            client.addEventListener(MessageListener)
-            client.addEventListener(VoiceStateListener)
+            launch {
+                NamerouletteEventLoop.startLoop()
+            }
         }
     }
 }

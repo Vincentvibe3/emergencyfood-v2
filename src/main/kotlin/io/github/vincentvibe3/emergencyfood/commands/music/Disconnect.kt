@@ -39,7 +39,7 @@ object Disconnect : GenericCommand(), SlashCommand, MessageCommand {
 
     override suspend fun handle(event: MessageReceivedEvent) {
         val guild = event.guild
-        val channel = event.textChannel
+        val channel = event.guildChannel
         if (guild.audioManager.isConnected) {
             guild.audioManager.closeAudioConnection()
             PlayerManager.removePlayer(guild.id)

@@ -118,7 +118,7 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
     }
 
     override suspend fun handle(event: MessageReceivedEvent) {
-        val textChannel = event.textChannel
+        val textChannel = event.guildChannel
         val options = event.getOptions()
         val id = options.getOrNull(0)
         val page = if (options.size >= 2) {

@@ -174,7 +174,7 @@ object Queue : GenericCommand(), SlashCommand, MessageCommand {
 
     override suspend fun handle(event: MessageReceivedEvent) {
         val guildId = event.guild.id
-        val channel = event.textChannel
+        val channel = event.guildChannel
         val player = guildId.let { PlayerManager.getPlayer(it) }
         var embedBuilder = Templates.getMusicQueueEmbed()
         val queue = player.getQueue()

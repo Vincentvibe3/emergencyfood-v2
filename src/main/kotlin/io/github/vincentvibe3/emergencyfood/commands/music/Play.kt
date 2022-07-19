@@ -168,7 +168,7 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
         }
         val songOption = event.getOption("song")?.asString
         if (player != null && channel != null) {
-            player.setUpdateChannel(event.textChannel.id)
+            player.setUpdateChannel(event.guildChannel.id)
             connect(channel, player)
             val response = if (songOption == null) {
                 resume(player)
@@ -187,7 +187,7 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
         val guildId = event.guild.id
         val player = guildId.let { PlayerManager.getPlayer(it) }
         val channel = event.member?.voiceState?.channel
-        val textChannel = event.textChannel
+        val textChannel = event.guildChannel
         try {
             event.member?.deafen(true)
         } catch (e: InsufficientPermissionException) {
@@ -204,7 +204,7 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
             song
         }
         if (channel != null) {
-            player.setUpdateChannel(event.textChannel.id)
+            player.setUpdateChannel(event.guildChannel.id)
             connect(channel, player)
             val response = if (songOption == null) {
                 resume(player)

@@ -68,6 +68,6 @@ object Programming : GenericSubCommand(), SubCommand, MessageSubCommand {
     override suspend fun handle(event: MessageReceivedEvent) {
         val categoryUrl = getCategory()
         val image = getImage(categoryUrl)
-        event.textChannel.sendMessage(image).queue()
+        event.guildChannel.sendMessage(image).queue()
     }
 }

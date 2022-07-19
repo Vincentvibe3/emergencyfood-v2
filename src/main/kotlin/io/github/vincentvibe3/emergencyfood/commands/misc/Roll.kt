@@ -19,7 +19,7 @@ object Roll : GenericCommand(), SlashCommand, MessageCommand {
     }
 
     override suspend fun handle(event: MessageReceivedEvent) {
-        val channel = event.textChannel
+        val channel = event.guildChannel
         val number = (0..100).random()
         channel.sendMessage("You rolled $number").queue()
     }

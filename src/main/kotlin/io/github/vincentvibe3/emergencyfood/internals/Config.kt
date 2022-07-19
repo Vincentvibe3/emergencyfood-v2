@@ -12,5 +12,7 @@ object Config {
     var logflareUrl = ""
     var logflareKey = ""
     var envName = "unknown"
+    var supabaseUrl = ""
+    var supabaseKey = ""
 
 }

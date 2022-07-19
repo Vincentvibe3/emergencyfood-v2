@@ -39,7 +39,7 @@ object Clear : GenericCommand(), SlashCommand, MessageCommand {
 
     override suspend fun handle(event: MessageReceivedEvent) {
         val guildId = event.guild.id
-        val channel = event.textChannel
+        val channel = event.guildChannel
         val player = guildId.let { PlayerManager.getPlayer(it) }
         if (player.isQueueEmpty()) {
             channel.sendMessage("Cannot clear, the queue is already empty").queue()

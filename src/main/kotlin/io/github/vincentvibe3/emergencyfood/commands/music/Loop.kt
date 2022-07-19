@@ -53,6 +53,6 @@ object Loop : GenericCommand(), SlashCommand, MessageCommand {
         val response = MessageBuilder()
             .setEmbeds(embed)
             .build()
-        event.textChannel.sendMessage(response).queue()
+        event.guildChannel.sendMessage(response).queue()
     }
 }

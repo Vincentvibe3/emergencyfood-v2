@@ -48,9 +48,9 @@ object Pause : GenericCommand(), SlashCommand, MessageCommand {
             val message = MessageBuilder()
                 .setEmbeds(embed)
                 .build()
-            event.textChannel.sendMessage(message).queue()
+            event.guildChannel.sendMessage(message).queue()
         } else {
-            event.textChannel.sendMessage("No track is playing").queue()
+            event.guildChannel.sendMessage("No track is playing").queue()
         }
     }
 }

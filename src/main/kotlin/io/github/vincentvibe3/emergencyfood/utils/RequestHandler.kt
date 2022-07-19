@@ -143,6 +143,107 @@ object RequestHandler {
         }
     }
 
+    suspend fun patch(originalUrl: String, requestBody:String, headers:HashMap<String, String> = HashMap()):String{
+        val host = if (rateLimits.containsKey(originalUrl)){
+            originalUrl
+        } else {
+            try {
+                URI(originalUrl).host
+            } catch (e:URISyntaxException){
+                e.printStackTrace()
+                throw RequestFailedException()
+            }
+        }
+        var queueTime by Delegates.notNull<Long>()
+        //sync queue position fetching
+        mutex.withLock {
+            queueTime = getQueuePos(host)
+        }
+        while (System.currentTimeMillis()/1000 < queueTime) {
+            delay(100L)
+        }
+        cleanQueue(queueTime)
+
+        var responseBody = ""
+        var success:Boolean
+
+        try {
+            val headersBuilder = Headers.Builder()
+            headers.forEach {
+                headersBuilder.add(it.key, it.value)
+            }
+            val body = requestBody.toRequestBody(null)
+            val request: Request = Request.Builder()
+                .url(originalUrl)
+                .headers(headersBuilder.build())
+                .patch(body)
+                .build()
+            val call = client2.newCall(request)
+            val response = call.execute()
+            responseBody = response.body?.string() ?: ""
+            success = true
+        } catch (e:Exception){
+            e.printStackTrace()
+            success = false
+        }
+
+        if (!success){
+            throw RequestFailedException()
+        } else {
+            return responseBody
+        }
+    }
+
+    suspend fun delete(originalUrl: String, headers:HashMap<String, String> = HashMap()):String{
+        val host = if (rateLimits.containsKey(originalUrl)){
+            originalUrl
+        } else {
+            try {
+                URI(originalUrl).host
+            } catch (e:URISyntaxException){
+                e.printStackTrace()
+                throw RequestFailedException()
+            }
+        }
+        var queueTime by Delegates.notNull<Long>()
+        //sync queue position fetching
+        mutex.withLock {
+            queueTime = getQueuePos(host)
+        }
+        while (System.currentTimeMillis()/1000 < queueTime) {
+            delay(100L)
+        }
+        cleanQueue(queueTime)
+
+        var responseBody = ""
+        var success:Boolean
+
+        try {
+            val headersBuilder = Headers.Builder()
+            headers.forEach {
+                headersBuilder.add(it.key, it.value)
+            }
+            val request: Request = Request.Builder()
+                .url(originalUrl)
+                .headers(headersBuilder.build())
+                .delete()
+                .build()
+            val call = client2.newCall(request)
+            val response = call.execute()
+            responseBody = response.body?.string() ?: ""
+            success = true
+        } catch (e:Exception){
+            e.printStackTrace()
+            success = false
+        }
+
+        if (!success){
+            throw RequestFailedException()
+        } else {
+            return responseBody
+        }
+    }
+
     private fun getQueuePos(entry: String):Long{
         val queueToCheck = queue[entry]
         val currentTime = (System.currentTimeMillis().toDouble() / 1000).roundToLong()

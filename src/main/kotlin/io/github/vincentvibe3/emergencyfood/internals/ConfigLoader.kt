@@ -20,11 +20,13 @@ object ConfigLoader {
 
     private const val KTS = "config.bot.kts"
     private const val JSON = "botConfig.json"
-    private val required = arrayOf("channel", "token", "owner")
+    private val required = arrayOf("channel", "token", "owner", "supabaseUrl", "supabaseKey")
     private val requiredSet = hashMapOf(
         "channel" to false,
         "token" to false,
-        "owner" to false
+        "owner" to false,
+        "supabaseUrl" to true,
+        "supabaseKey" to true
     )
 
     /** preferred methods of config
@@ -73,6 +75,8 @@ object ConfigLoader {
                 "logflareUrl" -> Config.logflareUrl = it.value as String
                 "logflareKey" -> Config.logflareKey = it.value as String
                 "envName" -> Config.envName = it.value as String
+                "supabaseUrl" -> Config.supabaseUrl = it.value as String
+                "supabaseKey" -> Config.supabaseKey = it.value as String
             }
         }
     }
@@ -96,7 +100,7 @@ object ConfigLoader {
 
     private fun jsonReadScope(tempConfig: HashMap<String, Any>, scope: Pair<String, JSONObject>) {
         val stringParams = arrayOf(
-            "owner", "status", "prefix", "token", "testServer", "logflareUrl", "logflareKey", "envName"
+            "owner", "status", "prefix", "token", "testServer", "logflareUrl", "logflareKey", "envName", "supabaseUrl", "supabaseKey"
         )
         val arrayParams = arrayOf(
             "exclusions"
@@ -220,6 +224,14 @@ object ConfigLoader {
         val tempLogflareUrl = System.getenv("LOGFLARE_URL")
         val tempLogflareKey = System.getenv("LOGFLARE_KEY")
         val tempEnvName = System.getenv("ENV_NAME")
+        val tempSupabaseUrl = System.getenv("LOGFLARE_URL")
+        if (tempSupabaseUrl != null){
+            updateSetting("supabaseUrl", tempSupabaseUrl, tempConfig)
+        }
+        val tempSupabaseKey = System.getenv("LOGFLARE_KEY")
+        if (tempSupabaseKey != null){
+            updateSetting("supabaseKey", tempSupabaseKey, tempConfig)
+        }
         if (tempEnvName != null){
             updateSetting("envName", tempEnvName, tempConfig)
         }

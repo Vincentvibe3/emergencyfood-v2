@@ -40,7 +40,7 @@ object Shuffle : GenericCommand(), SlashCommand, MessageCommand {
     override suspend fun handle(event: MessageReceivedEvent) {
         val guildId = event.guild.id
         val player = guildId.let { PlayerManager.getPlayer(it) }
-        val channel = event.textChannel
+        val channel = event.guildChannel
         if (player.isQueueEmpty()) {
             channel.sendMessage("Cannot shuffle an empty queue").queue()
         } else {

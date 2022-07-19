@@ -94,7 +94,7 @@ object Random : GenericSubCommand(), SubCommand, MessageSubCommand {
     }
 
     override suspend fun handle(event: MessageReceivedEvent) {
-        val textChannel = event.textChannel
+        val textChannel = event.guildChannel
         val options = event.getOptions()
         var tags: String? = ""
         var strict = false

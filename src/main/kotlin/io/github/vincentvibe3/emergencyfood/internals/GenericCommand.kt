@@ -26,13 +26,13 @@ abstract class GenericCommand {
     suspend fun handleMessageSubCommands(event: MessageReceivedEvent) {
         val options = event.getOptions()
         if (options.isEmpty()) {
-            event.textChannel.sendMessage("Please pass a valid subcommand").queue()
+            event.guildChannel.sendMessage("Please pass a valid subcommand").queue()
         } else {
             val subcommand = options[0]
             if (subCommands.containsKey(subcommand)) {
                 (subCommands[subcommand] as MessageSubCommand).handle(event)
             } else {
-                event.textChannel.sendMessage("Invalid subcommand supplied").queue()
+                event.guildChannel.sendMessage("Invalid subcommand supplied").queue()
             }
         }
 
