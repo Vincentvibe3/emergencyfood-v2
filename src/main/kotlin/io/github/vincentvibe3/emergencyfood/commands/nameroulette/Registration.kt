@@ -37,8 +37,9 @@ object Registration:GenericSubCommand(), SubCommand {
                         "deathroll" to false,
                         "roll_names" to "[]",
                         "added_choices" to 0,
-                        "added_death" to 0
+                        "added_choices_death" to 0
                     ))
+                    println(result)
                     if (result.contains("message")){
                         event.reply("An error occurred").setEphemeral(true).queue()
                     } else {
