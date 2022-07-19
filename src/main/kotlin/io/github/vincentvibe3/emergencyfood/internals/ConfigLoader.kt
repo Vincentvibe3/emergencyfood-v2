@@ -224,11 +224,11 @@ object ConfigLoader {
         val tempLogflareUrl = System.getenv("LOGFLARE_URL")
         val tempLogflareKey = System.getenv("LOGFLARE_KEY")
         val tempEnvName = System.getenv("ENV_NAME")
-        val tempSupabaseUrl = System.getenv("LOGFLARE_URL")
+        val tempSupabaseUrl = System.getenv("SUPABASE_URL")
         if (tempSupabaseUrl != null){
             updateSetting("supabaseUrl", tempSupabaseUrl, tempConfig)
         }
-        val tempSupabaseKey = System.getenv("LOGFLARE_KEY")
+        val tempSupabaseKey = System.getenv("SUPABASE_KEY")
         if (tempSupabaseKey != null){
             updateSetting("supabaseKey", tempSupabaseKey, tempConfig)
         }
