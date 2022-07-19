@@ -1,4 +1,4 @@
-package io.github.vincentvibe3.emergencyfood.utils
+package io.github.vincentvibe3.emergencyfood.utils.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.InteractionSelectMenu
@@ -13,7 +13,6 @@ import org.json.JSONArray
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -23,7 +22,7 @@ object NamerouletteEventLoop {
 
     val activeDropdowns = ArrayList<InteractionSelectMenu>()
 
-    private suspend fun check(guild:NamerouletteGuildInfo){
+    private suspend fun check(guild: NamerouletteGuildInfo){
         val day = guild.day
         val minute = guild.minute
         val hour = guild.hour

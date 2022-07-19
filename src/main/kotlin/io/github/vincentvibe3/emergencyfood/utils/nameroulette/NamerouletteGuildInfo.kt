@@ -1,4 +1,4 @@
-package io.github.vincentvibe3.emergencyfood.utils
+package io.github.vincentvibe3.emergencyfood.utils.nameroulette
 
 class NamerouletteGuildInfo(
     val id:Long,

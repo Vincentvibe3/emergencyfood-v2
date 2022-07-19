@@ -2,7 +2,7 @@ package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.internals.InteractionSelectMenu
 import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
-import io.github.vincentvibe3.emergencyfood.utils.NamerouletteEventLoop
+import io.github.vincentvibe3.emergencyfood.utils.nameroulette.NamerouletteEventLoop
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent

@@ -1,7 +1,6 @@
-package io.github.vincentvibe3.emergencyfood.internals.events
+package io.github.vincentvibe3.emergencyfood.internals
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
-import io.github.vincentvibe3.emergencyfood.internals.*
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import kotlinx.coroutines.GlobalScope
