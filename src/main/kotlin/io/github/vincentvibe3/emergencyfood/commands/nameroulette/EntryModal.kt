@@ -64,7 +64,7 @@ object EntryModal: InteractionModal() {
                 menuHandler.expiry = System.currentTimeMillis()+900000
                 val menu = menuHandler.menu
                     .addOption("Set ${it.asString} as normal", "normal", "Set as normal")
-                    .addOption("Set ${it.asString} deathroll", "deathroll", "Set as deathroll")
+                    .addOption("Set ${it.asString} as deathroll", "deathroll", "Set as deathroll")
                     .build()
                 SelectMenuManager.registerLocal(menuHandler)
                 selectMenus.add(ActionRow.of(menu))
