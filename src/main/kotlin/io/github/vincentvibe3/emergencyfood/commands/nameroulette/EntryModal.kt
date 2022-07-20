@@ -28,7 +28,7 @@ object EntryModal: InteractionModal() {
         val jsonData = JSONArray(data)
         return if (!jsonData.isEmpty){
             val addCount = jsonData.getJSONObject(0).getInt("added_choices")
-            val addCountDeath = jsonData.getJSONObject(0).getInt("added_choices")
+            val addCountDeath = jsonData.getJSONObject(0).getInt("added_choices_death")
             val textEntries = ArrayList<ActionRow>()
             if (addCount>=3&&addCountDeath>=2){
                 return null
