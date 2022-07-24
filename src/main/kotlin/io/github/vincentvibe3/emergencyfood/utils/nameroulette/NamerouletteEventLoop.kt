@@ -11,9 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.MessageBuilder
 import org.json.JSONArray
-import java.time.DayOfWeek
-import java.time.Instant
-import java.time.ZoneId
+import java.time.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -27,10 +25,7 @@ object NamerouletteEventLoop {
         val day = guild.day
         val minute = guild.minute
         val hour = guild.hour
-        val currentTimeStamp = System.currentTimeMillis()
-        val date = Instant.ofEpochSecond(currentTimeStamp/1000)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDateTime()
+        val date = OffsetDateTime.now(ZoneOffset.UTC)
         val dayOfWeekMatch = when (date.dayOfWeek){
             DayOfWeek.MONDAY -> day == 1
             DayOfWeek.TUESDAY -> day == 2
@@ -123,10 +118,10 @@ object NamerouletteEventLoop {
         return result
     }
 
-    private suspend fun setup(){
+    suspend fun setup(){
         val rawData = Supabase.select("guilds")
         val jsonData = JSONArray(rawData)
-	guilds.clear()
+	    guilds.clear()
         for (index in 0 until jsonData.length()){
             val guildData = jsonData.getJSONObject(index)
             val guild = NamerouletteGuildInfo(
