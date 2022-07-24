@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 
 class PlaybackHandler(private val queueManager: QueueManager) : EventListener() {
 
-    override fun onLoadFailed() {
+    override fun onLoadFailed(reason: String) {
         Logging.logger.error("Failed to load a track")
         throw LoadFailedException()
     }

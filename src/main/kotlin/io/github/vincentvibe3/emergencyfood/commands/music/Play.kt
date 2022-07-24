@@ -135,7 +135,7 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
                 .setContent("An error occurred while adding the song to the queue")
                 .build()
         }
-        val embed = if (track.startsWith("https://www.youtube.com/playlist?list=")) {
+        val embed = if (track.startsWith("https://www.youtube.com/playlist?list=")||track.startsWith("https://open.spotify.com/playlist/")) {
             waitForPlaylistLoad(player, initSize)
             Templates.getMusicEmbed()
                 .setTitle("Queued")

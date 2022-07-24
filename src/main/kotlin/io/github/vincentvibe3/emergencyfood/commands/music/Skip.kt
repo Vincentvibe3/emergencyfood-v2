@@ -22,7 +22,7 @@ object Skip : GenericCommand(), SlashCommand, MessageCommand {
         val player = guildId?.let { PlayerManager.getPlayer(it) }
         if (player != null) {
             if (player.isQueueEmpty()) {
-                event.reply("Cannot skip, the queue is empty").queue()
+                event.hook.editOriginal ("Cannot skip, the queue is empty").queue()
             } else {
                 if (player.isLastSong()&&!player.looped()){
                     player.clear()
@@ -39,7 +39,7 @@ object Skip : GenericCommand(), SlashCommand, MessageCommand {
 
             }
         } else {
-            event.reply("Failed to fetch player").queue()
+            event.hook.editOriginal("Failed to fetch player").queue()
         }
     }
 

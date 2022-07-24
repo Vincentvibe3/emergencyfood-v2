@@ -39,7 +39,6 @@ object Registration:GenericSubCommand(), SubCommand {
                         "added_choices" to 0,
                         "added_choices_death" to 0
                     ))
-                    println(result)
                     if (result.contains("message")){
                         event.reply("An error occurred").setEphemeral(true).queue()
                     } else {
