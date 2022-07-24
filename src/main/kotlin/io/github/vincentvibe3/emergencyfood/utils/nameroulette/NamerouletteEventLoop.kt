@@ -126,6 +126,7 @@ object NamerouletteEventLoop {
     private suspend fun setup(){
         val rawData = Supabase.select("guilds")
         val jsonData = JSONArray(rawData)
+	guilds.clear()
         for (index in 0 until jsonData.length()){
             val guildData = jsonData.getJSONObject(index)
             val guild = NamerouletteGuildInfo(
