@@ -29,6 +29,26 @@ object Setup:GenericSubCommand(), SubCommand {
         return result != "[]"
     }
 
+    private fun adjustTime(weekday:String?, hour:Int, timeZone:Int): Pair<Int?, Int> {
+        val hourUTC = hour-timeZone
+        if (hourUTC>=24){
+            val day = weekdays[weekday]
+            val adjustedDay = if (day!=null){
+                 if (day==6){
+                    0
+                } else {
+                    day+1
+                }
+            } else {
+                null
+            }
+            val adjustedHour = hourUTC-24
+            return  Pair(adjustedDay, adjustedHour)
+        } else {
+            return Pair(weekdays[weekday], hourUTC)
+        }
+    }
+
     override suspend fun handle(event: SlashCommandInteractionEvent) {
         val guild = event.guild
         val weekday = event.getOption("weekday")?.asString?.lowercase(Locale.getDefault())
@@ -36,9 +56,11 @@ object Setup:GenericSubCommand(), SubCommand {
         val minute = event.getOption("minute")?.asInt
         val timeZone = event.getOption("timezone")?.asInt
         if(timeZone!=null&&hour!=null){
-            val hourUTC = hour-timeZone
             if (guild != null){
-                if (weekdays.keys.contains(weekday)&&hour in 0..23&&minute in 0..59) {
+                val adjusted = adjustTime(weekday, hour, timeZone)
+                val adjustedDay = adjusted.first
+                val adjustedhour = adjusted.second
+                if (weekdays.values.contains(adjustedDay)&&adjustedhour in 0..23&&minute in 0..59) {
                     var update = false
                     val result = if (checkIfExists(guild.id)){
                         update = true
@@ -46,8 +68,8 @@ object Setup:GenericSubCommand(), SubCommand {
                             "guilds",
                             hashMapOf(
                                 "channel_id" to event.channel.id,
-                                "ping_day_of_week" to weekdays[weekday],
-                                "ping_hour" to hourUTC,
+                                "ping_day_of_week" to adjustedDay,
+                                "ping_hour" to adjustedhour,
                                 "ping_min" to minute
                             ) as HashMap<String, Any>,
                             listOf(
@@ -60,8 +82,8 @@ object Setup:GenericSubCommand(), SubCommand {
                             hashMapOf(
                                 "id" to guild.id,
                                 "channel_id" to event.channel.id,
-                                "ping_day_of_week" to weekdays[weekday],
-                                "ping_hour" to hourUTC,
+                                "ping_day_of_week" to adjustedDay,
+                                "ping_hour" to adjustedhour,
                                 "ping_min" to minute
                             ) as HashMap<String, Any>
                         )
