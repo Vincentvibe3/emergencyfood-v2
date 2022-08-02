@@ -3,6 +3,7 @@ package io.github.vincentvibe3.emergencyfood.internals
 import io.github.vincentvibe3.emergencyfood.commands.admin.Admin
 import io.github.vincentvibe3.emergencyfood.commands.anime.Anime
 import io.github.vincentvibe3.emergencyfood.commands.kana.KanaPractice
+import io.github.vincentvibe3.emergencyfood.commands.misc.Divorce
 import io.github.vincentvibe3.emergencyfood.commands.misc.Marry
 import io.github.vincentvibe3.emergencyfood.commands.misc.Roll
 import io.github.vincentvibe3.emergencyfood.commands.music.*
@@ -39,7 +40,7 @@ object CommandManager {
             registerLocal(Admin)
             registerLocal(NameRoulette)
             registerLocal(Marry)
-
+            registerLocal(Divorce)
         } catch (e:IllegalArgumentException) {
             Logging.logger.error("Failed to add ${e.stackTrace[5].className.split(".").last()}")
         }
