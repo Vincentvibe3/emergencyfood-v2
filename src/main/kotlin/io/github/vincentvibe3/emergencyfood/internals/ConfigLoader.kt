@@ -220,6 +220,7 @@ object ConfigLoader {
         val tempTestServer = System.getenv("TEST_SERVER")
         updateSetting("token", tempToken, tempConfig)
         val exclusionsValues = System.getenv("EXCLUSIONS")
+        //fix issue on empty or one element
         val exclusions = exclusionsValues?.replace("\"", "")?.split(" ") ?: ArrayList()
         val tempLogflareUrl = System.getenv("LOGFLARE_URL")
         val tempLogflareKey = System.getenv("LOGFLARE_KEY")

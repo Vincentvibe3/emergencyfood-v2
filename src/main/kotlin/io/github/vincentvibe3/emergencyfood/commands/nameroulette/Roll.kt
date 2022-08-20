@@ -37,7 +37,7 @@ object Roll: GenericSubCommand(), SubCommand {
     }
 
     private fun getDeath(rollCount:Int): Boolean {
-        val chances = listOf(50, 80)
+        val chances = listOf(33, 69)
         val randNum = Random.nextInt(1..100)
         return randNum<=chances[rollCount-1]
     }
@@ -105,6 +105,7 @@ object Roll: GenericSubCommand(), SubCommand {
             if (rolls >= 3) {
                 event.reply("You do not have any more rolls").queue()
             } else {
+                event.deferReply(true).queue()
                 val isDeath = getDeath(rolls)
                 val rollsData = JSONArray(userData.getString("roll_names"))
                 val row:HashMap<String, Any> = hashMapOf(
@@ -137,12 +138,13 @@ object Roll: GenericSubCommand(), SubCommand {
                 val message = buildAndUpdateMessage(guild.id)
                 if (message){
                     if (isDeath){
-                        event.reply("You got the deathroll").setEphemeral(true).queue()
+
+                        event.hook.editOriginal("You got the deathroll").queue()
                     } else {
-                        event.reply("You got ${rollsData.last()}").setEphemeral(true).queue()
+                        event.hook.editOriginal("You got ${rollsData.last()}").queue()
                     }
                 } else {
-                    event.reply("Name roulette is not available in this server").setEphemeral(true).queue()
+                    event.hook.editOriginal("Name roulette is not available in this server").queue()
                 }
             }
         }
