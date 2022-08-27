@@ -43,11 +43,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Build and push docker image
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
+      - name: Build docker image
+        run: /usr/bin/docker build -t vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
+        
+      - name: Push docker image
+        run: /usr/bin/docker push vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
