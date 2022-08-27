@@ -12,6 +12,7 @@ on:
 jobs:
   build:
       uses: ./.github/workflows/Build.yaml
+      secrets: inherit
   
   release:
     needs: build
@@ -43,7 +44,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Build docker image
-        run: /usr/bin/docker build . -t vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
+        run: /usr/bin/docker build . -t ghcr.io/vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
         
       - name: Push docker image
         run: /usr/bin/docker push ghcr.io/vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
