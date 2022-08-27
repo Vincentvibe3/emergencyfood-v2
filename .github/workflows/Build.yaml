@@ -28,6 +28,7 @@ jobs:
       with:
         name: jar
         path: ./build/libs/Emergencyfood*.jar
+        retention-days: 1
       
     - name: Status webhook  
       uses: sarisia/actions-status-discord@v1
