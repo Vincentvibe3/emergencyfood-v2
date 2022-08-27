@@ -15,7 +15,8 @@ jobs:
       name: Deploy app
       runs-on: ubuntu-latest
       steps:
-        
+        - uses: actions/checkout@v2
+
         - name: Set env
           run: temp=${{ inputs.ref }}; echo "RELEASE_VERSION=${temp#refs/*/}" >> $GITHUB_ENV
       
