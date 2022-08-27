@@ -64,3 +64,9 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: "Release workflow"
           username: GitHub Actions
+  deploy:
+      needs: release
+      uses: ./.github/workflows/Deploy.yaml
+      with:
+        ref: ${{ github.ref }}
+      secrets: inherit
