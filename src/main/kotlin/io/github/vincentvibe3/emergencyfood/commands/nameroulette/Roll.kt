@@ -61,7 +61,7 @@ object Roll: GenericSubCommand(), SubCommand {
             val usersData = JSONArray(rawData)
             for (index in 0 until usersData.length()){
                 val user = usersData.getJSONObject(index)
-                val rolls = JSONArray(user.getString("roll_names"))
+                val rolls = user.getJSONArray("roll_names");
                 if (user.getBoolean("deathroll")){
                     rolls.put("Deathroll")
                 }
@@ -107,7 +107,7 @@ object Roll: GenericSubCommand(), SubCommand {
             } else {
                 event.deferReply(true).queue()
                 val isDeath = getDeath(rolls)
-                val rollsData = JSONArray(userData.getString("roll_names"))
+                val rollsData = userData.getJSONArray("roll_names")
                 val row:HashMap<String, Any> = hashMapOf(
                     "roll_count" to rolls + 1,
                 )
@@ -123,7 +123,7 @@ object Roll: GenericSubCommand(), SubCommand {
                     }
                     rollsData.put(roll)
                 }
-                row["roll_names"] = rollsData.toString()
+                row["roll_names"] = rollsData
                 Supabase.update(
                     "users",
                     row,

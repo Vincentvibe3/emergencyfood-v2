@@ -110,7 +110,7 @@ object NamerouletteEventLoop {
             val roll = rollChoices.shuffled()[0]
             Supabase.update("users", hashMapOf(
                 "roll_count" to 1,
-                "roll_names" to JSONArray().put(roll).toString(),
+                "roll_names" to JSONArray().put(roll),
                 "deathroll" to false
             ), listOf(SupabaseFilter("id", user.getString("id"), SupabaseFilter.Match.EQUALS)))
             result[user.getString("id").split(":")[0]] = roll
