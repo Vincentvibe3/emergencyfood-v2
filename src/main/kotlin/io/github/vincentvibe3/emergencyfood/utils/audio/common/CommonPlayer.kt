@@ -33,7 +33,9 @@ class CommonPlayer(val guild: String) {
     private val lavahandler = AudioHandler(lavaplayer)
     private val defaultPlayer = "ef"
 
-    val loadQueue = LinkedBlockingQueue<LoadResult>()
+    fun queueLoadRequest(id:String, callback:()->Unit){
+        queueManager.pendingLoad[id] = callback
+    }
 
     fun setupPlayer() {
         playerManager.configuration.setFrameBufferFactory { bufferDuration, format, stopping ->
@@ -78,13 +80,14 @@ class CommonPlayer(val guild: String) {
         return queueManager.updatesChannel
     }
 
-    fun play(track: String) {
+    fun play(track: String, event:Any) {
         if (queueManager.queue.size == Int.MAX_VALUE) {
             throw QueueAddException()
         }
         try {
+            queueManager.pendingLoad[track] = event
             if (defaultPlayer == "ef") {
-                efPlayer.load(track)
+                efPlayer.load(track, track)
             } else {
                 val load = playerManager.loadItemOrdered(lavaplayer, track, AudioLoader(queueManager, lavaplayer))
                 load.get()

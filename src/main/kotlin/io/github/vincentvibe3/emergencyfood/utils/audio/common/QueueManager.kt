@@ -6,6 +6,8 @@ import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
 
@@ -16,17 +18,69 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
     var loop = false
     private var lastUpdatesMessage: String? = null
     private var lastUpdatesChannel: String? = null
+    val pendingLoad = HashMap<String, Any>()
+
+    fun playlistLoadedMessage(trackCount: Int, loadId:String){
+        val message = MessageBuilder()
+            .setEmbeds(Templates.getMusicEmbed()
+                .setTitle("Queued")
+                .setDescription("Added $trackCount songs from [playlist]($loadId)")
+                .build())
+            .build()
+        val event = pendingLoad[loadId]
+        if (event!=null){
+            if (event is SlashCommandInteractionEvent){
+                event.hook.editOriginal(message).queue()
+            } else if (event is MessageReceivedEvent){
+                event.channel.sendMessage(message).queue()
+            } else {
+                Logging.logger.error("Received a non event class while loading")
+            }
+        } else {
+            Logging.logger.error("Failed to get event for loading")
+        }
+    }
+
+    private fun trackLoadedMessage(track:Any, loadId:String){
+        var title = ""
+        var url = ""
+        if (track is AudioTrack){
+            url = track.info.uri
+            title = track.info.title
+        } else if (track is Track){
+            url = track.url
+            title = track.title?: "No title"
+        }
+        val message = MessageBuilder()
+            .setEmbeds(Templates.getMusicEmbed()
+                .setTitle("Queued")
+                .setDescription("Added [$title]($url)")
+                .build())
+            .build()
+        val event = pendingLoad[loadId]
+        if (event!=null){
+            if (event is SlashCommandInteractionEvent){
+                event.hook.editOriginal(message).queue()
+            } else if (event is MessageReceivedEvent){
+                event.channel.sendMessage(message).queue()
+            } else {
+                Logging.logger.error("Received a non event class while loading")
+            }
+        } else {
+            Logging.logger.error("Failed to get event for loading")
+        }
+    }
 
     fun addToQueue(track: AudioTrack, isFromPlaylist: Boolean): Boolean {
         if (!isFromPlaylist) {
-            commonPlayer.loadQueue.take().value = queue.size
+            trackLoadedMessage(track, track.identifier)
         }
         return queue.offer(track)
     }
 
     fun addToQueue(track: Track, isFromPlaylist: Boolean): Boolean {
         if (!isFromPlaylist) {
-            commonPlayer.loadQueue.take().value = queue.size
+            trackLoadedMessage(track, track.loadId)
         }
         return queue.offer(track)
     }

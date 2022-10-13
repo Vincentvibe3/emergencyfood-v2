@@ -37,6 +37,7 @@ class AudioLoader(private val queueManager: QueueManager, private val player: Au
             val channel = client.getTextChannelById(channelId)
             channel?.sendMessage("Failed to add ${playlist.tracks.size - successCount}, the rest was added")?.queue()
         }
+        queueManager.playlistLoadedMessage(successCount, playlist.tracks.first().identifier)
         if (initSize == 0) {
             val firstSong = queueManager.queue.peek()
             player.playTrack(firstSong as AudioTrack?)

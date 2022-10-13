@@ -25,7 +25,7 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.15.3")
     implementation("ch.qos.logback:logback-classic:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.3.3")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.3.4")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 

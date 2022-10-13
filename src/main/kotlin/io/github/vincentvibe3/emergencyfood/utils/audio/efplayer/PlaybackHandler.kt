@@ -16,7 +16,7 @@ class PlaybackHandler(private val queueManager: QueueManager) : EventListener() 
         throw LoadFailedException()
     }
 
-    override fun onPlaylistLoaded(tracks: List<Track>, player: Player) {
+    override fun onPlaylistLoaded(tracks: List<Track>, player: Player, loadId: String) {
         val initSize = queueManager.queue.size
         var successCount = 0
         tracks.forEach {
@@ -30,6 +30,7 @@ class PlaybackHandler(private val queueManager: QueueManager) : EventListener() 
             val channel = client.getTextChannelById(channelId)
             channel?.sendMessage("Failed to add ${tracks.size - successCount}, the rest was added")?.queue()
         }
+        queueManager.playlistLoadedMessage(successCount, tracks[0].loadId)
         if (initSize == 0) {
             val firstSong = queueManager.queue.peek()
             player.play(firstSong as Track)
@@ -54,7 +55,7 @@ class PlaybackHandler(private val queueManager: QueueManager) : EventListener() 
         }
     }
 
-    override fun onTrackLoad(track: Track, player: Player) {
+    override fun onTrackLoad(track: Track, player: Player, loadId: String) {
         queueManager.addToQueue(track, false)
         if (queueManager.queue.size == 1) {
             val firstSong = queueManager.queue.peek()
