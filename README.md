@@ -21,6 +21,7 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 ![Build Status Github Actions](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Build.yaml/badge.svg?branch=main) 
  
 *Latest Version:*
+
 [![Release Status](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml/badge.svg)](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml)
 
 ## Dependencies
