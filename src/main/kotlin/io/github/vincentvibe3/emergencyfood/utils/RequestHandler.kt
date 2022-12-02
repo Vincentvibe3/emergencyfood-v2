@@ -1,16 +1,18 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import okhttp3.Headers
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
+import java.net.URISyntaxException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
-import okhttp3.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.net.URISyntaxException
 
 /**
  * Handles request while rate-limiting

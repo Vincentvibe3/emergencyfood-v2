@@ -4,9 +4,9 @@ import io.github.vincentvibe3.emergencyfood.commands.music.Queue
 import io.github.vincentvibe3.emergencyfood.internals.InteractionButton
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 
 object QueueEnd : InteractionButton() {
 
@@ -21,16 +21,16 @@ object QueueEnd : InteractionButton() {
             val queue = player.getQueue()
             val lastPage = Queue.getPageCount(queue)
             if (queue.isEmpty()) {
-                event.message.editMessage("The queue is empty").override(true).queue()
+                event.message.editMessage("The queue is empty").setReplace(true).queue()
             } else {
                 val embedBuilder = Templates.getMusicQueueEmbed()
                 Queue.getEmbed(player, lastPage, embedBuilder)
                 val buttons = Queue.getButtonsRow(lastPage, lastPage)
-                val message = MessageBuilder()
+                val message = MessageEditBuilder()
                     .setEmbeds(embedBuilder.build())
-                    .setActionRows(buttons)
+                    .setComponents(buttons)
                     .build()
-                event.message.editMessage(message).override(true).queue()
+                event.message.editMessage(message).setReplace(true).queue()
             }
             event.reply("Updated queue").queue()
             event.hook.deleteOriginal().queue()

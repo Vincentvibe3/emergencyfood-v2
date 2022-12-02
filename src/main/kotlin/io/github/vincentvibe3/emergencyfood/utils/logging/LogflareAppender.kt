@@ -2,8 +2,8 @@ package io.github.vincentvibe3.emergencyfood.utils.logging
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
-import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
 import io.github.vincentvibe3.emergencyfood.internals.Config
+import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject

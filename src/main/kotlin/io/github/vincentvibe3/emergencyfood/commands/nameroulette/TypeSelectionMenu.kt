@@ -5,14 +5,14 @@ import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
 import io.github.vincentvibe3.emergencyfood.utils.nameroulette.NamerouletteEventLoop
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectInteraction
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import org.json.JSONArray
 import java.util.*
 
 class TypeSelectionMenu(override val name: String) :InteractionSelectMenu() {
 
-    override val menu: SelectMenu.Builder = SelectMenu.create(name)
+    override val menu: StringSelectMenu.Builder = StringSelectMenu.create(name)
 
     override val expires: Boolean = true
 
@@ -30,7 +30,7 @@ class TypeSelectionMenu(override val name: String) :InteractionSelectMenu() {
         return false
     }
 
-    override suspend fun handle(event: SelectMenuInteractionEvent) {
+    override suspend fun handle(event: StringSelectInteraction) {
         val guild = event.guild
         if (guild!=null){
             val rawData = Supabase.select("users", listOf(

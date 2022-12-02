@@ -11,13 +11,14 @@ import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
-import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import net.dv8tion.jda.api.interactions.components.ActionRow
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -93,16 +94,16 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
 
     }
 
-    suspend fun getMessage(id: String, currentPage: Long): Message {
+    suspend fun getMessage(id: String, currentPage: Long): MessageCreateData {
         //currentPage is the index of the page
         //Note: starts at 1
         lateinit var sauceInfo: JSONObject
         try {
             sauceInfo = getInfo(id)
         } catch (e: JSONException) {
-            return MessageBuilder().setContent("An unknown error occurred").build()
+            return MessageCreateBuilder().setContent("An unknown error occurred").build()
         } catch (e: RequestFailedException) {
-            return MessageBuilder().setContent("An unknown error occurred").build()
+            return MessageCreateBuilder().setContent("An unknown error occurred").build()
         }
         val pageCount = sauceInfo.getLong("num_pages")
         val image = getImage(sauceInfo, currentPage)
@@ -111,9 +112,9 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
             .setFooter("Page $currentPage of $pageCount")
             .setDescription("Now Reading: [$id](https://nhentai.net/g/$id)")
             .build()
-        return MessageBuilder()
+        return MessageCreateBuilder()
             .setEmbeds(embed)
-            .setActionRows(getButtonsRow(currentPage, pageCount))
+            .setComponents(getButtonsRow(currentPage, pageCount))
             .build()
     }
 
@@ -147,7 +148,7 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
                 page = 1L
             }
             val message = getMessage(id, page)
-            event.hook.editOriginal(message).queue()
+            event.hook.editOriginal(MessageEditData.fromCreateData(message)).queue()
         }
     }
 }

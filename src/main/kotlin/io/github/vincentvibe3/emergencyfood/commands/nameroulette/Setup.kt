@@ -1,6 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
-import io.github.vincentvibe3.emergencyfood.internals.*
+import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
+import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import io.github.vincentvibe3.emergencyfood.utils.nameroulette.NamerouletteEventLoop
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
@@ -8,7 +9,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import java.util.*
-import kotlin.collections.HashMap
 
 object Setup:GenericSubCommand(), SubCommand {
 

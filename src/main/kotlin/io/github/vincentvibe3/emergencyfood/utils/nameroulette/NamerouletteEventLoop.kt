@@ -9,11 +9,11 @@ import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import org.json.JSONArray
-import java.time.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import java.time.DayOfWeek
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 object NamerouletteEventLoop {
 
@@ -55,11 +55,11 @@ object NamerouletteEventLoop {
             }
             val rolls = updateUsers(guildData, rollChoices.first)
             val deathroll = deaths[0]
-            val messageBuilder = MessageBuilder()
-            messageBuilder.appendLine("***Name roulette results:***")
-            messageBuilder.appendLine("This week's deathroll is $deathroll")
+            val messageBuilder = MessageCreateBuilder()
+            messageBuilder.addContent("***Name roulette results:***")
+            messageBuilder.addContent("This week's deathroll is $deathroll")
             rolls.forEach {
-                messageBuilder.appendLine("<@${it.key}>: ${it.value}")
+                messageBuilder.addContent("<@${it.key}>: ${it.value}")
             }
             if (rolls.isNotEmpty()){
                 val message = messageBuilder.build()

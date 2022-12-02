@@ -4,6 +4,7 @@ import io.github.vincentvibe3.emergencyfood.commands.sauce.Read
 import io.github.vincentvibe3.emergencyfood.internals.InteractionButton
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 
 object SauceEnd : InteractionButton() {
     override val name = "SauceEnd"
@@ -19,10 +20,10 @@ object SauceEnd : InteractionButton() {
             val nextPage = footer.split(" ")[3].toLong()
             if (id != null) {
                 val message = Read.getMessage(id, nextPage)
-                event.message.editMessage(message).override(true).queue()
+                event.message.editMessage(MessageEditData.fromCreateData(message)).setReplace(true).queue()
             }
         } else {
-            event.message.editMessage("An unknown error occurred").override(true).queue()
+            event.message.editMessage("An unknown error occurred").setReplace(true).queue()
         }
         event.reply("Changing Page").queue()
         event.hook.deleteOriginal().queue()

@@ -2,12 +2,8 @@ package io.github.vincentvibe3.emergencyfood.core
 
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.internals.ConfigLoader
-import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
-import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
-import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 
 fun main() {
     Logging.logger.info("Loading Config...")

@@ -14,11 +14,11 @@ import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.CommonPlayer
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.components.ActionRow
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import java.util.concurrent.BlockingQueue
 
 object Queue : GenericCommand(), SlashCommand, MessageCommand {
@@ -161,9 +161,9 @@ object Queue : GenericCommand(), SlashCommand, MessageCommand {
                 embedBuilder = embedBuilder.setFooter("Page 1/$lastPage")
                 getEmbed(player, 1, embedBuilder)
                 val buttons = getButtonsRow(1, lastPage)
-                val message = MessageBuilder()
+                val message = MessageCreateBuilder()
                     .setEmbeds(embedBuilder.build())
-                    .setActionRows(buttons)
+                    .addComponents(buttons)
                     .build()
                 event.reply(message).queue()
             }
@@ -185,9 +185,9 @@ object Queue : GenericCommand(), SlashCommand, MessageCommand {
             embedBuilder = embedBuilder.setFooter("Page 1/$lastPage")
             getEmbed(player, 1, embedBuilder)
             val buttons = getButtonsRow(1, lastPage)
-            val message = MessageBuilder()
+            val message = MessageCreateBuilder()
                 .setEmbeds(embedBuilder.build())
-                .setActionRows(buttons)
+                .addComponents(buttons)
                 .build()
             channel.sendMessage(message).queue()
         }

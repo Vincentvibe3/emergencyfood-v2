@@ -5,7 +5,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.FileNotFoundException
-import kotlin.IllegalArgumentException
 import kotlin.system.exitProcess
 
 object ConfigLoader {
