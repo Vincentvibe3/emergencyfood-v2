@@ -10,7 +10,6 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 * [Dependencies](#Dependencies)
 * [Configuration](#Configuration)
   * [botConfig.json](#botConfigjson)
-  * [config.bot.kts](#configbotkts)
   * [Environment Variables](#Environment-Variables)
 * [Self Hosting](#Self-Host)
 
@@ -20,9 +19,9 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 
 ![Build Status Github Actions](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Build.yaml/badge.svg?branch=main) 
  
-*Version 1.7.12:*
+*Version 1.7.13:*
 
-[![Release](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml/badge.svg?branch=v.1.7.12)](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml)
+[![Release](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml/badge.svg?branch=v.1.7.13)](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml)
 
 ## Dependencies
 
