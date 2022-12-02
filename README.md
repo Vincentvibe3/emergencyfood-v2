@@ -20,9 +20,9 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 
 ![Build Status Github Actions](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Build.yaml/badge.svg?branch=main) 
  
-*Latest Version:*
+*Version 1.7.12:*
 
-[![Release Status](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml/badge.svg)](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml)
+[![Release](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml/badge.svg?branch=v.1.7.12)](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml)
 
 ## Dependencies
 
@@ -39,8 +39,7 @@ This project is made possible by:
 Configuration is possible through 3 methods
 
 1. A `botConfig.json` file
-2. A `config.bot.kts` file
-3. Environment Variables
+2. Environment Variables
 
 The bot will attempt to load a config from each of these methods in this order.
 Failure to load any config will prevent the bot from launching. 
@@ -48,17 +47,6 @@ Failure to load any config will prevent the bot from launching.
 ### *botConfig.json*
 
 An example can be found [here](https://github.com/Vincentvibe3/emergencyfood-v2/blob/main/examples/botConfig.json)
-
-### *config.bot.kts*
-
-> **⚠ Not implemented yet ⚠**
-
->**⚠ Warning! ⚠**
-> 
-> This method will evaluate the script when loading the config.
-> Make sure that you verify that `config.bot.kts` is safe before starting the bot.
-
-An example can be found [here]()
 
 ### *Environment Variables*
 
