@@ -3,11 +3,12 @@ package io.github.vincentvibe3.emergencyfood.utils.audio.common
 import com.github.Vincentvibe3.efplayer.core.Track
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.vincentvibe3.emergencyfood.core.Bot
-import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
-import net.dv8tion.jda.api.MessageBuilder
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
 
@@ -21,7 +22,7 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
     val pendingLoad = HashMap<String, Any>()
 
     fun playlistLoadedMessage(trackCount: Int, loadId:String){
-        val message = MessageBuilder()
+        val message = MessageCreateBuilder()
             .setEmbeds(Templates.getMusicEmbed()
                 .setTitle("Queued")
                 .setDescription("Added $trackCount songs from [playlist]($loadId)")
@@ -30,7 +31,7 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         val event = pendingLoad[loadId]
         if (event!=null){
             if (event is SlashCommandInteractionEvent){
-                event.hook.editOriginal(message).queue()
+                event.hook.editOriginal(MessageEditData.fromCreateData(message)).queue()
             } else if (event is MessageReceivedEvent){
                 event.channel.sendMessage(message).queue()
             } else {
@@ -51,7 +52,7 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
             url = track.url
             title = track.title?: "No title"
         }
-        val message = MessageBuilder()
+        val message = MessageCreateBuilder()
             .setEmbeds(Templates.getMusicEmbed()
                 .setTitle("Queued")
                 .setDescription("Added [$title]($url)")
@@ -60,7 +61,7 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         val event = pendingLoad[loadId]
         if (event!=null){
             if (event is SlashCommandInteractionEvent){
-                event.hook.editOriginal(message).queue()
+                event.hook.editOriginal(MessageEditData.fromCreateData(message)).queue()
             } else if (event is MessageReceivedEvent){
                 event.channel.sendMessage(message).queue()
             } else {
@@ -147,7 +148,7 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
                 .setTitle("Now Playing")
                 .setDescription("[$title]($url)")
                 .build()
-            val message = MessageBuilder()
+            val message = MessageCreateBuilder()
                 .setEmbeds(embed)
                 .build()
             channel.sendMessage(message).queue(

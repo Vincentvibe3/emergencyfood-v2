@@ -3,7 +3,7 @@ package io.github.vincentvibe3.emergencyfood.utils.audio.common
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import kotlinx.coroutines.delay
-import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 
 object PlayerManager {
 
@@ -61,7 +61,7 @@ object PlayerManager {
         val embed = Templates.getMusicEmbed()
             .setTitle("Disconnected due to inactivity")
             .build()
-        val message = MessageBuilder()
+        val message = MessageCreateBuilder()
             .setEmbeds(embed)
             .build()
         client.getTextChannelById(messageChannel)?.sendMessage(message)?.queue()

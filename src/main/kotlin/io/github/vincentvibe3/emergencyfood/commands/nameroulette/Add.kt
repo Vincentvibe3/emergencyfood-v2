@@ -1,10 +1,8 @@
 package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
-import io.github.vincentvibe3.emergencyfood.internals.MessageSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
 object Add: GenericSubCommand(), SubCommand{

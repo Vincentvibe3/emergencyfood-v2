@@ -1,7 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.internals
 
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
-import net.dv8tion.jda.api.interactions.components.Modal
+import net.dv8tion.jda.api.interactions.modals.Modal
 
 abstract class InteractionModal {
 

@@ -4,21 +4,22 @@ import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
 import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
-import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.CommonPlayer
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.LoadFailedException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.QueueAddException
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.SongNotFoundException
-import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.entities.AudioChannel
-import net.dv8tion.jda.api.entities.Message
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 
 object Play : GenericCommand(), SlashCommand, MessageCommand {
 
@@ -64,39 +65,39 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
     }
 
     //resume and return response depending on whether the player was resumed
-    private fun resume(player: CommonPlayer): Message {
+    private fun resume(player: CommonPlayer): MessageCreateData {
         return if (player.isPaused()) {
             player.resume()
             val embed = Templates.getMusicEmbed()
                 .setTitle("Resumed Playback")
                 .build()
-            MessageBuilder()
+            MessageCreateBuilder()
                 .setEmbeds(embed)
                 .build()
         } else {
-            MessageBuilder()
+            MessageCreateBuilder()
                 .setContent("The player is not paused")
                 .build()
         }
     }
 
     //plays and return response depending on whether loading was successful or not
-    private fun play(player: CommonPlayer, query: String, event: Any):Message? {
+    private fun play(player: CommonPlayer, query: String, event: Any): MessageCreateData? {
         lateinit var track: String
         try {
             track = getTrack(query)
             player.play(track, event)
             return null
         } catch (e: SongNotFoundException) {
-            return MessageBuilder()
+            return MessageCreateBuilder()
                 .setContent("Could not find a matching song")
                 .build()
         } catch (e: LoadFailedException) {
-            return MessageBuilder()
+            return MessageCreateBuilder()
                 .setContent("Failed to load song")
                 .build()
         } catch (e: QueueAddException) {
-            return MessageBuilder()
+            return MessageCreateBuilder()
                 .setContent("An error occurred while adding the song to the queue")
                 .build()
         }
@@ -124,7 +125,7 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
                 play(player, songOption, event)
             }
             if (response != null) {
-                event.hook.editOriginal(response).queue()
+                event.hook.editOriginal(MessageEditData.fromCreateData(response)).queue()
             }
         } else if (player == null) {
             event.hook.editOriginal("An error occurred when fetching the player").queue()

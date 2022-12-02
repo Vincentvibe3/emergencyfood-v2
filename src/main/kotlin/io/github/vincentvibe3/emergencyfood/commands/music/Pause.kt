@@ -5,10 +5,10 @@ import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
 import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.build.Commands
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 
 object Pause : GenericCommand(), SlashCommand, MessageCommand {
 
@@ -25,7 +25,7 @@ object Pause : GenericCommand(), SlashCommand, MessageCommand {
                 val embed = Templates.getMusicEmbed()
                     .setTitle("Paused")
                     .build()
-                val message = MessageBuilder()
+                val message = MessageCreateBuilder()
                     .setEmbeds(embed)
                     .build()
                 event.reply(message).queue()
@@ -45,7 +45,7 @@ object Pause : GenericCommand(), SlashCommand, MessageCommand {
             val embed = Templates.getMusicEmbed()
                 .setTitle("Paused")
                 .build()
-            val message = MessageBuilder()
+            val message = MessageCreateBuilder()
                 .setEmbeds(embed)
                 .build()
             event.guildChannel.sendMessage(message).queue()

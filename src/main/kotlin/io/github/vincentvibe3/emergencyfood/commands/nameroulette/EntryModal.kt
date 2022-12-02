@@ -6,9 +6,9 @@ import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.interactions.components.ActionRow
-import net.dv8tion.jda.api.interactions.components.Modal
 import net.dv8tion.jda.api.interactions.components.text.TextInput
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
+import net.dv8tion.jda.api.interactions.modals.Modal
 import org.json.JSONArray
 
 object EntryModal: InteractionModal() {
@@ -72,7 +72,7 @@ object EntryModal: InteractionModal() {
         }
         event.reply("Select the type of each added entry (The dropdowns will be active for 15 minutes)")
             .setEphemeral(true)
-            .addActionRows(selectMenus)
+            .addComponents(selectMenus)
             .queue();
 //        event.getValue("entry1")?.let { event.reply(it.asString).queue() }
     }

@@ -5,10 +5,11 @@ import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
-import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.random.Random
@@ -43,7 +44,7 @@ object Roll: GenericSubCommand(), SubCommand {
     }
 
     private suspend fun buildAndUpdateMessage(guildId:String): Boolean {
-        val messageBuilder = MessageBuilder()
+        val messageBuilder = MessageCreateBuilder()
         val rawData = Supabase.select("users", listOf(
             SupabaseFilter("guild", guildId, SupabaseFilter.Match.EQUALS)
         ))
@@ -56,8 +57,8 @@ object Roll: GenericSubCommand(), SubCommand {
         } else {
             val guildDataJson = guildsDataJson.getJSONObject(0)
             val deathroll = guildDataJson.getString("current_deathroll")
-            messageBuilder.appendLine("***Name roulette results:***")
-            messageBuilder.appendLine("This week's deathroll is $deathroll")
+            messageBuilder.addContent("***Name roulette results:***")
+            messageBuilder.addContent("This week's deathroll is $deathroll")
             val usersData = JSONArray(rawData)
             for (index in 0 until usersData.length()){
                 val user = usersData.getJSONObject(index)
@@ -65,14 +66,14 @@ object Roll: GenericSubCommand(), SubCommand {
                 if (user.getBoolean("deathroll")){
                     rolls.put("Deathroll")
                 }
-                messageBuilder.appendLine("<@${user.getString("id").split(":")[0]}>: ${rolls.joinToString(", ")}")
+                messageBuilder.addContent("<@${user.getString("id").split(":")[0]}>: ${rolls.joinToString(", ")}")
             }
             updateMessage(guildDataJson, messageBuilder.build())
             return true
         }
     }
 
-    private fun updateMessage(guildData: JSONObject, message: Message){
+    private fun updateMessage(guildData: JSONObject, message: MessageCreateData){
         val lastMessageData = guildData.getString("last_message").split(":")
         val originalMessageId = lastMessageData[0]
         val channelId = lastMessageData[1]
@@ -80,7 +81,7 @@ object Roll: GenericSubCommand(), SubCommand {
         client.getTextChannelById(channelId)
             ?.retrieveMessageById(originalMessageId)
             ?.queue{
-                it.editMessage(message).queue()
+                it.editMessage(MessageEditData.fromCreateData(message)).queue()
             }
     }
 
