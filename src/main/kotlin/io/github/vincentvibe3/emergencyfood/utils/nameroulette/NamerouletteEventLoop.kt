@@ -34,6 +34,7 @@ object NamerouletteEventLoop {
             DayOfWeek.FRIDAY -> day == 5
             DayOfWeek.SATURDAY -> day == 6
             DayOfWeek.SUNDAY -> day == 0
+            null -> false
         }
         val minuteMatch = date.minute == minute
         val hourMatch = date.hour == hour
@@ -56,10 +57,10 @@ object NamerouletteEventLoop {
             val rolls = updateUsers(guildData, rollChoices.first)
             val deathroll = deaths[0]
             val messageBuilder = MessageCreateBuilder()
-            messageBuilder.addContent("***Name roulette results:***")
-            messageBuilder.addContent("This week's deathroll is $deathroll")
+            messageBuilder.addContent("***Name roulette results:***\n")
+            messageBuilder.addContent("This week's deathroll is $deathroll\n")
             rolls.forEach {
-                messageBuilder.addContent("<@${it.key}>: ${it.value}")
+                messageBuilder.addContent("<@${it.key}>: ${it.value}\n")
             }
             if (rolls.isNotEmpty()){
                 val message = messageBuilder.build()

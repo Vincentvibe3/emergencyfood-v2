@@ -57,16 +57,16 @@ object Roll: GenericSubCommand(), SubCommand {
         } else {
             val guildDataJson = guildsDataJson.getJSONObject(0)
             val deathroll = guildDataJson.getString("current_deathroll")
-            messageBuilder.addContent("***Name roulette results:***")
-            messageBuilder.addContent("This week's deathroll is $deathroll")
+            messageBuilder.addContent("***Name roulette results:***\n")
+            messageBuilder.addContent("This week's deathroll is $deathroll\n")
             val usersData = JSONArray(rawData)
             for (index in 0 until usersData.length()){
                 val user = usersData.getJSONObject(index)
-                val rolls = user.getJSONArray("roll_names");
+                val rolls = user.getJSONArray("roll_names")
                 if (user.getBoolean("deathroll")){
                     rolls.put("Deathroll")
                 }
-                messageBuilder.addContent("<@${user.getString("id").split(":")[0]}>: ${rolls.joinToString(", ")}")
+                messageBuilder.addContent("<@${user.getString("id").split(":")[0]}>: ${rolls.joinToString(", ")}\n")
             }
             updateMessage(guildDataJson, messageBuilder.build())
             return true
