@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.7.13"
+version = "1.7.14"
 
 repositories {
     mavenCentral()
@@ -25,7 +25,7 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.15.3")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.3.4")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.3.5")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
