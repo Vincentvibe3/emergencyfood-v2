@@ -171,16 +171,21 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         } else if (trackIndex == queue.size - 1 && loop) {
             rebuildQueue()
             next = queue.elementAt(0)
+            if (track==next){
+                next = null
+            }
             queue.remove(queue.elementAt(trackIndex))
             //play next
         } else {
             next = queue.elementAt(trackIndex + 1)
             queue.remove(queue.elementAt(trackIndex))
         }
-        if (next is Track) {
-            commonPlayer.efPlayer.play(next)
-        } else if (next is AudioTrack) {
-            commonPlayer.lavaplayer.playTrack(next)
+        if (next != null){
+            if (next is Track) {
+                commonPlayer.efPlayer.play(next)
+            } else if (next is AudioTrack) {
+                commonPlayer.lavaplayer.playTrack(next)
+            }
         }
         val client = Bot.getClientInstance()
         val channel = client.getTextChannelById(updatesChannel)
