@@ -15,6 +15,7 @@ object NameRoulette:GenericCommand(), SlashCommand{
         registerSubCommands(Roll)
         registerSubCommands(Setup)
         registerSubCommands(Registration)
+        registerSubCommands(List)
     }
 
     override val name: String = "nameroulette"
@@ -24,6 +25,7 @@ object NameRoulette:GenericCommand(), SlashCommand{
         .addSubcommands(Roll.subCommand)
         .addSubcommands(Setup.subCommand)
         .addSubcommands(Registration.subCommand)
+        .addSubcommands(List.subCommand)
 
     override suspend fun handle(event: SlashCommandInteractionEvent) {
         handleSubCommands(event)

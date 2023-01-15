@@ -16,7 +16,5 @@ fun main() {
 
     //start bot
     Bot.start()
-
-
 }
 
