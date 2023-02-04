@@ -3,8 +3,7 @@ package io.github.vincentvibe3.emergencyfood.internals
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.audio.common.PlayerManager
 import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
@@ -16,6 +15,7 @@ import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 object UniversalListener:ListenerAdapter() {
+    private val coroutineScope = CoroutineScope(Dispatchers.Default+SupervisorJob())
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val client = Bot.getClientInstance()
         val name = client.guilds.first { it.id == event.guild.id }.selfMember.effectiveName
@@ -28,7 +28,7 @@ object UniversalListener:ListenerAdapter() {
             Logging.logger.debug("MessageCommand received")
             val message = event.message.contentDisplay.replace("@$name", "").replace(Config.prefix, "").trim()
             val commandName = message.split(" ")[0]
-            GlobalScope.launch {
+            coroutineScope.launch {
                 retrieveMessageCommand(commandName)?.handle(event)
             }
         }
@@ -56,7 +56,7 @@ object UniversalListener:ListenerAdapter() {
     //find the required command and run its handler function
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         Logging.logger.debug("SlashCommand ${event.name} called")
-        GlobalScope.launch {
+        coroutineScope.launch {
             retrieveSlashCommand(event.name)?.handle(event)
         }
     }
@@ -69,7 +69,7 @@ object UniversalListener:ListenerAdapter() {
     //respond to a button being clicked
     override fun onButtonInteraction(event: ButtonInteractionEvent) {
         Logging.logger.debug("Button ${event.componentId} pressed")
-        GlobalScope.launch {
+        coroutineScope.launch {
             retrieveButton(event.componentId)?.handle(event)
         }
     }
@@ -82,7 +82,7 @@ object UniversalListener:ListenerAdapter() {
     //respond to a button being clicked
     override fun onModalInteraction(event: ModalInteractionEvent) {
         Logging.logger.debug("Modal ${event.modalId} triggered")
-        GlobalScope.launch {
+        coroutineScope.launch {
             retrieveModal(event.modalId)?.handle(event)
         }
     }
@@ -148,7 +148,7 @@ object UniversalListener:ListenerAdapter() {
     }
 
     override fun onStringSelectInteraction(event: StringSelectInteractionEvent) {
-        GlobalScope.launch {
+        coroutineScope.launch {
             val menu = retrieveMenu(event.componentId)
             if (menu==null){
                 event.reply("This dropdown has expired").setEphemeral(true).queue()

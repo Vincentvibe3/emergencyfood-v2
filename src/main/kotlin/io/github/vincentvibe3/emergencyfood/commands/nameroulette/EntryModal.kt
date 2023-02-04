@@ -40,8 +40,7 @@ object EntryModal: InteractionModal() {
                     .setMaxLength(1000)
                     .setRequired(false)
                 if (count==1){
-                    input.setLabel("Entry $count")
-                        .setRequired(true)
+                    input.setLabel("Entry $count").isRequired = true
                 }
                 textEntries.add(ActionRow.of(input.build()))
             }
@@ -73,8 +72,7 @@ object EntryModal: InteractionModal() {
         event.reply("Select the type of each added entry (The dropdowns will be active for 15 minutes)")
             .setEphemeral(true)
             .addComponents(selectMenus)
-            .queue();
-//        event.getValue("entry1")?.let { event.reply(it.asString).queue() }
+            .queue()
     }
 
 

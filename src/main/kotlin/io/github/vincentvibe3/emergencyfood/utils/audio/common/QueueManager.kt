@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.locks.ReentrantLock
 
 class QueueManager(private val commonPlayer: CommonPlayer) {
 
@@ -20,6 +21,7 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
     private var lastUpdatesMessage: String? = null
     private var lastUpdatesChannel: String? = null
     val pendingLoad = HashMap<String, Any>()
+    private val lock = ReentrantLock()
 
     fun playlistLoadedMessage(trackCount: Int, loadId:String){
         val message = MessageCreateBuilder()
@@ -99,14 +101,22 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         queue = newQueue
     }
 
-    fun onTrackEnd(track: Any, canStartNext: Boolean) {
+    private fun deleteNowPlayingMessage(){
         val client = Bot.getClientInstance()
         //delete the old now playing message if it exists
-        val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
-        if (lastChannel != null) {
-            val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
-            lastMessage?.queue({ it.delete().queue() }, { Logging.logger.error("Failed to get old message") })
+        synchronized(lock) {
+            val lastChannel = lastUpdatesChannel?.let { client.getTextChannelById(it) }
+            if (lastChannel != null) {
+                val lastMessage = lastUpdatesMessage?.let { lastChannel.retrieveMessageById(it) }
+                lastMessage?.queue({
+                    it.delete().queue()
+                }, { Logging.logger.error("Failed to get old message") })
+            }
         }
+    }
+
+    fun onTrackEnd(track: Any, canStartNext: Boolean) {
+        deleteNowPlayingMessage()
         var next: Any? = null
         //clear on end
         if (canStartNext) {
@@ -151,17 +161,20 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
             val message = MessageCreateBuilder()
                 .setEmbeds(embed)
                 .build()
-            channel.sendMessage(message).queue(
-                {
-                    lastUpdatesMessage = it.id
-                    lastUpdatesChannel = it.channel.id
-                },
-                { Logging.logger.error("Failed to send update message in ${channel.guild}") }
-            )
+            synchronized(lock) {
+                channel.sendMessage(message).queue(
+                    {
+                        lastUpdatesMessage = it.id
+                        lastUpdatesChannel = it.channel.id
+                    },
+                    { Logging.logger.error("Failed to send update message in ${channel.guild}") }
+                )
+            }
         }
     }
 
     fun onTrackException(track: Any) {
+        deleteNowPlayingMessage()
         val trackIndex = queue.indexOf(track)
         //clear on end
         var next: Any? = null

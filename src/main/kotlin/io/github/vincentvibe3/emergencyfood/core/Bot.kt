@@ -12,6 +12,9 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.ChunkingFilter
+import net.dv8tion.jda.api.utils.MemberCachePolicy
+import net.dv8tion.jda.api.utils.cache.CacheFlag
 import javax.security.auth.login.LoginException
 import kotlin.system.exitProcess
 
@@ -24,15 +27,29 @@ object Bot {
         return client
     }
 
+    private fun buildClient(): JDA {
+        val activity = Activity.playing(Config.status)
+        val builder = JDABuilder.createLight(Config.token)
+        return builder
+            .enableCache(CacheFlag.VOICE_STATE)
+            .setChunkingFilter(ChunkingFilter.NONE)
+            .setLargeThreshold(50)
+            .setMemberCachePolicy(
+                MemberCachePolicy.VOICE
+                    .or(MemberCachePolicy.OWNER)
+            )
+            .enableIntents(
+                GatewayIntent.MESSAGE_CONTENT,
+            )
+            .setActivity(activity)
+            .addEventListeners(UniversalListener)
+            .build()
+    }
+
     //start the bot
     fun start() {
-        val activity = Activity.playing(Config.status)
         try {
-            client = JDABuilder.createDefault(Config.token)
-                .enableIntents( GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
-                .setActivity(activity)
-                .addEventListeners(UniversalListener)
-                .build()
+            client = buildClient()
         } catch (e: LoginException) {
             Logging.logger.error("Invalid Token was passed")
             exitProcess(1)

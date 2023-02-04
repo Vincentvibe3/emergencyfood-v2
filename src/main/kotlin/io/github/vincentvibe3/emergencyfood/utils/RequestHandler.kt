@@ -28,7 +28,9 @@ object RequestHandler {
     val rateLimits = HashMap<String, Long>()
 
     //    private val client = HttpClient()
-    private val client2 = OkHttpClient()
+    private val client2 = OkHttpClient.Builder()
+        .retryOnConnectionFailure(true)
+        .build()
 
     private val mutex = Mutex()
 
@@ -47,7 +49,7 @@ object RequestHandler {
                 URI(originalUrl).host
             } catch (e:URISyntaxException){
                 e.printStackTrace()
-                throw RequestFailedException()
+                throw RequestFailedException("Failed to GET $originalUrl")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -80,7 +82,7 @@ object RequestHandler {
             success = false
         }
         if (!success){
-            throw RequestFailedException()
+            throw RequestFailedException("Failed to GET $originalUrl")
         } else {
             return body
         }
@@ -102,7 +104,7 @@ object RequestHandler {
                 URI(originalUrl).host
             } catch (e:URISyntaxException){
                 e.printStackTrace()
-                throw RequestFailedException()
+                throw RequestFailedException("Failed to POST $originalUrl")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -139,7 +141,7 @@ object RequestHandler {
         }
 
         if (!success){
-            throw RequestFailedException()
+            throw RequestFailedException("Failed to POST $originalUrl")
         } else {
             return responseBody
         }
@@ -153,7 +155,7 @@ object RequestHandler {
                 URI(originalUrl).host
             } catch (e:URISyntaxException){
                 e.printStackTrace()
-                throw RequestFailedException()
+                throw RequestFailedException("Failed to PATCH $originalUrl")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -190,7 +192,7 @@ object RequestHandler {
         }
 
         if (!success){
-            throw RequestFailedException()
+            throw RequestFailedException("Failed to PATCH $originalUrl")
         } else {
             return responseBody
         }
@@ -204,7 +206,7 @@ object RequestHandler {
                 URI(originalUrl).host
             } catch (e:URISyntaxException){
                 e.printStackTrace()
-                throw RequestFailedException()
+                throw RequestFailedException("Failed to DELETE $originalUrl")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -240,7 +242,7 @@ object RequestHandler {
         }
 
         if (!success){
-            throw RequestFailedException()
+            throw RequestFailedException("Failed to DELETE $originalUrl")
         } else {
             return responseBody
         }

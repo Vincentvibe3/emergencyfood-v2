@@ -1,4 +1,4 @@
 package io.github.vincentvibe3.emergencyfood.utils.exceptions
 
-class RequestFailedException : Exception() {
+class RequestFailedException(message: String) : Exception(message) {
 }
