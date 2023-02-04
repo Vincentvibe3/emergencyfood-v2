@@ -1,15 +1,18 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.net.URISyntaxException
+import java.net.URLEncoder
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
@@ -42,11 +45,22 @@ object RequestHandler {
      *
      */
     suspend fun get(originalUrl: String, headers:HashMap<String, String> = HashMap()):String{
+        val urlEncoded = withContext(Dispatchers.IO) {
+            if (originalUrl.startsWith("https://")) {
+                "https://"+originalUrl.removePrefix("https://").split("/").joinToString("/") {
+                    URLEncoder.encode(it, "utf-8")
+                }
+            } else {
+                "http://"+originalUrl.removePrefix("http://").split("/").joinToString("/") {
+                    URLEncoder.encode(it, "utf-8")
+                }
+            }
+        }
         val host = if (rateLimits.containsKey(originalUrl)){
-            originalUrl
+            urlEncoded
         } else {
             try {
-                URI(originalUrl).host
+                URI(urlEncoded).host
             } catch (e:URISyntaxException){
                 e.printStackTrace()
                 throw RequestFailedException("Failed to GET $originalUrl")
@@ -70,7 +84,7 @@ object RequestHandler {
                 headersBuilder.add(it.key, it.value)
             }
             val request: Request = Request.Builder()
-                .url(originalUrl)
+                .url(urlEncoded)
                 .headers(headersBuilder.build())
                 .build()
             val call = client2.newCall(request)
