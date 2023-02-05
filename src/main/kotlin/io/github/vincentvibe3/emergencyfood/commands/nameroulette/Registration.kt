@@ -2,8 +2,10 @@ package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteUser
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 
@@ -30,15 +32,16 @@ object Registration:GenericSubCommand(), SubCommand {
                     ))
                     event.reply("Unregistered from Name Roulette").setEphemeral(true).queue()
                 } else {
-                    val result = Supabase.insert("users", hashMapOf(
-                        "id" to "${event.user.id}:${guild.id}",
-                        "guild" to guild.id,
-                        "roll_count" to 0,
-                        "deathroll" to false,
-                        "roll_names" to "[]",
-                        "added_choices" to 0,
-                        "added_choices_death" to 0
+                    val data = Json.encodeToString(NameRouletteUser.serializer(), NameRouletteUser(
+                        "${event.user.id}:${guild.id}",
+                        guild.id,
+                        0,
+                        false,
+                        arrayListOf(),
+                        0,
+                        0
                     ))
+                    val result = Supabase.insert("users", data)
                     if (result.contains("message")){
                         event.reply("An error occurred").setEphemeral(true).queue()
                     } else {

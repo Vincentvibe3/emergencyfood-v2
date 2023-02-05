@@ -11,6 +11,8 @@ import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.*
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
@@ -19,8 +21,6 @@ import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import org.json.JSONException
-import org.json.JSONObject
 
 object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
     override val name = "read"
@@ -36,22 +36,23 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
         ButtonManager.registerLocal(SauceEnd)
     }
 
-    private suspend fun getInfo(id: String?): JSONObject {
-        lateinit var jsonResponse: JSONObject
-        try {
+    private suspend fun getInfo(id: String?): JsonObject {
+        return try {
             val response = RequestHandler.get("https://nhentai.net/api/gallery/$id")
-            jsonResponse = JSONObject(response)
+            Json.decodeFromString(response)
         } catch (e: RequestFailedException) {
             throw e
-        } catch (e: JSONException) {
-            throw e
         }
-        return jsonResponse
     }
 
-    private fun getImageFormat(image: JSONObject): String {
+    private fun getImageFormat(image: JsonObject): String {
         lateinit var ext: String
-        when (image.getString("t")) {
+        val type = if (image["t"] is JsonPrimitive){
+            image["t"]?.jsonPrimitive?.content
+        } else {
+            return ""
+        }
+        when (type) {
             "j" -> ext = "jpg"
             "p" -> ext = "png"
             "g" -> ext = "gif"
@@ -59,12 +60,12 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
         return ext
     }
 
-    private fun getImage(info: JSONObject, index: Long): String {
+    private fun getImage(info: JsonObject, index: Long): String {
         //index starts at 1
-        val pageInfo = info.getJSONObject("images").getJSONArray("pages")
-        val page = pageInfo.getJSONObject((index - 1).toInt())
-        val format = getImageFormat(page)
-        val id = info.getString("media_id")
+        val pageInfo = info["images"]?.jsonObject?.get("pages")?.jsonArray
+        val page = pageInfo?.get((index - 1).toInt())?.jsonObject
+        val format = page?.let { getImageFormat(it) }
+        val id = info["media_id"]?.jsonPrimitive?.content
         return "https://i.nhentai.net/galleries/$id/${index}.$format"
     }
 
@@ -97,15 +98,12 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
     suspend fun getMessage(id: String, currentPage: Long): MessageCreateData {
         //currentPage is the index of the page
         //Note: starts at 1
-        lateinit var sauceInfo: JSONObject
-        try {
-            sauceInfo = getInfo(id)
-        } catch (e: JSONException) {
-            return MessageCreateBuilder().setContent("An unknown error occurred").build()
+        val sauceInfo = try {
+            getInfo(id)
         } catch (e: RequestFailedException) {
             return MessageCreateBuilder().setContent("An unknown error occurred").build()
         }
-        val pageCount = sauceInfo.getLong("num_pages")
+        val pageCount = sauceInfo["num_pages"]?.jsonPrimitive?.long
         val image = getImage(sauceInfo, currentPage)
         val embed = Templates.getSauceEmbed()
             .setImage(image)
@@ -114,7 +112,7 @@ object Read : GenericSubCommand(), SubCommand, MessageSubCommand {
             .build()
         return MessageCreateBuilder()
             .setEmbeds(embed)
-            .setComponents(getButtonsRow(currentPage, pageCount))
+            .setComponents(pageCount?.let { getButtonsRow(currentPage, it) })
             .build()
     }
 

@@ -2,15 +2,17 @@ package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteRoll
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import org.json.JSONArray
 
-object List: GenericSubCommand(), SubCommand{
+object ListEntries: GenericSubCommand(), SubCommand{
 
     override val name: String = "list"
     override val subCommand: SubcommandData = SubcommandData(name, "List all name roulette possible rolls")
@@ -22,16 +24,15 @@ object List: GenericSubCommand(), SubCommand{
             val allRolls = Supabase.select("nameroulette_choices", listOf(
                 SupabaseFilter("guild", guildId, SupabaseFilter.Match.EQUALS)
             ))
-            val jsonData = JSONArray(allRolls)
+            val jsonData =  Json.decodeFromString<List<NameRouletteRoll>>(allRolls)
             val messageBuilder = MessageCreateBuilder()
             val rolls = arrayListOf<String>()
             val deathRolls = arrayListOf<String>()
-            for (index in 0 until jsonData.length()){
-                val entryInfo = jsonData.getJSONObject(index)
-                if (entryInfo.getBoolean("deathroll")){
-                    deathRolls.add(entryInfo.getString("name"))
+            for (element in jsonData){
+                if (element.deathroll) {
+                    deathRolls.add(element.name)
                 } else {
-                    rolls.add(entryInfo.getString("name"))
+                    rolls.add(element.name)
                 }
             }
             messageBuilder.addContent("***Entries:***\n")

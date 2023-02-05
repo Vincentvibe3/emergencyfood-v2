@@ -1,7 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.commands.music
 
 import com.github.Vincentvibe3.efplayer.core.Track
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+//import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.vincentvibe3.emergencyfood.buttons.music.queue.QueueEnd
 import io.github.vincentvibe3.emergencyfood.buttons.music.queue.QueueNext
 import io.github.vincentvibe3.emergencyfood.buttons.music.queue.QueuePrev
@@ -107,8 +107,8 @@ object Queue : GenericCommand(), SlashCommand, MessageCommand {
             val track = queue.elementAt(index)
             val songLength = if (track is Track) {
                 track.duration
-            } else if (track is AudioTrack) {
-                track.info.length
+//            } else if (track is AudioTrack) {
+//                track.info.length
             } else {
                 -1
             }
@@ -124,15 +124,15 @@ object Queue : GenericCommand(), SlashCommand, MessageCommand {
             }
             val title = if (track is Track) {
                 track.title
-            } else if (track is AudioTrack) {
-                track.info.title
+//            } else if (track is AudioTrack) {
+//                track.info.title
             } else {
                 "Unknown"
             }
             val url = if (track is Track) {
                 track.url
-            } else if (track is AudioTrack) {
-                track.info.uri
+//            } else if (track is AudioTrack) {
+//                track.info.uri
             } else {
                 ""
             }

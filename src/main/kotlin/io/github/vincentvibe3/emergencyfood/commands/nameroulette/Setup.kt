@@ -2,9 +2,11 @@ package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.internals.GenericSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteGuild
 import io.github.vincentvibe3.emergencyfood.utils.nameroulette.NamerouletteEventLoop
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
@@ -29,7 +31,10 @@ object Setup:GenericSubCommand(), SubCommand {
         return result != "[]"
     }
 
-    private fun adjustTime(weekday:String?, hour:Int, timeZone:Int): Pair<Int?, Int> {
+    private fun adjustTime(weekday:String, hour:Int, timeZone:Int): Pair<Int, Int>? {
+        if (!weekdays.contains(weekday)){
+            return null
+        }
         val hourUTC = hour-timeZone
         if (hourUTC>=24){
             val day = weekdays[weekday]
@@ -43,9 +48,9 @@ object Setup:GenericSubCommand(), SubCommand {
                 null
             }
             val adjustedHour = hourUTC-24
-            return  Pair(adjustedDay, adjustedHour)
+            return  Pair(adjustedDay!!, adjustedHour)
         } else {
-            return Pair(weekdays[weekday], hourUTC)
+            return Pair(weekdays[weekday]!!, hourUTC)
         }
     }
 
@@ -55,23 +60,25 @@ object Setup:GenericSubCommand(), SubCommand {
         val hour = event.getOption("hour")?.asInt
         val minute = event.getOption("minute")?.asInt
         val timeZone = event.getOption("timezone")?.asInt
-        if(timeZone!=null&&hour!=null){
-            if (guild != null){
-                val adjusted = adjustTime(weekday, hour, timeZone)
+        if(timeZone!=null&&hour!=null&&weekday!=null&&minute!=null){
+            val adjusted = adjustTime(weekday, hour, timeZone)
+            if (guild != null&&adjusted!=null){
                 val adjustedDay = adjusted.first
                 val adjustedhour = adjusted.second
                 if (weekdays.values.contains(adjustedDay)&&adjustedhour in 0..23&&minute in 0..59) {
                     var update = false
+                    val guildData = NameRouletteGuild(
+                        guild.id.toLong(),
+                        event.channel.id,
+                        adjustedDay,
+                        adjustedhour,
+                        minute
+                    )
                     val result = if (checkIfExists(guild.id)){
                         update = true
                         Supabase.update(
                             "guilds",
-                            hashMapOf(
-                                "channel_id" to event.channel.id,
-                                "ping_day_of_week" to adjustedDay,
-                                "ping_hour" to adjustedhour,
-                                "ping_min" to minute
-                            ) as HashMap<String, Any>,
+                            Json.encodeToString(NameRouletteGuild.serializer(), guildData),
                             listOf(
                                 SupabaseFilter("id", guild.id, SupabaseFilter.Match.EQUALS)
                             )
@@ -79,13 +86,7 @@ object Setup:GenericSubCommand(), SubCommand {
                     } else {
                         Supabase.insert(
                             "guilds",
-                            hashMapOf(
-                                "id" to guild.id,
-                                "channel_id" to event.channel.id,
-                                "ping_day_of_week" to adjustedDay,
-                                "ping_hour" to adjustedhour,
-                                "ping_min" to minute
-                            ) as HashMap<String, Any>
+                            Json.encodeToString(NameRouletteGuild.serializer(), guildData)
                         )
                     }
                     if (result==null||(result.contains("message")&&!result.contains("last_message"))){

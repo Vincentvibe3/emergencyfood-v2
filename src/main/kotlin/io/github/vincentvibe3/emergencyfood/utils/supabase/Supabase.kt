@@ -2,18 +2,16 @@ package io.github.vincentvibe3.emergencyfood.utils.supabase
 
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
-import org.json.JSONArray
-import org.json.JSONObject
 
 object Supabase {
 
-    private fun generateJson(data:HashMap<String, Any>):JSONObject{
-        val result = JSONObject()
-        data.forEach {
-            result.put(it.key, it.value)
-        }
-        return result
-    }
+//    private fun generateJson(data:HashMap<String, Any>):JSONObject{
+//        val result = JSONObject()
+//        data.forEach {
+//            result.put(it.key, it.value)
+//        }
+//        return result
+//    }
 
     private fun createQuery(query:List<SupabaseFilter>): String {
         return query.joinToString("&")
@@ -32,7 +30,7 @@ object Supabase {
         return RequestHandler.get(endpoint, headers)
     }
 
-    suspend fun update(tableName:String, row: HashMap<String, Any>, query:List<SupabaseFilter> = listOf()): String? {
+    suspend fun update(tableName:String, row: String, query:List<SupabaseFilter> = listOf()): String? {
         if (query.isEmpty()){
             return null
         }
@@ -43,7 +41,7 @@ object Supabase {
             "Content-Type" to "application/json",
             "Prefer" to "return=representation"
         )
-        return RequestHandler.patch(endpoint, generateJson(row).toString(), headers)
+        return RequestHandler.patch(endpoint, row, headers)
     }
 
     suspend fun delete(tableName:String, query:List<SupabaseFilter> = listOf()): String {
@@ -75,20 +73,20 @@ object Supabase {
         return RequestHandler.post(endpoint, data, headers)
     }
 
-    suspend fun upsert(tableName:String, row: HashMap<String, Any>): String {
-        return insertImpl(tableName, generateJson(row).toString(), upsert = true)
+    suspend fun upsert(tableName:String, row: String): String {
+        return insertImpl(tableName, row, upsert = true)
     }
 
-    suspend fun insert(tableName:String, row: HashMap<String, Any>): String {
-        return insertImpl(tableName, generateJson(row).toString())
+    suspend fun insert(tableName:String, row: String): String {
+        return insertImpl(tableName, row)
     }
 
-    suspend fun insert(tableName:String, rows: List<HashMap<String, Any>>): String {
-        val data = JSONArray()
-        rows.forEach{
-            data.put(generateJson(it))
-        }
-        return insertImpl(tableName, data.toString(), false)
-    }
+//    suspend fun insert(tableName:String, rows: List<HashMap<String, Any>>): String {
+//        val data = JSONArray()
+//        rows.forEach{
+//            data.put(generateJson(it))
+//        }
+//        return insertImpl(tableName, data.toString(), false)
+//    }
 
 }

@@ -4,27 +4,31 @@ import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.internals.InteractionSelectMenu
 import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteGuild
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteRoll
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteUser
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
-import org.json.JSONArray
 import java.time.DayOfWeek
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 object NamerouletteEventLoop {
 
-    private val guilds = ArrayList<NamerouletteGuildInfo>()
+    private val guilds = ArrayList<NameRouletteGuild>()
 
     val activeDropdowns = ArrayList<InteractionSelectMenu>()
 
-    private suspend fun check(guild: NamerouletteGuildInfo){
-        val day = guild.day
-        val minute = guild.minute
-        val hour = guild.hour
+    private suspend fun check(guild: NameRouletteGuild){
+        val day = guild.ping_day_of_week
+        val minute = guild.ping_min
+        val hour = guild.ping_hour
         val date = OffsetDateTime.now(ZoneOffset.UTC)
         val dayOfWeekMatch = when (date.dayOfWeek){
             DayOfWeek.MONDAY -> day == 1
@@ -44,7 +48,7 @@ object NamerouletteEventLoop {
         }
     }
 
-    private suspend fun update(guildData: NamerouletteGuildInfo){
+    private suspend fun update(guildData: NameRouletteGuild){
         val client = Bot.getClientInstance()
         val guild = client.getGuildById(guildData.id)
         if (guild!=null){
@@ -67,11 +71,12 @@ object NamerouletteEventLoop {
                 channel?.sendMessage(message)?.queue {
                     runBlocking {
                         launch {
+                            guildData.last_message = "${it.id}:${channel.id}"
+                            guildData.current_deathroll = deathroll
                             Supabase.update(
-                                "guilds", hashMapOf(
-                                    "last_message" to "${it.id}:${channel.id}",
-                                    "current_deathroll" to deathroll
-                                ), listOf(SupabaseFilter("id", guild.id, SupabaseFilter.Match.EQUALS))
+                                "guilds",
+                                Json.encodeToString(NameRouletteGuild.serializer(), guildData),
+                                listOf(SupabaseFilter("id", guild.id, SupabaseFilter.Match.EQUALS))
                             )
                         }
                     }
@@ -82,57 +87,50 @@ object NamerouletteEventLoop {
 
     }
 
-    private suspend fun getRolls(guild: NamerouletteGuildInfo): Pair<ArrayList<String>, ArrayList<String>> {
+    private suspend fun getRolls(guild: NameRouletteGuild): Pair<ArrayList<String>, ArrayList<String>> {
         val rawData = Supabase.select("nameroulette_choices", listOf(
             SupabaseFilter("guild", guild.id.toString(), SupabaseFilter.Match.EQUALS)
         ))
-        val jsonData = JSONArray(rawData)
+        val jsonData = Json.decodeFromString<List<NameRouletteRoll>>(rawData)
         val normal = ArrayList<String>()
         val deathrolls = ArrayList<String>()
-        for (index in 0 until jsonData.length()){
-            val entry = jsonData.getJSONObject(index)
-            if (!entry.getBoolean("deathroll")){
-                normal.add(entry.getString("name"))
+        for (entry in jsonData){
+            if (!entry.deathroll){
+                normal.add(entry.name)
             } else {
-                deathrolls.add(entry.getString("name"))
+                deathrolls.add(entry.name)
             }
         }
         return Pair(normal, deathrolls)
     }
 
-    private suspend fun updateUsers(guild: NamerouletteGuildInfo, rollChoices:List<String>): HashMap<String, String> {
+    private suspend fun updateUsers(guild: NameRouletteGuild, rollChoices:List<String>): HashMap<String, String> {
         val result = HashMap<String, String>()
         val rawData = Supabase.select("users", listOf(
             SupabaseFilter("guild", guild.id.toString(), SupabaseFilter.Match.EQUALS)
         ))
-        val jsonData = JSONArray(rawData)
-        for (index in 0 until jsonData.length()){
-            val user = jsonData.getJSONObject(index)
+        val jsonData = Json.decodeFromString<List<NameRouletteUser>>(rawData)
+        for (user in jsonData){
             val roll = rollChoices.shuffled()[0]
-            Supabase.update("users", hashMapOf(
-                "roll_count" to 1,
-                "roll_names" to JSONArray().put(roll),
-                "deathroll" to false
-            ), listOf(SupabaseFilter("id", user.getString("id"), SupabaseFilter.Match.EQUALS)))
-            result[user.getString("id").split(":")[0]] = roll
+            user.roll_count = 1
+            user.roll_names.add(roll)
+            user.deathroll = false
+            Supabase.update(
+                "users",
+                Json.encodeToString(NameRouletteUser.serializer(), user),
+                listOf(SupabaseFilter("id", user.id, SupabaseFilter.Match.EQUALS))
+            )
+            result[user.id.split(":")[0]] = roll
         }
         return result
     }
 
     suspend fun setup(){
         val rawData = Supabase.select("guilds")
-        val jsonData = JSONArray(rawData)
+        val jsonData = Json.decodeFromString<List<NameRouletteGuild>>(rawData)
 	    guilds.clear()
-        for (index in 0 until jsonData.length()){
-            val guildData = jsonData.getJSONObject(index)
-            val guild = NamerouletteGuildInfo(
-                guildData.getLong("id"),
-                guildData.getString("channel_id"),
-                guildData.getInt("ping_day_of_week"),
-                guildData.getInt("ping_hour"),
-                guildData.getInt("ping_min")
-            )
-            guilds.add(guild)
+        for (guildData in jsonData){
+            guilds.add(guildData)
         }
     }
 
