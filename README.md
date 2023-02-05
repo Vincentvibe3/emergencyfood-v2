@@ -23,16 +23,6 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 
 [![Release](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml/badge.svg?branch=v.1.7.13)](https://github.com/Vincentvibe3/emergencyfood-v2/actions/workflows/Release.yml)
 
-## Dependencies
-
-This project is made possible by:
-
-- [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA)
-- [Lavaplayer](https://github.com/sedmelluq/lavaplayer)
-- [Ktor](https://ktor.io/)
-- [Jsoup](https://jsoup.org/)
-- [JSON](https://github.com/stleary/JSON-java)
-
 ## Configuration
 
 Configuration is possible through 3 methods
