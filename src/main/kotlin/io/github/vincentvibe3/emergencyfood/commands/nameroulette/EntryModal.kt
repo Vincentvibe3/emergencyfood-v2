@@ -2,14 +2,16 @@ package io.github.vincentvibe3.emergencyfood.commands.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.internals.InteractionModal
 import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
+import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteUser
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.text.TextInput
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
 import net.dv8tion.jda.api.interactions.modals.Modal
-import org.json.JSONArray
 
 object EntryModal: InteractionModal() {
     override val name: String
@@ -25,10 +27,10 @@ object EntryModal: InteractionModal() {
         val data = Supabase.select("users",
             listOf(SupabaseFilter("id", "$id:$guild", SupabaseFilter.Match.EQUALS))
         )
-        val jsonData = JSONArray(data)
-        return if (!jsonData.isEmpty){
-            val addCount = jsonData.getJSONObject(0).getInt("added_choices")
-            val addCountDeath = jsonData.getJSONObject(0).getInt("added_choices_death")
+        val jsonData = Json.decodeFromString<List<NameRouletteUser>>(data)
+        return if (jsonData.isNotEmpty()){
+            val addCount = jsonData[0].added_choices
+            val addCountDeath = jsonData[0].added_choices_death
             val textEntries = ArrayList<ActionRow>()
             if (addCount>=3&&addCountDeath>=2){
                 return null

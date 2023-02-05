@@ -22,13 +22,11 @@ repositories {
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.3")
     implementation ("com.sedmelluq:lavaplayer:1.3.77")
-    implementation("org.json:json:20220924")
-//    implementation ("org.jsoup:jsoup:1.15.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.github.Vincentvibe3:ef-player:v.1.3.11")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
+    testImplementation(kotlin("test"))
 }
 
 tasks.test {

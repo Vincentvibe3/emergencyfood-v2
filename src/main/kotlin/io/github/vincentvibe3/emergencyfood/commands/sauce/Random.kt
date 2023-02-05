@@ -5,12 +5,12 @@ import io.github.vincentvibe3.emergencyfood.internals.MessageSubCommand
 import io.github.vincentvibe3.emergencyfood.internals.SubCommand
 import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.*
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
-import org.json.JSONException
-import org.json.JSONObject
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -26,71 +26,67 @@ object Random : GenericSubCommand(), SubCommand, MessageSubCommand {
             false
         )
 
-    private suspend fun search(query: String): JSONObject {
-        lateinit var jsonResponse: JSONObject
-        try {
+    private suspend fun search(query: String): JsonObject {
+        return try {
             val response = RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query")
-            jsonResponse = JSONObject(response)
+            Json.decodeFromString(response)
         } catch (e: RequestFailedException) {
             throw e
-        } catch (e: JSONException) {
-            throw e
         }
-        return jsonResponse
     }
 
-    private suspend fun getPage(response: JSONObject, query: String): JSONObject? {
-        val totalPages = response.getInt("num_pages")
-        if (totalPages < 1) {
-            return null
+    private suspend fun getPage(response: JsonObject, query: String): JsonObject? {
+        val totalPages = response["num_pages"]?.jsonPrimitive?.int
+        if (totalPages != null) {
+            if (totalPages < 1) {
+                return null
+            }
+            val pageToGet = Random.nextInt(1..totalPages)
+            return try {
+                val pageResponse =
+                    RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query&page=$pageToGet")
+                Json.decodeFromString(pageResponse)
+            } catch (e: RequestFailedException) {
+                throw e
+            }
         }
-        val pageToGet = Random.nextInt(1..totalPages)
-        lateinit var jsonResponse: JSONObject
-        try {
-            val pageResponse =
-                RequestHandler.get("https://nhentai.net/api/galleries/search?query=$query&page=$pageToGet")
-            jsonResponse = JSONObject(pageResponse)
-        } catch (e: RequestFailedException) {
-            throw e
-        } catch (e: JSONException) {
-            throw e
-        }
-        return jsonResponse
+        return null
     }
 
-    private fun getEntry(response: JSONObject, strict: Boolean, query: String): String {
+    private fun getEntry(response: JsonObject, strict: Boolean, query: String): String? {
         var found = false
         val searchTags = query.split("+")
-        lateinit var entry: JSONObject
-        val entries = response.getJSONArray("result")
-        val max = entries.length() - 1
-        var attempts = 0
-        while (!found && attempts <= max) {
-            val entryIndex = Random.nextInt(0..max)
-            entry = entries.getJSONObject(entryIndex)
-            val tags = entry.getJSONArray("tags")
-            val tagNames = ArrayList<String>()
-            tags.forEach {
-                if (it is JSONObject) {
-                    tagNames.add(it.getString("name"))
+        lateinit var entry: JsonObject
+        val entries = response["result"]?.jsonArray
+        if (entries!=null){
+            val max = entries.size - 1
+            var attempts = 0
+            while (!found && attempts <= max) {
+                val entryIndex = Random.nextInt(0..max)
+                entry = entries[entryIndex].jsonObject
+                val tagNames = ArrayList<String>()
+                entry["tags"]?.jsonArray?.forEach {
+                    if (it is JsonObject) {
+                        it["name"]?.jsonPrimitive?.let { value -> tagNames.add(value.content) }
+                    }
                 }
+                found = if (strict) {
+                    searchTags.size == searchTags
+                        .filter { tagName -> tagNames.any { it == tagName } }
+                        .size
+                } else {
+                    true
+                }
+                attempts++
             }
-            found = if (strict) {
-                searchTags.size == searchTags
-                    .filter { tagName -> tagNames.any { it == tagName } }
-                    .size
+            return if (found) {
+                val id = entry["id"]?.jsonPrimitive?.int
+                "https://nhentai.net/g/$id"
             } else {
-                true
+                "Could not find a matching sauce. Try Again"
             }
-            attempts++
         }
-        return if (found) {
-            val id = entry.getInt("id")
-            "https://nhentai.net/g/$id"
-        } else {
-            "Could not find a matching sauce. Try Again"
-        }
-
+        return null
     }
 
     override suspend fun handle(event: MessageReceivedEvent) {
@@ -115,12 +111,12 @@ object Random : GenericSubCommand(), SubCommand, MessageSubCommand {
             val page = getPage(pages, query)
             if (page != null) {
                 val url = getEntry(page, strict, query)
-                textChannel.sendMessage(url).queue()
+                if (url != null) {
+                    textChannel.sendMessage(url).queue()
+                }
             } else {
                 textChannel.sendMessage("No result was found").queue()
             }
-        } catch (e: JSONException) {
-            textChannel.sendMessage("An unknown error occurred").queue()
         } catch (e: RequestFailedException) {
             textChannel.sendMessage("An unknown error occurred").queue()
         }
@@ -141,12 +137,12 @@ object Random : GenericSubCommand(), SubCommand, MessageSubCommand {
             val page = getPage(pages, query)
             if (page != null) {
                 val url = getEntry(page, strict, query)
-                event.hook.editOriginal(url).queue()
+                if (url != null) {
+                    event.hook.editOriginal(url).queue()
+                }
             } else {
                 event.hook.editOriginal("No result was found").queue()
             }
-        } catch (e: JSONException) {
-            event.hook.editOriginal("An unknown error occurred").queue()
         } catch (e: RequestFailedException) {
             event.hook.editOriginal("An unknown error occurred").queue()
         }
