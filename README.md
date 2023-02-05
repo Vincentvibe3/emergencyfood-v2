@@ -7,7 +7,6 @@ Looking for the original project? Find it [here](https://github.com/Vincentvibe3
 ## Table of Contents
 
 * [Status](#Status)
-* [Dependencies](#Dependencies)
 * [Configuration](#Configuration)
   * [botConfig.json](#botConfigjson)
   * [Environment Variables](#Environment-Variables)
