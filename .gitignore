@@ -8,3 +8,4 @@ emergencyfood.service
 .ignore/
 efplayer.config.json
 old.efplayer.config.json
+cver.txt

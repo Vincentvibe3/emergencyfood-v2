@@ -1,18 +1,15 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import okhttp3.Headers
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.net.URI
-import java.net.URISyntaxException
-import java.net.URLEncoder
+import java.lang.IllegalArgumentException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 import kotlin.properties.Delegates
@@ -45,25 +42,15 @@ object RequestHandler {
      *
      */
     suspend fun get(originalUrl: String, headers:HashMap<String, String> = HashMap()):String{
-        val urlEncoded = withContext(Dispatchers.IO) {
-            if (originalUrl.startsWith("https://")) {
-                "https://"+originalUrl.removePrefix("https://").split("/").joinToString("/") {
-                    URLEncoder.encode(it, "utf-8")
-                }
-            } else {
-                "http://"+originalUrl.removePrefix("http://").split("/").joinToString("/") {
-                    URLEncoder.encode(it, "utf-8")
-                }
-            }
-        }
+        val url = originalUrl.toHttpUrl()
         val host = if (rateLimits.containsKey(originalUrl)){
-            urlEncoded
+            originalUrl
         } else {
             try {
-                URI(urlEncoded).host
-            } catch (e:URISyntaxException){
+                url.host
+            } catch (e:IllegalArgumentException){
                 e.printStackTrace()
-                throw RequestFailedException("Failed to GET $originalUrl")
+                throw RequestFailedException("Url $originalUrl was malformed")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -84,7 +71,7 @@ object RequestHandler {
                 headersBuilder.add(it.key, it.value)
             }
             val request: Request = Request.Builder()
-                .url(urlEncoded)
+                .url(url)
                 .headers(headersBuilder.build())
                 .build()
             val call = client2.newCall(request)
@@ -111,14 +98,15 @@ object RequestHandler {
      *
      */
     suspend fun post(originalUrl: String, requestBody:String, headers:HashMap<String, String> = HashMap()):String{
+        val url = originalUrl.toHttpUrl()
         val host = if (rateLimits.containsKey(originalUrl)){
             originalUrl
         } else {
             try {
-                URI(originalUrl).host
-            } catch (e:URISyntaxException){
+                url.host
+            } catch (e:IllegalArgumentException){
                 e.printStackTrace()
-                throw RequestFailedException("Failed to POST $originalUrl")
+                throw RequestFailedException("Url $originalUrl was malformed")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -141,7 +129,7 @@ object RequestHandler {
             }
             val body = requestBody.toRequestBody(null)
             val request: Request = Request.Builder()
-                .url(originalUrl)
+                .url(url)
                 .headers(headersBuilder.build())
                 .post(body)
                 .build()
@@ -162,14 +150,15 @@ object RequestHandler {
     }
 
     suspend fun patch(originalUrl: String, requestBody:String, headers:HashMap<String, String> = HashMap()):String{
+        val url = originalUrl.toHttpUrl()
         val host = if (rateLimits.containsKey(originalUrl)){
             originalUrl
         } else {
             try {
-                URI(originalUrl).host
-            } catch (e:URISyntaxException){
+                url.host
+            } catch (e:IllegalArgumentException){
                 e.printStackTrace()
-                throw RequestFailedException("Failed to PATCH $originalUrl")
+                throw RequestFailedException("Url $originalUrl was malformed")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -192,7 +181,7 @@ object RequestHandler {
             }
             val body = requestBody.toRequestBody(null)
             val request: Request = Request.Builder()
-                .url(originalUrl)
+                .url(url)
                 .headers(headersBuilder.build())
                 .patch(body)
                 .build()
@@ -213,14 +202,15 @@ object RequestHandler {
     }
 
     suspend fun delete(originalUrl: String, headers:HashMap<String, String> = HashMap()):String{
+        val url = originalUrl.toHttpUrl()
         val host = if (rateLimits.containsKey(originalUrl)){
             originalUrl
         } else {
             try {
-                URI(originalUrl).host
-            } catch (e:URISyntaxException){
+                url.host
+            } catch (e:IllegalArgumentException){
                 e.printStackTrace()
-                throw RequestFailedException("Failed to DELETE $originalUrl")
+                throw RequestFailedException("Url $originalUrl was malformed")
             }
         }
         var queueTime by Delegates.notNull<Long>()
@@ -242,7 +232,7 @@ object RequestHandler {
                 headersBuilder.add(it.key, it.value)
             }
             val request: Request = Request.Builder()
-                .url(originalUrl)
+                .url(url)
                 .headers(headersBuilder.build())
                 .delete()
                 .build()

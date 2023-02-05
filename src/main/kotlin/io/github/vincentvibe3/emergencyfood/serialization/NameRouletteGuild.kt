@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NameRouletteGuild(
-    val id:String,
+    val id:Long,
     val channel_id:String,
     val ping_day_of_week:Int,
     val ping_hour:Int,

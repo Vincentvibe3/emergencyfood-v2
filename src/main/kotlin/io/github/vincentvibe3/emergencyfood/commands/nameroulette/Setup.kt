@@ -68,7 +68,7 @@ object Setup:GenericSubCommand(), SubCommand {
                 if (weekdays.values.contains(adjustedDay)&&adjustedhour in 0..23&&minute in 0..59) {
                     var update = false
                     val guildData = NameRouletteGuild(
-                        guild.id,
+                        guild.id.toLong(),
                         event.channel.id,
                         adjustedDay,
                         adjustedhour,

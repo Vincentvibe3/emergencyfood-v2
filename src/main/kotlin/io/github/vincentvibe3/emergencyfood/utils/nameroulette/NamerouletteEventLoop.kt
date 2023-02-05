@@ -89,7 +89,7 @@ object NamerouletteEventLoop {
 
     private suspend fun getRolls(guild: NameRouletteGuild): Pair<ArrayList<String>, ArrayList<String>> {
         val rawData = Supabase.select("nameroulette_choices", listOf(
-            SupabaseFilter("guild", guild.id, SupabaseFilter.Match.EQUALS)
+            SupabaseFilter("guild", guild.id.toString(), SupabaseFilter.Match.EQUALS)
         ))
         val jsonData = Json.decodeFromString<List<NameRouletteRoll>>(rawData)
         val normal = ArrayList<String>()
@@ -107,7 +107,7 @@ object NamerouletteEventLoop {
     private suspend fun updateUsers(guild: NameRouletteGuild, rollChoices:List<String>): HashMap<String, String> {
         val result = HashMap<String, String>()
         val rawData = Supabase.select("users", listOf(
-            SupabaseFilter("guild", guild.id, SupabaseFilter.Match.EQUALS)
+            SupabaseFilter("guild", guild.id.toString(), SupabaseFilter.Match.EQUALS)
         ))
         val jsonData = Json.decodeFromString<List<NameRouletteUser>>(rawData)
         for (user in jsonData){
