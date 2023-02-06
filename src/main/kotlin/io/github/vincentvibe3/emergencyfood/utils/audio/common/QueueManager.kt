@@ -1,7 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.utils.audio.common
 
 import com.github.Vincentvibe3.efplayer.core.Track
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+//import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.Templates
 import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
@@ -47,12 +47,12 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
     private fun trackLoadedMessage(track:Any, loadId:String){
         var title = ""
         var url = ""
-        if (track is AudioTrack){
-            url = track.info.uri
-            title = track.info.title
-        } else if (track is Track){
+        if (track is Track){
             url = track.url
             title = track.title?: "No title"
+//        }else if (track is AudioTrack){
+//            url = track.info.uri
+//            title = track.info.title
         }
         val message = MessageCreateBuilder()
             .setEmbeds(Templates.getMusicEmbed()
@@ -74,12 +74,12 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         }
     }
 
-    fun addToQueue(track: AudioTrack, isFromPlaylist: Boolean): Boolean {
-        if (!isFromPlaylist) {
-            trackLoadedMessage(track, track.identifier)
-        }
-        return queue.offer(track)
-    }
+//    fun addToQueue(track: AudioTrack, isFromPlaylist: Boolean): Boolean {
+//        if (!isFromPlaylist) {
+//            trackLoadedMessage(track, track.identifier)
+//        }
+//        return queue.offer(track)
+//    }
 
     fun addToQueue(track: Track, isFromPlaylist: Boolean): Boolean {
         if (!isFromPlaylist) {
@@ -92,10 +92,10 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
     fun rebuildQueue() {
         val newQueue: BlockingDeque<Any> = LinkedBlockingDeque()
         queue.forEach {
-            if (it is AudioTrack) {
-                newQueue.offer(it.makeClone())
-            } else {
+            if (it is Track) {
                 newQueue.offer(it)
+//            } else {
+//                newQueue.offer(it.makeClone())
             }
         }
         queue = newQueue
@@ -132,8 +132,8 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
             }
             if (next is Track) {
                 commonPlayer.efPlayer.play(next)
-            } else if (next is AudioTrack) {
-                commonPlayer.lavaplayer.playTrack(next)
+//            } else if (next is AudioTrack) {
+//                commonPlayer.lavaplayer.playTrack(next)
             }
         }
 
@@ -145,12 +145,12 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         val channel = client.getTextChannelById(updatesChannel)
         var title: String? = null
         var url: String? = null
-        if (track is AudioTrack) {
-            title = track.info.title
-            url = track.info.uri
-        } else if (track is Track) {
+        if (track is Track) {
             title = track.title
             url = track.url
+//        } else if (track is AudioTrack) {
+//            title = track.info.title
+//            url = track.info.uri
         }
         //send now playing message
         if (channel != null && title != null && url != null) {
@@ -196,8 +196,8 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
         if (next != null){
             if (next is Track) {
                 commonPlayer.efPlayer.play(next)
-            } else if (next is AudioTrack) {
-                commonPlayer.lavaplayer.playTrack(next)
+//            } else if (next is AudioTrack) {
+//                commonPlayer.lavaplayer.playTrack(next)
             }
         }
         val client = Bot.getClientInstance()
@@ -209,33 +209,33 @@ class QueueManager(private val commonPlayer: CommonPlayer) {
 
     }
 
-    fun onTrackStuck(track: AudioTrack?) {
-        val trackIndex = queue.indexOf(track)
-        //clear on end
-        var next: Any? = null
-        if (trackIndex == queue.size - 1 && !loop) {
-            queue.clear()
-            //prepare queue and loop
-        } else if (trackIndex == queue.size - 1 && loop) {
-            rebuildQueue()
-            next = queue.elementAt(0)
-            queue.remove(queue.elementAt(trackIndex))
-            //play next
-        } else {
-            next = queue.elementAt(trackIndex + 1)
-            queue.remove(queue.elementAt(trackIndex))
-        }
-        if (next is Track) {
-            commonPlayer.efPlayer.play(next)
-        } else if (next is AudioTrack) {
-            commonPlayer.lavaplayer.playTrack(next)
-        }
-        val client = Bot.getClientInstance()
-        val channel = client.getTextChannelById(updatesChannel)
-        channel?.sendMessage("An error occurred during playback")?.queue(
-            {},
-            { Logging.logger.error("Failed to send playback failure message in ${channel.guild}") }
-        )
-
-    }
+//    fun onTrackStuck(track: AudioTrack?) {
+//        val trackIndex = queue.indexOf(track)
+//        //clear on end
+//        var next: Any? = null
+//        if (trackIndex == queue.size - 1 && !loop) {
+//            queue.clear()
+//            //prepare queue and loop
+//        } else if (trackIndex == queue.size - 1 && loop) {
+//            rebuildQueue()
+//            next = queue.elementAt(0)
+//            queue.remove(queue.elementAt(trackIndex))
+//            //play next
+//        } else {
+//            next = queue.elementAt(trackIndex + 1)
+//            queue.remove(queue.elementAt(trackIndex))
+//        }
+//        if (next is Track) {
+//            commonPlayer.efPlayer.play(next)
+//        } else if (next is AudioTrack) {
+//            commonPlayer.lavaplayer.playTrack(next)
+//        }
+//        val client = Bot.getClientInstance()
+//        val channel = client.getTextChannelById(updatesChannel)
+//        channel?.sendMessage("An error occurred during playback")?.queue(
+//            {},
+//            { Logging.logger.error("Failed to send playback failure message in ${channel.guild}") }
+//        )
+//
+//    }
 }
