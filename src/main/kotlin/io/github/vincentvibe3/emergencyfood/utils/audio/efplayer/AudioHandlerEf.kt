@@ -19,7 +19,7 @@ class AudioHandlerEf(private var player: Player) : AudioSendHandler {
             buffer = ByteBuffer.allocate(bytes.size)
         }
         buffer.clear()
-        buffer.put(player.provide())
+        buffer.put(bytes)
         buffer.flip()
         return buffer
     }
