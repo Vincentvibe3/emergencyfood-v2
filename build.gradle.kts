@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.3")
-    implementation ("com.sedmelluq:lavaplayer:1.3.77")
+//    implementation ("com.github.walkyst:lavaplayer-fork:1.3.99.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
