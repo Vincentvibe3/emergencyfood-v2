@@ -113,6 +113,7 @@ object NamerouletteEventLoop {
         for (user in jsonData){
             val roll = rollChoices.shuffled()[0]
             user.roll_count = 1
+            user.roll_names.clear()
             user.roll_names.add(roll)
             user.deathroll = false
             Supabase.update(
