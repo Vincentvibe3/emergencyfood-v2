@@ -34,7 +34,7 @@ object Registration:GenericSubCommand(), SubCommand {
                 } else {
                     val data = Json.encodeToString(NameRouletteUser.serializer(), NameRouletteUser(
                         "${event.user.id}:${guild.id}",
-                        guild.id,
+                        guild.id.toLong(),
                         0,
                         false,
                         arrayListOf(),

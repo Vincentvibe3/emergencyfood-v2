@@ -52,7 +52,7 @@ class TypeSelectionMenu(override val name: String) :InteractionSelectMenu() {
                             NameRouletteRoll.serializer(),
                             NameRouletteRoll(
                                 event.componentId.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                                event.guild!!.id,
+                                event.guild!!.id.toLong(),
                                 event.user.id,
                                 event.selectedOptions[0].value != "normal"
                             )
