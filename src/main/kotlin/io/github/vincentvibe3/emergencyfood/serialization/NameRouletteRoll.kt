@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NameRouletteRoll(
-    val id:Int,
     val name:String,
     val guild:String,
     val added_by:String,
-    val deathroll:Boolean
+    val deathroll:Boolean,
+    val id:Int?=null,
 )
