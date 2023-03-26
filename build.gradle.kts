@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.7.24"
+version = "1.7.25"
 
 repositories {
     mavenCentral()

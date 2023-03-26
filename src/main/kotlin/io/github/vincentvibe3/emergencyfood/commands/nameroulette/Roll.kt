@@ -107,6 +107,7 @@ object Roll: GenericSubCommand(), SubCommand {
             val rolls = userData.roll_count
             if (userData.deathroll){
                 event.reply("You got the deathroll. You may not reroll").setEphemeral(true).queue()
+                return
             }
             if (rolls >= 3) {
                 event.reply("You do not have any more rolls").queue()
