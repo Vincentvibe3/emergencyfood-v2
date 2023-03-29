@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.7.25"
+version = "1.7.26"
 
 repositories {
     mavenCentral()
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:5.0.0-beta.3")
+    implementation("net.dv8tion:JDA:5.0.0-beta.6")
 //    implementation ("com.github.walkyst:lavaplayer-fork:1.3.99.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.5")

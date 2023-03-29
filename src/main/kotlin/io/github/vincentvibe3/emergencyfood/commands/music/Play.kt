@@ -47,6 +47,7 @@ object Play : GenericCommand(), SlashCommand, MessageCommand {
 
     //connect to the vc
     private fun connect(channel: AudioChannel, player: CommonPlayer) {
+        Logging.logger.info("Connecting to a voice channel")
         val guild = channel.guild
         val audioManager = guild.audioManager
         audioManager.sendingHandler = player.getAudioHandler()

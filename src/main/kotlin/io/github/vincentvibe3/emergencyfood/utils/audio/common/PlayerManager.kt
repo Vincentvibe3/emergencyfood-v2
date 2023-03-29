@@ -2,6 +2,7 @@ package io.github.vincentvibe3.emergencyfood.utils.audio.common
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.utils.Templates
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import kotlinx.coroutines.delay
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 
@@ -68,6 +69,7 @@ object PlayerManager {
         removePlayer(guildId)
         guild?.audioManager?.closeAudioConnection()
         unsetForCleanup(guildId)
+        Logging.logger.info("Disconnected from voice channel due to inactivity")
     }
 
     fun setForCleanup(guild: String) {
