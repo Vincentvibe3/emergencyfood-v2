@@ -30,8 +30,8 @@ jobs:
         - name: Pull docker image
           run: /usr/bin/docker pull ghcr.io/vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
         
-        - uses: superfly/flyctl-actions/setup-flyctl@master
-        - run: flyctl deploy -i ghcr.io/vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
+#         - uses: superfly/flyctl-actions/setup-flyctl@master
+#         - run: flyctl deploy -i ghcr.io/vincentvibe3/emergencyfood:${{ env.RELEASE_VERSION }}
         
         - name: Deploy to azure
           run: |
