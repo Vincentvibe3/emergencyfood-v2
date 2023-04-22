@@ -40,7 +40,8 @@ jobs:
                 -H "Authorization: Bearer  ${{ secrets.SUPABASE_KEY }}" \
                 -H "Range: 0-9") \
               && ADDRESS=$(echo $PAYLOAD | python3 -c 'import json, sys; print(json.load(sys.stdin)[0]["ip"]);') \
-              && curl -d "label=bot&version=${{ env.RELEASE_VERSION }}&token=${{ secrets.AGENT_TOKEN }}" "$ADDRESS/version" | grep "^Accepted$"
+              && curl -d '{"label":"bot","version":"${{ env.RELEASE_VERSION }}","token":"${{ secrets.AGENT_TOKEN }}"}' \
+                -H "Content-Type: application/json" "$ADDRESS/version" | grep "^Accepted$"
 
         - name: Status webhook
           uses: sarisia/actions-status-discord@v1
