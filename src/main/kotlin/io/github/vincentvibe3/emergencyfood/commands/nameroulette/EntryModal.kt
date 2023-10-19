@@ -47,7 +47,7 @@ object EntryModal: InteractionModal() {
                 textEntries.add(ActionRow.of(input.build()))
             }
             Modal.create(name, "Name Roulette Submission")
-                .addActionRows(textEntries)
+                .addComponents(textEntries)
                 .build()
         } else {
             null
