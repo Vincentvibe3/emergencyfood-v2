@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.7.32"
+version = "1.7.33"
 
 repositories {
     mavenCentral()
@@ -24,7 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.4.3")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.4.4")
     testImplementation(kotlin("test"))
 }
 
