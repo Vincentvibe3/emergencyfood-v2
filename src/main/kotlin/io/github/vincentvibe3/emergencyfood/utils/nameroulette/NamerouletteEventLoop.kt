@@ -7,11 +7,10 @@ import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteGuild
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteRoll
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteUser
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
@@ -83,8 +82,9 @@ object NamerouletteEventLoop {
 
                 }
             }
+        } else {
+            Logging.logger.warn("Could not find guild ${guildData.id}")
         }
-
     }
 
     private suspend fun getRolls(guild: NameRouletteGuild): Pair<ArrayList<String>, ArrayList<String>> {
@@ -148,6 +148,18 @@ object NamerouletteEventLoop {
                 }
             }
         }
+    }
+
+    suspend fun compute(){
+
+    }
+
+    suspend fun newStart(guild:NameRouletteGuild) = coroutineScope{
+        val scheduled = launch {
+
+            check(guild)
+        }
+        scheduled.cancel()
     }
 
     suspend fun startLoop() {
