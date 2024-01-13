@@ -32,7 +32,10 @@ object PlayerManager {
 
     suspend fun startCleanupLoop() {
         while (true) {
+            Logging.logger.debug("Polling cleanup")
+            println(checkForCleanup)
             if (checkForCleanup.isEmpty()) {
+                Logging.logger.debug("Delaying")
                 delay(30000L)
             } else {
                 val checkTime = checkForCleanup.values.first()
@@ -41,10 +44,11 @@ object PlayerManager {
                 if (currentTime >= checkTime) {
                     cleanUp(guild)
                 } else {
+                    Logging.logger.debug("Delaying to latest")
                     delay(checkTime - currentTime)
-                    if (checkForCleanup.keys.first() == guild) {
-                        cleanUp(guild)
-                    }
+//                    if (checkForCleanup.keys.first() == guild) {
+//                        cleanUp(guild)
+//                    }
                 }
             }
         }
@@ -74,7 +78,7 @@ object PlayerManager {
 
     fun setForCleanup(guild: String) {
         val currentTime = System.currentTimeMillis()
-        val timeout = 5
+        val timeout = 2
         val checkTime = currentTime + (timeout * 60 * 1000)
         checkForCleanup[guild] = checkTime
     }

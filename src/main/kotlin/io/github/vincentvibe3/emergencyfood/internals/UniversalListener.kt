@@ -108,25 +108,19 @@ object UniversalListener:ListenerAdapter() {
         val channelJoin = event.channelJoined
         val guild = event.guild
         val guildId = guild.id
-        if (!event.member.user.isBot) {
-            if (channelJoin != null && channelJoin.members.contains(selfMember)) {
-                Logging.logger.debug("User Connected to vc")
-                PlayerManager.unsetForCleanup(guildId)
-            } else if (channelLeft != null && channelLeft.members.contains(selfMember)) {
-                Logging.logger.debug("User Disconnected from vc")
-                if (channelLeft.members.none { !it.user.isBot }) {
-                    PlayerManager.setForCleanup(guildId)
-                }
+
+        if (channelLeft!=null&&channelLeft.members.contains(selfMember)){
+            if (channelLeft.members.none { !it.user.isBot }){
+                PlayerManager.setForCleanup(guildId)
+                Logging.logger.debug("Player set for cleanup")
             }
-        } else {
-            if (event.member.user.id == selfId && channelJoin != null) {
-                if (channelJoin.members.none { !it.user.isBot }) {
-                    PlayerManager.setForCleanup(guildId)
-                }
-            } else if (event.member.user.id == selfId && channelLeft != null && !PlayerManager.isSetForCleanup(guildId)) {
-                PlayerManager.removePlayer(guildId)
+        } else if (channelJoin!=null&&channelJoin.members.contains(selfMember)){
+            if (!event.member.user.isBot){
+                Logging.logger.debug("Cancelling player cleanup")
+                PlayerManager.unsetForCleanup(guildId)
             }
         }
+
     }
 
     override fun onGuildVoiceGuildDeafen(event: GuildVoiceGuildDeafenEvent) {
