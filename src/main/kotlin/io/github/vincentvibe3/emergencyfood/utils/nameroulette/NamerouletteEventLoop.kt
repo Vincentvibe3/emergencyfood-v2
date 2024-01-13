@@ -161,6 +161,7 @@ object NamerouletteEventLoop {
                 elapsed = 0
             }
             guilds.forEach {
+                println(it)
                 check(it)
                 cleanDropdowns()
             }
