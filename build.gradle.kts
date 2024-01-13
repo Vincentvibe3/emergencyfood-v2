@@ -24,7 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.12")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.4.4")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.4.5")
     testImplementation(kotlin("test"))
 }
 
