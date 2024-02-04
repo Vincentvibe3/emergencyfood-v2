@@ -15,8 +15,8 @@ import net.dv8tion.jda.api.interactions.modals.Modal
 
 object EntryModal: InteractionModal() {
 
-    private const val NORMAL_LIMIT = Int.MAX_VALUE
-    private const val DEATH_LIMIT = Int.MAX_VALUE
+    const val NORMAL_LIMIT = Int.MAX_VALUE
+    const val DEATH_LIMIT = Int.MAX_VALUE
 
     override val name: String
         get() = "nameroulettemodal"

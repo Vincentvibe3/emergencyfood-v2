@@ -43,7 +43,7 @@ class TypeSelectionMenu(override val name: String) :InteractionSelectMenu() {
             val jsonData = Json.decodeFromString<List<NameRouletteUser>>(rawData)
             val addCount = jsonData[0].added_choices
             val addCountDeath = jsonData[0].added_choices_death
-            if ((addCount<3&&event.selectedOptions[0].value == "normal")||addCountDeath<2&&event.selectedOptions[0].value == "deathroll") {
+            if ((addCount<EntryModal.NORMAL_LIMIT&&event.selectedOptions[0].value == "normal")||addCountDeath<EntryModal.DEATH_LIMIT&&event.selectedOptions[0].value == "deathroll") {
                 if (exists(guild.id, event.componentId)){
                     event.reply("This entry is already in Name Roulette").queue()
                 } else {
