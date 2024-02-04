@@ -14,6 +14,10 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
 import net.dv8tion.jda.api.interactions.modals.Modal
 
 object EntryModal: InteractionModal() {
+
+    private const val NORMAL_LIMIT = Int.MAX_VALUE
+    private const val DEATH_LIMIT = Int.MAX_VALUE
+
     override val name: String
         get() = "nameroulettemodal"
 
@@ -32,10 +36,10 @@ object EntryModal: InteractionModal() {
             val addCount = jsonData[0].added_choices
             val addCountDeath = jsonData[0].added_choices_death
             val textEntries = ArrayList<ActionRow>()
-            if (addCount>=3&&addCountDeath>=2){
+            if (addCount>= NORMAL_LIMIT&&addCountDeath>= DEATH_LIMIT){
                 return null
             }
-            for (count in 1..(5-addCount-addCountDeath)){
+            for (count in 1..5){
                 val input = TextInput.create("entry$count", "Entry $count (optional)", TextInputStyle.SHORT)
                     .setPlaceholder("Enter the name of the series")
                     .setMinLength(1)
