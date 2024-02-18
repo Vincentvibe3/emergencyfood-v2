@@ -9,7 +9,7 @@
     <appender name="LOGFLARE" class="io.github.vincentvibe3.emergencyfood.utils.logging.LogflareAppender">
     </appender>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="LOGFLARE" />
     </root>

@@ -33,7 +33,6 @@ object PlayerManager {
     suspend fun startCleanupLoop() {
         while (true) {
             Logging.logger.debug("Polling cleanup")
-            println(checkForCleanup)
             if (checkForCleanup.isEmpty()) {
                 Logging.logger.debug("Delaying")
                 delay(30000L)
