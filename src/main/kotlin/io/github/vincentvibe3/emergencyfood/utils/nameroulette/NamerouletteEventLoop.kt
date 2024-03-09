@@ -7,6 +7,8 @@ import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteGuild
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteRoll
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteUser
+import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import io.github.vincentvibe3.emergencyfood.utils.supabase.Supabase
 import io.github.vincentvibe3.emergencyfood.utils.supabase.SupabaseFilter
 import kotlinx.coroutines.delay
@@ -156,13 +158,17 @@ object NamerouletteEventLoop {
         }
         var elapsed = 0
         while (true) {
-            if (elapsed == 15||elapsed==0){
-                setup()
-                elapsed = 0
-            }
-            guilds.forEach {
-                check(it)
-                cleanDropdowns()
+            try {
+                if (elapsed == 15||elapsed==0){
+                    setup()
+                    elapsed = 0
+                }
+                guilds.forEach {
+                    check(it)
+                    cleanDropdowns()
+                }
+            } catch (e:RequestFailedException){
+                Logging.logger.warn("Failed name roulette poll, skipping")
             }
             delay(60000L)
             elapsed++

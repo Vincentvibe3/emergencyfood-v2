@@ -1,6 +1,7 @@
 package io.github.vincentvibe3.emergencyfood.utils
 
 import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import io.github.vincentvibe3.emergencyfood.utils.logging.Logging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -138,7 +139,7 @@ object RequestHandler {
             responseBody = response.body?.string() ?: ""
             success = true
         } catch (e:Exception){
-            e.printStackTrace()
+            Logging.logger.error(e.message)
             success = false
         }
 
@@ -190,7 +191,7 @@ object RequestHandler {
             responseBody = response.body?.string() ?: ""
             success = true
         } catch (e:Exception){
-            e.printStackTrace()
+            Logging.logger.error(e.message)
             success = false
         }
 
@@ -209,7 +210,7 @@ object RequestHandler {
             try {
                 url.host
             } catch (e:IllegalArgumentException){
-                e.printStackTrace()
+                Logging.logger.error(e.message)
                 throw RequestFailedException("Url $originalUrl was malformed")
             }
         }
@@ -241,7 +242,7 @@ object RequestHandler {
             responseBody = response.body?.string() ?: ""
             success = true
         } catch (e:Exception){
-            e.printStackTrace()
+            Logging.logger.error(e.message)
             success = false
         }
 

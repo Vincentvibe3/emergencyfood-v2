@@ -2,6 +2,8 @@ package io.github.vincentvibe3.emergencyfood.utils.supabase
 
 import io.github.vincentvibe3.emergencyfood.internals.Config
 import io.github.vincentvibe3.emergencyfood.utils.RequestHandler
+import io.github.vincentvibe3.emergencyfood.utils.exceptions.RequestFailedException
+import kotlinx.coroutines.delay
 
 object Supabase {
 
@@ -27,7 +29,18 @@ object Supabase {
             "apikey" to Config.supabaseKey,
             "Authorization" to "Bearer ${Config.supabaseKey}",
         )
-        return RequestHandler.get(endpoint, headers)
+        var retries = 0
+        lateinit var lastException:RequestFailedException
+        for (i in 1..3){
+            try {
+                return RequestHandler.get(endpoint, headers)
+            } catch (e:RequestFailedException){
+                lastException = e
+                retries++
+            }
+            delay(1000)
+        }
+        throw lastException
     }
 
     suspend fun update(tableName:String, row: String, query:List<SupabaseFilter> = listOf()): String? {
@@ -41,7 +54,18 @@ object Supabase {
             "Content-Type" to "application/json",
             "Prefer" to "return=representation"
         )
-        return RequestHandler.patch(endpoint, row, headers)
+        var retries = 0
+        lateinit var lastException:RequestFailedException
+        for (i in 1..3){
+            try {
+                return RequestHandler.patch(endpoint, row, headers)
+            } catch (e:RequestFailedException){
+                lastException = e
+                retries++
+            }
+            delay(1000)
+        }
+        throw lastException
     }
 
     suspend fun delete(tableName:String, query:List<SupabaseFilter> = listOf()): String {
@@ -54,7 +78,18 @@ object Supabase {
             "apikey" to Config.supabaseKey,
             "Authorization" to "Bearer ${Config.supabaseKey}",
         )
-        return RequestHandler.delete(endpoint, headers)
+        var retries = 0
+        lateinit var lastException:RequestFailedException
+        for (i in 1..3){
+            try {
+                return RequestHandler.delete(endpoint, headers)
+            } catch (e:RequestFailedException){
+                lastException = e
+                retries++
+            }
+            delay(1000)
+        }
+        throw lastException
     }
 
     private suspend fun insertImpl(tableName:String, data: String,  single:Boolean= true, upsert:Boolean = false): String {
@@ -70,7 +105,18 @@ object Supabase {
         if (upsert){
             headers["Prefer"] = "resolution=merge-duplicates"
         }
-        return RequestHandler.post(endpoint, data, headers)
+        var retries = 0
+        lateinit var lastException:RequestFailedException
+        for (i in 1..3){
+            try {
+                RequestHandler.post(endpoint, data, headers)
+            } catch (e:RequestFailedException){
+                lastException = e
+                retries++
+            }
+            delay(1000)
+        }
+        throw lastException
     }
 
     suspend fun upsert(tableName:String, row: String): String {
