@@ -58,6 +58,31 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
             "katakana" to "ラ リ ル レ ロ".split(" "),
             "answers" to "ra ri ru re ro".split(" ")
         ),
+        hashMapOf(
+            "hiragana" to "が ぎ ぐ げ ご".split(" "),
+            "katakana" to "ガ ギ グ ゲ ゴ".split(" "),
+            "answers" to "ga gi gu ge go".split(" ")
+        ),
+        hashMapOf(
+            "hiragana" to "ざ じ ず ぜ ぞ".split(" "),
+            "katakana" to "ザ ジ ズ ゼ ゾ".split(" "),
+            "answers" to "za ji zu ze zo".split(" ")
+        ),
+        hashMapOf(
+            "hiragana" to "だ ぢ づ で ど".split(" "),
+            "katakana" to "ダ ヂ ヅ デ ド".split(" "),
+            "answers" to "da ji zu de do".split(" ")
+        ),
+        hashMapOf(
+            "hiragana" to "ば び ぶ べ ぼ".split(" "),
+            "katakana" to "バ ビ ブ ベ ボ".split(" "),
+            "answers" to "ba bi bu be bo".split(" ")
+        ),
+        hashMapOf(
+            "hiragana" to "ぱ ぴ ぷ ぺ ぽ".split(" "),
+            "katakana" to "パ ピ プ ペ ポ".split(" "),
+            "answers" to "pa pi pu pe po".split(" ")
+        ),
         hashMapOf("hiragana" to "わ を".split(" "), "katakana" to "ワ ヲ".split(" "), "answers" to "wa wo".split(" ")),
         hashMapOf("hiragana" to "ん".split(" "), "katakana" to "ン".split(" "), "answers" to "n".split(" "))
     )
