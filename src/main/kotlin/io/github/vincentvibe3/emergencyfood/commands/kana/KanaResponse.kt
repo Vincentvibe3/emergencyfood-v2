@@ -7,7 +7,7 @@ open class KanaResponse(override val user: String, override val channel: String,
     MessageResponse {
 
     override fun handle(event: MessageReceivedEvent) {
-        if (event.message.contentDisplay == answer) {
+        if (event.message.contentDisplay.lowercase() == answer) {
             event.channel.sendMessage("You answered correctly").queue()
         } else {
             event.channel.sendMessage("The answer was `$answer`").queue()

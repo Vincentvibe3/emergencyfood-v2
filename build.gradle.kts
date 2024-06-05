@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.8.20"
+    kotlin("jvm") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.graalvm.buildtools.native") version "0.9.4"
     kotlin("plugin.serialization") version "1.8.20"
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:5.0.0-beta.20")
+    implementation("net.dv8tion:JDA:5.0.0-beta.24")
 //    implementation ("com.github.walkyst:lavaplayer-fork:1.3.99.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.12")
