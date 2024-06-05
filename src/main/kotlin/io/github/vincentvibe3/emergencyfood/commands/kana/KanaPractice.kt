@@ -90,10 +90,18 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
     override val name = "kana"
 
     override val command = Commands.slash(name, "practice your kana")
-        .addOption(OptionType.STRING, "type", "hiragana, katakana or random", true)
+        .addOption(OptionType.STRING, "type", "hiragana, katakana or random (or h,k,r)", true)
 
     private fun getQuestion(type: String): Pair<String, String>? {
-        var mode = type
+        var mode = if (type.lowercase() == "r"){
+            "random"
+        } else if (type.lowercase() == "h") {
+            "hiragana"
+        } else if (type.lowercase() == "k"){
+            "katakana"
+        } else {
+            type.lowercase()
+        }
         val yDim = Random.nextInt(0, 11)
         if (mode == "random") {
             val select = Random.nextInt(0, 2)
