@@ -1,6 +1,6 @@
 package io.github.vincentvibe3.emergencyfood.internals
 
-object MessageResponseManager {
+object MessageResponseManager:InteractionManager {
 
     private val pendingResponses = HashMap<String, HashMap<String, ArrayList<MessageResponse>>>()
 

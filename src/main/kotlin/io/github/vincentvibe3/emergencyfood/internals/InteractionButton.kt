@@ -11,6 +11,10 @@ abstract class InteractionButton {
     //Button to be created
     abstract val button: Button
 
+    open val expires = false
+
+    open var expiry:Long? = null
+
     //returns the button as disabled
     fun getDisabled(): Button {
         return button.asDisabled()

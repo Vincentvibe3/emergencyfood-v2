@@ -2,8 +2,6 @@ package io.github.vincentvibe3.emergencyfood.utils.nameroulette
 
 import io.github.vincentvibe3.emergencyfood.core.Bot
 import io.github.vincentvibe3.emergencyfood.internals.Config
-import io.github.vincentvibe3.emergencyfood.internals.InteractionSelectMenu
-import io.github.vincentvibe3.emergencyfood.internals.SelectMenuManager
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteGuild
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteRoll
 import io.github.vincentvibe3.emergencyfood.serialization.NameRouletteUser
@@ -25,7 +23,7 @@ object NamerouletteEventLoop {
 
     private val guilds = ArrayList<NameRouletteGuild>()
 
-    val activeDropdowns = ArrayList<InteractionSelectMenu>()
+//    val activeDropdowns = ArrayList<InteractionSelectMenu>()
 
     private suspend fun check(guild: NameRouletteGuild){
         val day = guild.ping_day_of_week
@@ -137,20 +135,20 @@ object NamerouletteEventLoop {
         }
     }
 
-    private fun cleanDropdowns(){
-        activeDropdowns.forEach{
-            val time = System.currentTimeMillis()
-            if (it.expires){
-                val expiry = it.expiry
-                if (expiry!=null){
-                    if (expiry>=time){
-                        activeDropdowns.remove(it)
-                        SelectMenuManager.unregisterLocal(it)
-                    }
-                }
-            }
-        }
-    }
+//    private fun cleanDropdowns(){
+//        activeDropdowns.forEach{
+//            val time = System.currentTimeMillis()
+//            if (it.expires){
+//                val expiry = it.expiry
+//                if (expiry!=null){
+//                    if (expiry>=time){
+//                        activeDropdowns.remove(it)
+//                        SelectMenuManager.unregisterLocal(it)
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     suspend fun startLoop() {
         if (Config.exclusions.contains("nameroulette")){
@@ -165,7 +163,7 @@ object NamerouletteEventLoop {
                 }
                 guilds.forEach {
                     check(it)
-                    cleanDropdowns()
+//                    cleanDropdowns()
                 }
             } catch (e:RequestFailedException){
                 Logging.logger.warn("Failed name roulette poll, skipping")

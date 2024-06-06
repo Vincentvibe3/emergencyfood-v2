@@ -1,20 +1,30 @@
 package io.github.vincentvibe3.emergencyfood.internals
 
-object SelectMenuManager {
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.UUID
 
-    private val menusList = HashMap<String, InteractionSelectMenu>()
+object SelectMenuManager:InteractionManager {
+
+    private val menusList = HashMap<UUID, InteractionSelectMenu>()
 
     //register buttons that can be listened for
     fun registerLocal(menu: InteractionSelectMenu) {
-        menusList[menu.name] = menu
+        menusList[menu.uuid] = menu
+        if (menu.expires) {
+            InteractionManager.coroutineScope.launch {
+                menu.expiry?.let { delay(it) }
+                unregisterLocal(menu)
+            }
+        }
     }
 
-    fun unregisterLocal(menu:InteractionSelectMenu){
-        menusList.remove(menu.name)
+    private fun unregisterLocal(menu:InteractionSelectMenu){
+        menusList.remove(menu.uuid)
     }
 
     //return all registered buttons
-    fun getMenus(): HashMap<String, InteractionSelectMenu> {
+    fun getMenus(): HashMap<UUID, InteractionSelectMenu> {
         return menusList
     }
 

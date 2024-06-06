@@ -1,13 +1,11 @@
 package io.github.vincentvibe3.emergencyfood.commands.kana
 
-import io.github.vincentvibe3.emergencyfood.internals.GenericCommand
-import io.github.vincentvibe3.emergencyfood.internals.MessageCommand
-import io.github.vincentvibe3.emergencyfood.internals.MessageResponseManager
-import io.github.vincentvibe3.emergencyfood.internals.SlashCommand
+import io.github.vincentvibe3.emergencyfood.internals.*
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
+import net.dv8tion.jda.api.interactions.components.ActionRow
 import kotlin.random.Random
 
 object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
@@ -90,9 +88,9 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
     override val name = "kana"
 
     override val command = Commands.slash(name, "practice your kana")
-        .addOption(OptionType.STRING, "type", "hiragana, katakana or random (or h,k,r)", true)
+        .addOption(OptionType.STRING, "type", "hiragana, katakana or random (or h,k,r)", false)
 
-    private fun getQuestion(type: String): Pair<String, String>? {
+    internal fun getQuestion(type: String): Pair<String, String>? {
         var mode = if (type.lowercase() == "r"){
             "random"
         } else if (type.lowercase() == "h") {
@@ -122,8 +120,8 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
         return null
     }
 
-    private fun setResponse(user: String, channel: String, answer: String) {
-        val response = KanaResponse(user, channel, answer)
+    internal fun setResponse(user: String, channel: String, answer: String) {
+        val response = KanaMessageResponse(user, channel, answer)
         MessageResponseManager.add(response)
     }
 
@@ -154,10 +152,20 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
                 setResponse(event.user.id, event.channel.id, ans)
                 event.reply("Which kana is this? $kana").queue()
             } else {
-                event.reply("Please pass a valid type").queue()
+                val kanaSelectionMenu = KanaModeSelectionMenu()
+                SelectMenuManager.registerLocal(kanaSelectionMenu)
+                event.reply("Select the kana type you want")
+                    .setEphemeral(true)
+                    .addComponents(listOf(ActionRow.of(kanaSelectionMenu.menu)))
+                    .queue()
             }
         } else {
-            event.reply("An error occurred. Please try again").queue()
+            val kanaSelectionMenu = KanaModeSelectionMenu()
+            SelectMenuManager.registerLocal(kanaSelectionMenu)
+            event.reply("Select the kana type you want")
+                .setEphemeral(true)
+                .addComponents(listOf(ActionRow.of(kanaSelectionMenu.menu)))
+                .queue()
         }
     }
 

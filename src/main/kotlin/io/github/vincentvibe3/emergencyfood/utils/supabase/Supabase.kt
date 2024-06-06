@@ -37,8 +37,8 @@ object Supabase {
             } catch (e:RequestFailedException){
                 lastException = e
                 retries++
+                delay(1000)
             }
-            delay(1000)
         }
         throw lastException
     }
@@ -62,8 +62,8 @@ object Supabase {
             } catch (e:RequestFailedException){
                 lastException = e
                 retries++
+                delay(1000)
             }
-            delay(1000)
         }
         throw lastException
     }
@@ -86,8 +86,8 @@ object Supabase {
             } catch (e:RequestFailedException){
                 lastException = e
                 retries++
+                delay(1000)
             }
-            delay(1000)
         }
         throw lastException
     }
@@ -109,12 +109,12 @@ object Supabase {
         lateinit var lastException:RequestFailedException
         for (i in 1..3){
             try {
-                RequestHandler.post(endpoint, data, headers)
+                return RequestHandler.post(endpoint, data, headers)
             } catch (e:RequestFailedException){
                 lastException = e
                 retries++
+                delay(1000)
             }
-            delay(1000)
         }
         throw lastException
     }

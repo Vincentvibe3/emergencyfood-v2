@@ -13,9 +13,11 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import java.util.*
 
 object UniversalListener:ListenerAdapter() {
     private val coroutineScope = CoroutineScope(Dispatchers.Default+SupervisorJob())
+
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val client = Bot.getClientInstance()
         val name = client.guilds.first { it.id == event.guild.id }.selfMember.effectiveName
@@ -83,13 +85,18 @@ object UniversalListener:ListenerAdapter() {
     override fun onModalInteraction(event: ModalInteractionEvent) {
         Logging.logger.debug("Modal ${event.modalId} triggered")
         coroutineScope.launch {
-            retrieveModal(event.modalId)?.handle(event)
+            val modal = retrieveModal(event.modalId)
+            if (modal == null){
+                event.reply("Modal has expired").setEphemeral(true).queue()
+            } else {
+                modal.handle(event)
+            }
         }
     }
 
     //get a modal
     private fun retrieveModal(name: String): InteractionModal? {
-        return ModalManager.getModals()[name]
+        return ModalManager.getModals()[UUID.fromString(name)]
     }
 
     // display info when bot is logged in
@@ -138,7 +145,7 @@ object UniversalListener:ListenerAdapter() {
 
     //get a menu
     private fun retrieveMenu(name: String): InteractionSelectMenu? {
-        return SelectMenuManager.getMenus()[name]
+        return SelectMenuManager.getMenus()[UUID.fromString(name)]
     }
 
     override fun onStringSelectInteraction(event: StringSelectInteractionEvent) {

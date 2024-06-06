@@ -12,29 +12,41 @@ import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.text.TextInput
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
 import net.dv8tion.jda.api.interactions.modals.Modal
+import java.util.*
+import kotlin.collections.ArrayList
 
-object EntryModal: InteractionModal() {
+class EntryModal(
+    val id:String,
+    val guild:String,
+    override val expires: Boolean=true,
+    override var expiry: Long? = DEFAULT_EXPIRY_OFFSET,
+    override val uuid: UUID=UUID.randomUUID()
+) : InteractionModal() {
 
-    const val NORMAL_LIMIT = Int.MAX_VALUE
-    const val DEATH_LIMIT = Int.MAX_VALUE
+    companion object {
+        const val NORMAL_LIMIT = Int.MAX_VALUE
+        const val DEATH_LIMIT = Int.MAX_VALUE
+    }
 
     override val name: String
-        get() = "nameroulettemodal"
+        get() = "Name Roulette Submission"
 
-    override val modal: Modal
-        get() {
-            return Modal.create(name, "Name Roulette Submission")
-                .build()
-        }
+    var addCount = 0
+    var addCountDeath = 0
 
-    suspend fun getModal(id:String, guild:String): Modal? {
+    suspend fun updateModalState(){
         val data = Supabase.select("users",
             listOf(SupabaseFilter("id", "$id:$guild", SupabaseFilter.Match.EQUALS))
         )
         val jsonData = Json.decodeFromString<List<NameRouletteUser>>(data)
-        return if (jsonData.isNotEmpty()){
-            val addCount = jsonData[0].added_choices
-            val addCountDeath = jsonData[0].added_choices_death
+        if (jsonData.isNotEmpty()) {
+            addCount = jsonData[0].added_choices
+            addCountDeath = jsonData[0].added_choices_death
+        }
+    }
+
+    override val modal: Modal?
+        get() {
             val textEntries = ArrayList<ActionRow>()
             if (addCount>= NORMAL_LIMIT&&addCountDeath>= DEATH_LIMIT){
                 return null
@@ -50,14 +62,10 @@ object EntryModal: InteractionModal() {
                 }
                 textEntries.add(ActionRow.of(input.build()))
             }
-            Modal.create(name, "Name Roulette Submission")
+            return Modal.create(uuid.toString(), name)
                 .addComponents(textEntries)
                 .build()
-        } else {
-            null
         }
-
-    }
 
     override suspend fun handle(event: ModalInteractionEvent) {
         var addCount = 0
@@ -65,12 +73,8 @@ object EntryModal: InteractionModal() {
         event.values.forEach {
             addCount++
             if (it.asString.isNotBlank()){
-                val menuHandler = TypeSelectionMenu(it.asString)
-                menuHandler.expiry = System.currentTimeMillis()+900000
+                val menuHandler = TypeSelectionMenu(it.asString, UUID.randomUUID())
                 val menu = menuHandler.menu
-                    .addOption("Set ${it.asString} as normal", "normal", "Set as normal")
-                    .addOption("Set ${it.asString} as deathroll", "deathroll", "Set as deathroll")
-                    .build()
                 SelectMenuManager.registerLocal(menuHandler)
                 selectMenus.add(ActionRow.of(menu))
             }
@@ -80,6 +84,5 @@ object EntryModal: InteractionModal() {
             .addComponents(selectMenus)
             .queue()
     }
-
 
 }
