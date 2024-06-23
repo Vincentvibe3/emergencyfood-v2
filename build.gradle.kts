@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.github.vincent.emergencyfood"
-version = "1.8.0"
+version = "1.8.1"
 
 repositories {
     mavenCentral()
@@ -20,11 +20,11 @@ repositories {
 
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.24")
-//    implementation ("com.github.walkyst:lavaplayer-fork:1.3.99.2")
+//    implementation ("dev.arbjerg:lavaplayer:2.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
     implementation("ch.qos.logback:logback-classic:1.4.12")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.github.Vincentvibe3:ef-player:v.1.4.5")
+    implementation("com.github.Vincentvibe3:ef-player:v.1.4.6")
     testImplementation(kotlin("test"))
 }
 
