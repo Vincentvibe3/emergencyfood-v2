@@ -5,4 +5,5 @@ RUN apk add --update --no-cache yt-dlp
 WORKDIR /home/current
 COPY /build/libs/Emergencyfood-*.jar ./bot.jar
 COPY /start.sh ./start.sh
+RUN chmod +x ./start.sh
 ENTRYPOINT ["./start.sh"]
