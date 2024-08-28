@@ -10,87 +10,89 @@ import kotlin.random.Random
 
 object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
 
-    private val kanas = listOf(
-        hashMapOf(
+    private val kanas = hashMapOf(
+        "a" to hashMapOf(
             "hiragana" to "あ い う え お".split(" "),
             "katakana" to "ア イ ウ エ オ".split(" "),
             "answers" to "a i u e o".split(" ")
         ),
-        hashMapOf(
+        "k" to hashMapOf(
             "hiragana" to "か き く け こ".split(" "),
             "katakana" to "カ キ ク ケ コ".split(" "),
             "answers" to "ka ki ku ke ko".split(" ")
         ),
-        hashMapOf(
+        "s" to hashMapOf(
             "hiragana" to "さ し す せ そ".split(" "),
             "katakana" to "サ シ ス セ ソ".split(" "),
             "answers" to "sa shi su se so".split(" ")
         ),
-        hashMapOf(
+        "t" to hashMapOf(
             "hiragana" to "た ち つ て と".split(" "),
             "katakana" to "タ チ ツ テ ト".split(" "),
             "answers" to "ta chi tsu te to".split(" ")
         ),
-        hashMapOf(
+        "n" to hashMapOf(
             "hiragana" to "な に ぬ ね の".split(" "),
             "katakana" to "ナ ニ ヌ ネ ノ".split(" "),
             "answers" to "na ni nu ne no".split(" ")
         ),
-        hashMapOf(
+        "h" to hashMapOf(
             "hiragana" to "は ひ ふ へ ほ".split(" "),
             "katakana" to "ハ ヒ フ ヘ ホ".split(" "),
             "answers" to "ha hi fu he ho".split(" ")
         ),
-        hashMapOf(
+        "m" to hashMapOf(
             "hiragana" to "ま み む め も".split(" "),
             "katakana" to "マ ミ ム メ モ".split(" "),
             "answers" to "ma mi mu me mo".split(" ")
         ),
-        hashMapOf(
+        "y" to hashMapOf(
             "hiragana" to "や ゆ よ".split(" "),
             "katakana" to "ヤ ユ ヨ".split(" "),
             "answers" to "ya yu yo".split(" ")
         ),
-        hashMapOf(
+        "r" to hashMapOf(
             "hiragana" to "ら り る れ ろ".split(" "),
             "katakana" to "ラ リ ル レ ロ".split(" "),
             "answers" to "ra ri ru re ro".split(" ")
         ),
-        hashMapOf(
+        "g" to hashMapOf(
             "hiragana" to "が ぎ ぐ げ ご".split(" "),
             "katakana" to "ガ ギ グ ゲ ゴ".split(" "),
             "answers" to "ga gi gu ge go".split(" ")
         ),
-        hashMapOf(
+        "z" to hashMapOf(
             "hiragana" to "ざ じ ず ぜ ぞ".split(" "),
             "katakana" to "ザ ジ ズ ゼ ゾ".split(" "),
             "answers" to "za ji zu ze zo".split(" ")
         ),
-        hashMapOf(
+        "d" to hashMapOf(
             "hiragana" to "だ ぢ づ で ど".split(" "),
             "katakana" to "ダ ヂ ヅ デ ド".split(" "),
             "answers" to "da ji zu de do".split(" ")
         ),
-        hashMapOf(
+        "b" to hashMapOf(
             "hiragana" to "ば び ぶ べ ぼ".split(" "),
             "katakana" to "バ ビ ブ ベ ボ".split(" "),
             "answers" to "ba bi bu be bo".split(" ")
         ),
-        hashMapOf(
+        "p" to hashMapOf(
             "hiragana" to "ぱ ぴ ぷ ぺ ぽ".split(" "),
             "katakana" to "パ ピ プ ペ ポ".split(" "),
             "answers" to "pa pi pu pe po".split(" ")
         ),
-        hashMapOf("hiragana" to "わ を".split(" "), "katakana" to "ワ ヲ".split(" "), "answers" to "wa wo".split(" ")),
-        hashMapOf("hiragana" to "ん".split(" "), "katakana" to "ン".split(" "), "answers" to "n".split(" "))
+        "w" to hashMapOf("hiragana" to "わ を".split(" "), "katakana" to "ワ ヲ".split(" "), "answers" to "wa wo".split(" ")),
+        "n2" to hashMapOf("hiragana" to "ん".split(" "), "katakana" to "ン".split(" "), "answers" to "n".split(" "))
     )
 
     override val name = "kana"
 
     override val command = Commands.slash(name, "practice your kana")
         .addOption(OptionType.STRING, "type", "hiragana, katakana or random (or h,k,r)", false)
+        .addOption(OptionType.STRING, "category", "kana category (${kanas.keys.filter { it != "n2" }.joinToString(",")})", false)
 
-    internal fun getQuestion(type: String): Pair<String, String>? {
+    internal fun getQuestion(type: String, category:String?): Pair<String, String>? {
+        val kanaCategory:String = category ?: kanas.keys.filterNot { it == "n2" }.random()
         var mode = if (type.lowercase() == "r"){
             "random"
         } else if (type.lowercase() == "h") {
@@ -100,7 +102,6 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
         } else {
             type.lowercase()
         }
-        val yDim = Random.nextInt(0, 11)
         if (mode == "random") {
             val select = Random.nextInt(0, 2)
             mode = if (select == 0) {
@@ -109,8 +110,8 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
                 "katakana"
             }
         }
-        val kanaCat = kanas[yDim][mode]
-        val answers = kanas[yDim]["answers"]
+        val kanaCat = kanas[kanaCategory]?.get(mode)
+        val answers = kanas[kanaCategory]?.get("answers")
         if (kanaCat != null && answers != null) {
             val xDim = Random.nextInt(0, kanaCat.size - 1)
             val answer = answers[xDim]
@@ -127,8 +128,9 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
 
     override suspend fun handle(event: MessageReceivedEvent) {
         val type = event.getOptions().firstOrNull()
+        val category = event.getOptions().getOrNull(1)
         if (type != null) {
-            val kanaAndAns = getQuestion(type)
+            val kanaAndAns = getQuestion(type, category)
             val kana = kanaAndAns?.first
             val ans = kanaAndAns?.second
             if (ans != null) {
@@ -144,8 +146,9 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
 
     override suspend fun handle(event: SlashCommandInteractionEvent) {
         val type = event.getOption("type")?.asString
+        val category = event.getOption("category")?.asString
         if (type != null) {
-            val kanaAndAns = getQuestion(type)
+            val kanaAndAns = getQuestion(type, category)
             if (kanaAndAns != null) {
                 val kana = kanaAndAns.first
                 val ans = kanaAndAns.second

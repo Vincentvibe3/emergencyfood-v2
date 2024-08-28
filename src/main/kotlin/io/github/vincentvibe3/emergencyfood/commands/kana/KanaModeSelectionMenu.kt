@@ -17,7 +17,7 @@ class KanaModeSelectionMenu: InteractionSelectMenu() {
 
     override suspend fun handle(event: StringSelectInteraction) {
         val type = event.values.first()
-        val kanaAndAns = getQuestion(type)
+        val kanaAndAns = getQuestion(type, null)
         if (kanaAndAns != null) {
             val kana = kanaAndAns.first
             val ans = kanaAndAns.second
