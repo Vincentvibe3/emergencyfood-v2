@@ -155,7 +155,7 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
                 setResponse(event.user.id, event.channel.id, ans)
                 event.reply("Which kana is this? $kana").queue()
             } else {
-                val kanaSelectionMenu = KanaModeSelectionMenu()
+                val kanaSelectionMenu = KanaModeSelectionMenu(category)
                 SelectMenuManager.registerLocal(kanaSelectionMenu)
                 event.reply("Select the kana type you want")
                     .setEphemeral(true)
@@ -163,7 +163,7 @@ object KanaPractice : GenericCommand(), SlashCommand, MessageCommand {
                     .queue()
             }
         } else {
-            val kanaSelectionMenu = KanaModeSelectionMenu()
+            val kanaSelectionMenu = KanaModeSelectionMenu(category)
             SelectMenuManager.registerLocal(kanaSelectionMenu)
             event.reply("Select the kana type you want")
                 .setEphemeral(true)

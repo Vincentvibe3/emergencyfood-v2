@@ -6,7 +6,9 @@ import io.github.vincentvibe3.emergencyfood.internals.InteractionSelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectInteraction
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 
-class KanaModeSelectionMenu: InteractionSelectMenu() {
+class KanaModeSelectionMenu(
+    private val category: String?
+): InteractionSelectMenu() {
 
     override val name: String = "ModeSelection"
     override val menu: StringSelectMenu = StringSelectMenu.create(uuid.toString())
@@ -17,7 +19,7 @@ class KanaModeSelectionMenu: InteractionSelectMenu() {
 
     override suspend fun handle(event: StringSelectInteraction) {
         val type = event.values.first()
-        val kanaAndAns = getQuestion(type, null)
+        val kanaAndAns = getQuestion(type, category)
         if (kanaAndAns != null) {
             val kana = kanaAndAns.first
             val ans = kanaAndAns.second
